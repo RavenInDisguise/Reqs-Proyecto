@@ -41,7 +41,7 @@ app.get('/ejemplo', (req, res) => {
     console.log('Consulta realizada');
   });
 });
-const port = 3001; 
+const port = 8080; 
 // Iniciar servidor
 
 server.listen(port, () => {
