@@ -41,7 +41,7 @@ app.get('/ejemplo', (req, res) => {
     console.log('Consulta realizada');
   });
 });
-const port = 8080; 
+const port = process.env.PORT || 8080; 
 // Iniciar servidor
 
 server.listen(port, () => {
