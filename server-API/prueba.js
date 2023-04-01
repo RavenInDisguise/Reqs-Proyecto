@@ -1,17 +1,19 @@
 const sql = require('mssql');
 const express = require('express');
-const app = express();
+var app = express();
+var http = require('http');
+var server = http.createServer(app);
 
 // Configuración de la conexión a la base de datos de Azure
 const config = {
-  server: 'bibliotec-server.database.windows.net ',
-  database: 'bibliotec-database',
-  user: 'bibliotec-server-admin',
-  password: 'Sprint01',
-  options: {
-    encrypt: true
-  }
-};
+    user: 'bibliotec-server-admin',
+    password: 'Sprint01',
+    server: 'bibliotec-server.database.windows.net',
+    database: 'bibliotec-database',
+    options: {
+        encrypt: true
+    }
+}
 
 // Establecer conexión a la base de datos de Azure
 sql.connect(config, err => {
@@ -22,6 +24,7 @@ sql.connect(config, err => {
   }
 });
 
+app.get('/',(req,res)=>res.json({message: 'Hola mundo'}));
 // Endpoint de ejemplo que realiza una consulta a la base de datos de Azure
 app.get('/ejemplo', (req, res) => {
   // Crear una nueva consulta a la base de datos
@@ -35,10 +38,14 @@ app.get('/ejemplo', (req, res) => {
     } else {
       res.send(resultado.recordset);
     }
+    console.log('Consulta realizada');
   });
 });
-
+const port = 3001; 
 // Iniciar servidor
-app.listen(3000, () => {
-  console.log('Servidor iniciado en el puerto 3000');
+
+server.listen(port, () => {
+  console.log('Servidor iniciado en el puerto: ' + port);
+  console.count('Número de veces que se ha iniciado el servidor');
 });
+return server;
