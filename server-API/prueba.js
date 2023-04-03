@@ -25,6 +25,9 @@ sql.connect(config, err => {
 });
 
 app.get('/',(req,res)=>res.json({message: 'Hola mundo'}));
+
+
+
 // Endpoint de ejemplo que realiza una consulta a la base de datos de Azure
 app.get('/ejemplo', (req, res) => {
   // Crear una nueva consulta a la base de datos
@@ -46,6 +49,4 @@ const port = process.env.PORT || 8080;
 
 server.listen(port, () => {
   console.log('Servidor iniciado en el puerto: ' + port);
-  console.count('Número de veces que se ha iniciado el servidor');
 });
-return server;
