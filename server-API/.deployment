@@ -1,2 +1,2 @@
 [config]
-command = node prueba.js
+command = npm install --production && node prueba.js
