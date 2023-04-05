@@ -379,18 +379,24 @@ router.put("/estudiante/actualizar",(req,res) =>{
   const apellido2 = bod.apellido2
   const cedula = bod.cedula
   const carnet = bod.carnet
+  const correo = bod.correo
+  const clave = bod.clave
   const fechaDeNacimiento = bod.fechaDeNacimiento
 
   const consulta = new sqlcon.Request();
-  const sql = `UPDATE Estudiantes 
-              SET 
-                nombre = '${nombre}', 
-                apellido1 = '${apellido1}', 
-                apellido2 = '${apellido2}', 
-                cedula = '${cedula}', 
-                carnet = '${carnet}', 
-                fechaDeNacimiento = '${fechaDeNacimiento}' 
-              WHERE id = ${id}`;
+  const query = `UPDATE Estudiantes AS E
+             LEFT JOIN Usuarios AS U 
+             ON Estudiantes.idUsuario = U.id
+             SET 
+               E.nombre = '${nombre}', 
+               E.apellido1 = '${apellido1}', 
+               E.apellido2 = '${apellido2}', 
+               E.cedula = '${cedula}', 
+               E.carnet = '${carnet}', 
+               E.fechaDeNacimiento = '${fechaDeNacimiento}',
+               U.correo = '${correo}',
+               U.clave = '${clave}'
+             WHERE Estudiantes.id = ${id} AND U.id = E.idUsuario`;
 
   consulta.query(query, (err, resultado) => {
     if (err) {
