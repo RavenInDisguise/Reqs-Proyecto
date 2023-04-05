@@ -409,4 +409,95 @@ router.put("/estudiante/actualizar",(req,res) =>{
   });
 });
 
+
+//Crear 
+
+router.post("/estudiante/crear", (req, res) => {
+  const bod = req.body;
+  const nombre = bod.nombre;
+  const apellido1 = bod.apellido1;
+  const apellido2 = bod.apellido2;
+  const cedula = bod.cedula;
+  const carnet = bod.carnet;
+  const correo = bod.correo;
+  const clave = bod.clave;
+  const fechaDeNacimiento = bod.fechaDeNacimiento;
+
+  const transaction = new sqlcon.Transaction();
+  transaction.begin((err) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send("Error al iniciar la transacción");
+      return;
+    }
+
+    const usuarioQuery = `INSERT INTO Usuarios (
+                            correo, 
+                            clave, 
+                            idTipoUsuario) 
+                          VALUES (
+                            '${correo}', 
+                            '${clave}', 
+                            3)`;
+                            
+    const estudianteQuery = `INSERT INTO Estudiantes (
+                              nombre, 
+                              apellido1, 
+                              apellido2, 
+                              cedula, 
+                              carnet, 
+                              fechaDeNacimiento, 
+                              idUsuario,
+                              activo) 
+                            VALUES (
+                              '${nombre}',
+                              '${apellido1}', 
+                              '${apellido2}', '${cedula}', 
+                              '${carnet}', 
+                              '${fechaDeNacimiento}', 
+                              SCOPE_IDENTITY(), 
+                              1 )`;
+
+    const request = new sqlcon.Request(transaction);
+    request.query(usuarioQuery, (err, result) => {
+      if (err) {
+        console.log(err);
+        transaction.rollback((err) => {
+          if (err) {
+            console.log(err);
+            res.status(500).send("Error al hacer rollback de la transacción");
+          } else {
+            res.status(500).send("Error al crear el usuario");
+          }
+        });
+      } else {
+        request.query(estudianteQuery, (err, result) => {
+          if (err) {
+            console.log(err);
+            transaction.rollback((err) => {
+              if (err) {
+                console.log(err);
+                res.status(500).send("Error al hacer rollback de la transacción");
+              } else {
+                res.status(500).send("Error al crear el estudiante");
+              }
+            });
+          } else {
+            transaction.commit((err) => {
+              if (err) {
+                console.log(err);
+                res.status(500).send("Error al hacer commit de la transacción");
+              } else {
+                res.send("Estudiante creado exitosamente");
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+});
+
+//crear usuario
+
 module.exports = router;
