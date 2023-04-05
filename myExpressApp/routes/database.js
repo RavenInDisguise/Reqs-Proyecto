@@ -314,7 +314,93 @@ router.get('/estudiante/reservas', (req, res) => {
   });
 });
 
-//Rutas UPDATE
+//Rutas PUT
+// "Eliminar"
 
+//eliminar reserva
+router.put('/reserva/eliminar', (req, res) => {
+  const idReserva = req.body.id;
+  const consulta = new sqlcon.Request();
+  const query = `UPDATE Reservas SET activo = 0 WHERE id =` + idReserva;
+
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al realizar la consulta');
+    } else {
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+  });
+});
+
+//eliminar estudiante
+router.put('/estudiante/eliminar', (req, res) => {
+  const idEstudiante = req.body.id;
+  const consulta = new sqlcon.Request();
+  const query = `UPDATE Estudiantes SET activo = 0 WHERE id =` + idEstudiante;
+
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al realizar la consulta');
+    } else {
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+  });
+});
+
+//eliminar cubiculo 
+router.put("/cubiculo/eliminar",(req,res) =>{
+  const idCubiculo = req.body.id;
+  const consulta = new sqlcon.Request();
+  const query = `UPDATE Cubiculos SET activo = 0 WHERE id =` + idCubiculo;
+
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al realizar la consulta');
+    } else {
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+  });
+});
+
+// update 
+
+//editar estudiantes
+router.put("/estudiante/actualizar",(req,res) =>{
+  const bod = req.body
+  const id = bod.id
+  const nombre = bod.nombre
+  const apellido1 = bod.apellido1
+  const apellido2 = bod.apellido2
+  const cedula = bod.cedula
+  const carnet = bod.carnet
+  const fechaDeNacimiento = bod.fechaDeNacimiento
+
+  const consulta = new sqlcon.Request();
+  const sql = `UPDATE Estudiantes 
+              SET 
+                nombre = '${nombre}', 
+                apellido1 = '${apellido1}', 
+                apellido2 = '${apellido2}', 
+                cedula = '${cedula}', 
+                carnet = '${carnet}', 
+                fechaDeNacimiento = '${fechaDeNacimiento}' 
+              WHERE id = ${id}`;
+
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al actualizar el estudiante');
+    } else {
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+  });
+});
 
 module.exports = router;

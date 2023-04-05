@@ -25,5 +25,35 @@
     parametros:
         id: id del estudiante por el que filtran las reservas
     retorna el id de la reserva, el nombre del cubiculo, la capacidad, la fecha, hora de inicio y fin de la reserva de las reservas relacionadas al id del estudiante 
+# PUT
+## Eliminado
+- /reserva/eliminar
+    parametros: 
+        id: id de la reserva que se va a "eliminar"
+    retorna la reserva actualizada, sirve para eliminar la reserva 
 
+- /estudiante/eliminar  reserva/eliminar?id=2
+    parametro:
+        id: id del estudiante que se va a "eliminar"
+    retorna el estudiante modidificado, sirve para eliminar un estudiante
+
+- /cubiculo/eliminar
+    parametro:
+        id: id del cubiculo que se va a "eliminar"
+    retorna el cubiculo modidificado, sirve para eliminar un cubiculo
+
+## Actualizar
+- /estudiante/actualizar
+    body:
+        id
+        nombre
+        apellido1
+        apellido2
+        cedula
+        carnet
+        fechaDeNacimiento
+        activo ( 1/0 )
+    retorna el estudiante actualizado y si no retorna 
+    error al actualizar. el estatus 500 es de error y
+    200 de exito
 
