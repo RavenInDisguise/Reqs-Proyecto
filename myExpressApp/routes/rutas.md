@@ -52,8 +52,23 @@
         cedula
         carnet
         fechaDeNacimiento
+        correo
+        clave
         activo ( 1/0 )
     retorna el estudiante actualizado y si no retorna 
     error al actualizar. el estatus 500 es de error y
     200 de exito
 
+## Crear 
+
+- /estudiante/crear
+    body:
+        nombre
+        apellido1
+        appelido2
+        cedula
+        carnet
+        correo
+        clave
+        fechaDeNacimiento
+    crea un usuario nuevo en la tabla Usuarios y luego toma el id de esta tabla para crear un Estudiante
