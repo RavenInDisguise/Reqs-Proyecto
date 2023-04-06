@@ -144,8 +144,8 @@ router.get('/cubiculos', (req, res) => {
   const query = `SELECT C.id, C.nombre, EC.descripcion AS estado, C.capacidad, SE.descripcion AS servicio 
                  FROM Cubiculos AS C 
                  LEFT JOIN EstadosCubiculo AS EC ON C.idEstado = EC.id 
-                 LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo 
-                 LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id`;
+                 LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo AND SC.activo = 1 
+                 LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id;`;
   
   consulta.query(query, (err, resultado) => {
       if (err) {
@@ -164,12 +164,15 @@ router.get('/cubiculos', (req, res) => {
                   cubiculos[idCubiculo].servicios.push(servicio);
               } else {
                   const { id, nombre, capacidad, estado } = cubiculo;
+
                   cubiculos[idCubiculo] = {
                       id,
                       nombre,
                       capacidad,
                       estado,
-                      servicios: [servicio]
+                      servicios: ((servicio) ? [servicio] : [])
+                      /* Cuando no hay servicios, da un arreglo vacío
+                      en lugar de un arreglo con un elemento nulo */
                   };
               }
           }
@@ -196,9 +199,9 @@ router.get('/cubiculo', (req, res) => {
                   SE.descripcion AS servicio 
                 FROM Cubiculos AS C 
                 LEFT JOIN EstadosCubiculo AS EC ON C.idEstado = EC.id 
-                LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo 
+                LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo AND SC.activo = 1
                 LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id
-                WHERE C.id =` + cubID;
+                WHERE C.id =` + cubID + `;`;
   
   consulta.query(query, (err, resultado) => {
       if (err) {
@@ -222,7 +225,9 @@ router.get('/cubiculo', (req, res) => {
                       nombre,
                       capacidad,
                       estado,
-                      servicios: [servicio]
+                      servicios: ((servicio) ? [servicio] : [])
+                      /* Cuando no hay servicios, da un arreglo vacío
+                      en lugar de un arreglo con un elemento nulo */
                   };
               }
           }
@@ -244,9 +249,9 @@ router.get('/cubiculos/disponibles', (req, res) => {
   const query = `SELECT C.id, C.nombre, EC.descripcion AS estado, C.capacidad, SE.descripcion AS servicio 
                  FROM Cubiculos AS C 
                  LEFT JOIN EstadosCubiculo AS EC ON C.idEstado = EC.id 
-                 LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo 
+                 LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo AND SC.activo = 1
                  LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id
-                 WHERE EC.descripcion = 'Disponible'`;
+                 WHERE EC.descripcion = 'Disponible';`;
   
   consulta.query(query, (err, resultado) => {
       if (err) {
@@ -270,7 +275,9 @@ router.get('/cubiculos/disponibles', (req, res) => {
                       nombre,
                       capacidad,
                       estado,
-                      servicios: [servicio]
+                      servicios: ((servicio) ? [servicio] : [])
+                      /* Cuando no hay servicios, da un arreglo vacío
+                      en lugar de un arreglo con un elemento nulo */
                   };
               }
           }
