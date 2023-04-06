@@ -43,6 +43,8 @@ router.post('/', async(req,res)=>{
       res.send(result.recordset)
     }
     console.log('Consulta realizada');
+  });
+});
 
 //ruta de prueba 
 router.get('/prueba', (req, res) => {
@@ -61,9 +63,7 @@ router.get('/prueba', (req, res) => {
     });
 
   });
-  
 
-});
 
 
 //Rutas GET
@@ -73,7 +73,7 @@ router.get('/prueba', (req, res) => {
 router.get('/estudiantes', (req, res) => {
     // Crear una nueva consulta a la base de datos
     const consulta = new sqlcon.Request();
-    var query = 'E.id, SELECT CONCAT(E.nombre,\' \',E.apellido1, \' \',E.apellido2) Nombre,'
+    var query = 'SELECT E.id, CONCAT(E.nombre,\' \',E.apellido1, \' \',E.apellido2) Nombre,'
       + ' E.carnet, E.cedula, U.correo '
       + 'FROM Estudiantes AS E ' 
       + 'LEFT JOIN Usuarios AS U ON U.id = E.idUsuario;'
