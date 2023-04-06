@@ -3,6 +3,8 @@ var sqlcon = require('mssql');
 var router = express.Router();
 var cors = require("cors");
 const nodemailer = require("nodemailer");
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
 const mail = 'bibliotec.itcr@gmail.com'
 
@@ -41,18 +43,36 @@ router.get('/', cors(), function(req, res, next) {
     res.render('index', { title: 'Express' });
   });
   
-router.post('/', async(req,res)=>{
-  const {email, password} = req.body
+// Inicio de sesión
+router.post('/', async (req, res) => {
+  const { email, password } = req.body;
   const check = new sqlcon.Request();
-  check.query(`Select U.id FRom Usuarios U
-  Inner Join TiposUsuario TU ON U.idTipoUsuario = TU.id
-  where TU.id = 3 AND u.correo = '${email}' AND U.clave = '${password}'`, (err,result)=>{
+  check.query(`
+  SELECT      U.id,
+              U.clave,
+              U.correo
+  FROM Usuarios U
+  INNER JOIN  TiposUsuario TU
+    ON U.idTipoUsuario = TU.id
+  WHERE       TU.id = 3
+    AND       U.correo = '${email}';
+  `, (err, result) => {
     if (err) {
-      console.log(err);
-      res.status(500).send('Error al realizar la consulta')
+      res.status(500).send({ message: 'Error al realizar la consulta' });
     } else {
-      console.log(req.cookies)
-      res.send(result.recordset)
+      if (result.recordset.length > 0) {
+        bcrypt.compare(password, result.recordset[0].clave, (error, response) => {
+          if (response) {
+            /* Coincide */
+            res.send({ message: "Sesión iniciada correctamente", correo: result.recordset[0].correo });
+          } else {
+            /* No coincide */
+            res.status(401).send({ message: "Credenciales incorrectas" });
+          }
+        })
+      } else {
+        res.status(401).send({ message: "El usuario no existe" });
+      }
     }
     console.log('Consulta realizada');
   });
@@ -496,14 +516,20 @@ router.put("/estudiante/crear", (req, res) => {
   const clave = bod.clave;
   const fechaDeNacimiento = bod.fechaDeNacimiento;
 
-  const quer = `
+  bcrypt.hash(clave, saltRounds, (err, hash) => {
+
+    if (err) {
+      res.send({ err: err });
+    }
+
+    const quer = `
     INSERT INTO Usuarios (
       correo, 
       clave, 
       idTipoUsuario) 
     VALUES (
       '${correo}', 
-      '${clave}', 
+      '${hash}', 
       3)
     
     DECLARE @idUsuario INT
@@ -528,17 +554,18 @@ router.put("/estudiante/crear", (req, res) => {
       @idUsuario, 
       1)
       `;
-  const consulta = new sqlcon.Request();
-  consulta.query(quer, (err, resultado) => {
-    if (err) {
-      console.log(err);
-      res.status(500).send('Error al actualizar el estudiante');
-    } else {
-      res.send(resultado);
-      console.log('Consulta realizada');
-    }
-  });
-  
+    const consulta = new sqlcon.Request();
+    consulta.query(quer, (err, resultado) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send('Error al actualizar el estudiante');
+      } else {
+        res.send(resultado);
+        console.log('Consulta realizada');
+      }
+    });
+  })
+
 });
 
 
