@@ -35,23 +35,23 @@
 - /estudiante/eliminar  reserva/eliminar?id=2
     parametro:
         id: id del estudiante que se va a "eliminar"
-    retorna el estudiante modidificado, sirve para eliminar un estudiante
+    rretorna el estatus 200 si funcionó y 500 si no, sirve para eliminar un estudiante
 
 - /cubiculo/eliminar
     parametro:
         id: id del cubiculo que se va a "eliminar"
-    retorna el cubiculo modidificado, sirve para eliminar un cubiculo
+    retorna el estatus 200 si funcionó y 500 si no, sirve para eliminar un cubiculo
 
 ## Actualizar
 - /estudiante/actualizar
-    body:
+    parametros:
         id
         nombre
         apellido1
         apellido2
         cedula
         carnet
-        fechaDeNacimiento
+        fechaDeNacimiento AAAA-MM-DD
         correo
         clave
         activo ( 1/0 )
@@ -62,7 +62,7 @@
 ## Crear 
 
 - /estudiante/crear
-    body:
+    parametros:
         nombre
         apellido1
         appelido2

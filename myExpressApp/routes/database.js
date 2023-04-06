@@ -339,7 +339,7 @@ router.get('/estudiante/reservas', (req, res) => {
 
 //eliminar reserva
 router.put('/reserva/eliminar', (req, res) => {
-  const idReserva = req.body.id;
+  const idReserva = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `UPDATE Reservas SET activo = 0 WHERE id =` + idReserva;
 
@@ -356,9 +356,9 @@ router.put('/reserva/eliminar', (req, res) => {
 
 //eliminar estudiante
 router.put('/estudiante/eliminar', (req, res) => {
-  const idEstudiante = req.body.id;
+  const idEstudiante = req.query.id;
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Estudiantes SET activo = 0 WHERE id =` + idEstudiante;
+  const query = `UPDATE Estudiantes SET activo = 0 WHERE id = ${idEstudiante}`;
 
   consulta.query(query, (err, resultado) => {
     if (err) {
@@ -373,16 +373,16 @@ router.put('/estudiante/eliminar', (req, res) => {
 
 //eliminar cubiculo 
 router.put("/cubiculo/eliminar",(req,res) =>{
-  const idCubiculo = req.body.id;
+  const idCubiculo = req.query.id;
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Cubiculos SET activo = 0 WHERE id =` + idCubiculo;
+  const query = `UPDATE Cubiculos SET idEstado = 5 WHERE id =` + idCubiculo;
 
   consulta.query(query, (err, resultado) => {
     if (err) {
       console.log(err);
       res.status(500).send('Error al realizar la consulta');
     } else {
-      res.send(resultado.recordset);
+      res.status(200).send(resultado.recordset);
       console.log('Consulta realizada');
     }
   });
@@ -392,7 +392,7 @@ router.put("/cubiculo/eliminar",(req,res) =>{
 
 //editar estudiantes
 router.put("/estudiante/actualizar",(req,res) =>{
-  const bod = req.body
+  const bod = req.query
   const id = bod.id
   const nombre = bod.nombre
   const apellido1 = bod.apellido1
@@ -404,36 +404,42 @@ router.put("/estudiante/actualizar",(req,res) =>{
   const fechaDeNacimiento = bod.fechaDeNacimiento
 
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Estudiantes AS E
-             LEFT JOIN Usuarios AS U 
-             ON Estudiantes.idUsuario = U.id
-             SET 
-               E.nombre = '${nombre}', 
-               E.apellido1 = '${apellido1}', 
-               E.apellido2 = '${apellido2}', 
-               E.cedula = '${cedula}', 
-               E.carnet = '${carnet}', 
-               E.fechaDeNacimiento = '${fechaDeNacimiento}',
-               U.correo = '${correo}',
-               U.clave = '${clave}'
-             WHERE Estudiantes.id = ${id} AND U.id = E.idUsuario`;
+  const query1 = `UPDATE Estudiantes
+                  SET 
+                    nombre = '${nombre}', 
+                    apellido1 = '${apellido1}', 
+                    apellido2 = '${apellido2}', 
+                    cedula = ${cedula}, 
+                    carnet = ${carnet}, 
+                    fechaDeNacimiento = '${fechaDeNacimiento}'
+                  WHERE id = ${id};`;
 
-  consulta.query(query, (err, resultado) => {
+  const query2 = `UPDATE Usuarios
+                  SET 
+                    correo = '${correo}',
+                    clave = '${clave}'
+                  WHERE id = (SELECT idUsuario FROM Estudiantes WHERE id = ${id});`;
+
+
+  consulta.query(query1 + ";" + query2, (err, resultado) => {
     if (err) {
       console.log(err);
       res.status(500).send('Error al actualizar el estudiante');
     } else {
-      res.send(resultado.recordset);
+      res.send(resultado);
       console.log('Consulta realizada');
     }
   });
 });
 
 
+
+
 //Crear 
 
-router.post("/estudiante/crear", (req, res) => {
-  const bod = req.body;
+//crear usuario
+router.put("/estudiante/crear", (req, res) => {
+  const bod = req.query;
   const nombre = bod.nombre;
   const apellido1 = bod.apellido1;
   const apellido2 = bod.apellido2;
@@ -443,81 +449,51 @@ router.post("/estudiante/crear", (req, res) => {
   const clave = bod.clave;
   const fechaDeNacimiento = bod.fechaDeNacimiento;
 
-  const transaction = new sqlcon.Transaction();
-  transaction.begin((err) => {
+  const quer = `
+    INSERT INTO Usuarios (
+      correo, 
+      clave, 
+      idTipoUsuario) 
+    VALUES (
+      '${correo}', 
+      '${clave}', 
+      3)
+    
+    DECLARE @idUsuario INT
+    SET @idUsuario = SCOPE_IDENTITY()  
+
+    INSERT INTO Estudiantes (
+      nombre, 
+      apellido1, 
+      apellido2, 
+      cedula, 
+      carnet, 
+      fechaDeNacimiento, 
+      idUsuario,
+      activo) 
+    VALUES (
+      '${nombre}',
+      '${apellido1}', 
+      '${apellido2}', 
+      '${cedula}', 
+      '${carnet}', 
+      '${fechaDeNacimiento}', 
+      @idUsuario, 
+      1)
+      `;
+  const consulta = new sqlcon.Request();
+  consulta.query(quer, (err, resultado) => {
     if (err) {
       console.log(err);
-      res.status(500).send("Error al iniciar la transacción");
-      return;
+      res.status(500).send('Error al actualizar el estudiante');
+    } else {
+      res.send(resultado);
+      console.log('Consulta realizada');
     }
-
-    const usuarioQuery = `INSERT INTO Usuarios (
-                            correo, 
-                            clave, 
-                            idTipoUsuario) 
-                          VALUES (
-                            '${correo}', 
-                            '${clave}', 
-                            3)`;
-                            
-    const estudianteQuery = `INSERT INTO Estudiantes (
-                              nombre, 
-                              apellido1, 
-                              apellido2, 
-                              cedula, 
-                              carnet, 
-                              fechaDeNacimiento, 
-                              idUsuario,
-                              activo) 
-                            VALUES (
-                              '${nombre}',
-                              '${apellido1}', 
-                              '${apellido2}', '${cedula}', 
-                              '${carnet}', 
-                              '${fechaDeNacimiento}', 
-                              SCOPE_IDENTITY(), 
-                              1 )`;
-
-    const request = new sqlcon.Request(transaction);
-    request.query(usuarioQuery, (err, result) => {
-      if (err) {
-        console.log(err);
-        transaction.rollback((err) => {
-          if (err) {
-            console.log(err);
-            res.status(500).send("Error al hacer rollback de la transacción");
-          } else {
-            res.status(500).send("Error al crear el usuario");
-          }
-        });
-      } else {
-        request.query(estudianteQuery, (err, result) => {
-          if (err) {
-            console.log(err);
-            transaction.rollback((err) => {
-              if (err) {
-                console.log(err);
-                res.status(500).send("Error al hacer rollback de la transacción");
-              } else {
-                res.status(500).send("Error al crear el estudiante");
-              }
-            });
-          } else {
-            transaction.commit((err) => {
-              if (err) {
-                console.log(err);
-                res.status(500).send("Error al hacer commit de la transacción");
-              } else {
-                res.send("Estudiante creado exitosamente");
-              }
-            });
-          }
-        });
-      }
-    });
   });
+  
 });
 
-//crear usuario
+
 
 module.exports = router;
