@@ -334,6 +334,39 @@ router.get('/estudiante/reservas', (req, res) => {
   });
 });
 
+
+
+//login
+router.get('/login', (req, res) => {
+  const correo = req.query.correo;
+  const clave = req.query.clave;
+  // Crear una nueva consulta a la base de datos
+  const consulta = new sqlcon.Request();
+
+  // tipo usuario 2 = Admin, 3 = Estudiante
+  var query = `SELECT 
+                E.id, 
+                U.idTipoUsuario 
+              FROM Usuarios AS U
+              LEFT JOIN Estudiantes AS E
+              ON U.id = E.idUsuario
+              WHERE 
+                correo = '${correo}' AND 
+                clave = '${clave}'` ;
+
+  // Ejecutar la consulta
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al realizar la consulta');
+    } else {
+      console.log(resultado.recordset);
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+    
+  });
+});
 //Rutas PUT
 // "Eliminar"
 
