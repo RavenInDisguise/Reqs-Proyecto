@@ -25,11 +25,7 @@
     parametros:
         id: id del estudiante por el que filtran las reservas
     retorna el id de la reserva, el nombre del cubiculo, la capacidad, la fecha, hora de inicio y fin de la reserva de las reservas relacionadas al id del estudiante 
-- /login 
-    parametros: 
-        correo
-        clave
-    devuelve el id del estudiante asociado al usuario, en caso de ser admin suele ser Nulo y el id del tipo de usuario (2 para admin y 3 para estudiante)
+
 # PUT
 ## Eliminado
 - /reserva/eliminar

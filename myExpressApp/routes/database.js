@@ -2,6 +2,18 @@ var express = require('express');
 var sqlcon = require('mssql');
 var router = express.Router();
 var cors = require("cors");
+const nodemailer = require("nodemailer");
+
+const mail = 'bibliotec.itcr@gmail.com'
+
+//configuracion del correo 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: mail,
+    pass: 'xykvnpfvomvkgstf'
+  }
+});
 
 // configuracion de la db
 const config = {
@@ -336,34 +348,29 @@ router.get('/estudiante/reservas', (req, res) => {
 
 
 
-//login
-router.get('/login', (req, res) => {
+//prueba para el correo
+router.get('/correo', (req, res) => {
   const correo = req.query.correo;
   const clave = req.query.clave;
   // Crear una nueva consulta a la base de datos
-  const consulta = new sqlcon.Request();
+  
 
-  // tipo usuario 2 = Admin, 3 = Estudiante
-  var query = `SELECT 
-                E.id, 
-                U.idTipoUsuario 
-              FROM Usuarios AS U
-              LEFT JOIN Estudiantes AS E
-              ON U.id = E.idUsuario
-              WHERE 
-                correo = '${correo}' AND 
-                clave = '${clave}'` ;
-
-  // Ejecutar la consulta
-  consulta.query(query, (err, resultado) => {
-    if (err) {
-      console.log(err);
-      res.status(500).send('Error al realizar la consulta');
+  const mailOptions = {
+    from: mail,
+    to: `${correo}` ,
+    subject: 'inicio de sesion exitoso',
+    text: 'Contenido del correo'
+  };
+  
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
     } else {
-      console.log(resultado.recordset);
-      res.send(resultado.recordset);
-      console.log('Consulta realizada');
+      console.log('Correo enviado: ' + info.response);
     }
+
+  
+  res.send('Correo enviado');
     
   });
 });
