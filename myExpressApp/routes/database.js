@@ -40,11 +40,29 @@ sqlcon.connect(config, err => {
 //ruta base
 /* GET home page. */
 router.get('/', cors(), function(req, res, next) {
-    res.render('index', { title: 'Express' });
+    res.render('index');
   });
+
+// Verificar si hay una sesión iniciada
+
+router.get('/login', (req, res) => {
+  const saved = req.session.user;
+
+  if (saved) {
+    res.send({
+      loggedIn : true,
+      userId : saved.userId,
+      email : saved.email
+    });
+  } else {
+    res.send({
+      loggedIn : false
+    });
+  }
+});
   
 // Inicio de sesión
-router.post('/', async (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const check = new sqlcon.Request();
   check.query(`
@@ -64,6 +82,10 @@ router.post('/', async (req, res) => {
         bcrypt.compare(password, result.recordset[0].clave, (error, response) => {
           if (response) {
             /* Coincide */
+            req.session.user = {
+              userId: result.recordset[0].id,
+              email: result.recordset[0].correo
+            };
             res.send({ message: "Sesión iniciada correctamente", correo: result.recordset[0].correo });
           } else {
             /* No coincide */
@@ -76,6 +98,22 @@ router.post('/', async (req, res) => {
     }
     console.log('Consulta realizada');
   });
+});
+
+// Cierre de sesión
+router.get('/logout', (req, res) => {
+  const saved = req.session.user;
+
+  if (saved) {
+    req.session.user = null;
+    res.send({
+      message : "Ok"
+    });
+  } else {
+    res.status(401).send({
+      message: 'No hay ninguna sesión activa'
+    });
+  }
 });
 
 //ruta de prueba 

@@ -1,13 +1,15 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var cors = require("cors");
-var usersRouter = require('./routes/users');
-var dbRouter = require('./routes/database');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const usersRouter = require('./routes/users');
+const dbRouter = require('./routes/database');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -16,8 +18,24 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());app.use(express.static(path.join(__dirname, 'client/build')));
-app.use(cors());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(cors({
+  origin: ["http://localhost:3000"],
+  methods: ["GET", "POST", "PUT"],
+  credentials: true
+}));
+app.use(bodyParser.urlencoded( { extended : true }));
+
+app.use(session({
+  key: "userId",
+  secret: "NoAutorizamosQueNosHackeen",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 /* Un día (en milisegundos) */
+  }
+}))
 
 app.use('/', dbRouter);
 app.use('/users', usersRouter);
