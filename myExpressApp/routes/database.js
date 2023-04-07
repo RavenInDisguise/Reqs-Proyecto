@@ -41,7 +41,7 @@ sqlcon.connect(config, err => {
 /* GET home page. */
 router.get('/', cors(), function(req, res, next) {
     res.render('index');
-  });
+});
 
 // Verificar si hay una sesión iniciada
 
@@ -52,7 +52,8 @@ router.get('/login', (req, res) => {
     res.send({
       loggedIn : true,
       userId : saved.userId,
-      email : saved.email
+      email : saved.email,
+      idEstudiante: saved.idEstudiante
     });
   } else {
     res.send({
@@ -66,12 +67,15 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const check = new sqlcon.Request();
   check.query(`
-  SELECT      U.id,
+  SELECT      U.id UsuarioID,
               U.clave,
-              U.correo
+              U.correo,
+              E.id EstudianteID
   FROM Usuarios U
   INNER JOIN  TiposUsuario TU
-    ON U.idTipoUsuario = TU.id
+  ON U.idTipoUsuario = TU.id
+  INNER JOIN Estudiantes E
+  ON U.id = E.idUsuario   
   WHERE       TU.id = 3
     AND       U.correo = '${email}';
   `, (err, result) => {
@@ -83,8 +87,9 @@ router.post('/login', async (req, res) => {
           if (response) {
             /* Coincide */
             req.session.user = {
-              userId: result.recordset[0].id,
-              email: result.recordset[0].correo
+              userId: result.recordset[0].UsuarioID,
+              email: result.recordset[0].correo,
+              idEstudiante: result.recordset[0].EstudianteID
             };
             res.send({ message: "Sesión iniciada correctamente", correo: result.recordset[0].correo });
           } else {
