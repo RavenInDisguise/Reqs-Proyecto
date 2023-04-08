@@ -1,22 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { Navigate, useLocation, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import './Login.css';
-import EstudianteMenu from "./EstudianteMenu";
+import { LoginContext, IdEstContext } from "./App";
 
 function Login() {
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [logueado, setLogueado] = useState(false);
-  const [IdEstudiante, setIdEstudiante] = useState('')
+  const [loggedIn, setLoggedIn] = useContext(LoginContext)
+  const [IdEstudiante, setIdEstudiante] = useContext(IdEstContext)
   axios.defaults.withCredentials = true;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/login").then((response) => {
+      if (response.data.loggedIn) {
+        setLoggedIn(true);
+        navigate('/Menu')
+      }
+    })
+  }, [])
 
   async function submit(e) {
     e.preventDefault();
 
-  await axios.post('http://localhost:3001/login', { email, password })
+     await axios.post('http://localhost:3001/login', { email, password })
      .then(res => {
        if (res.status == 200) {
-         window.location.reload(true);
+        navigate('/Menu')
        }
      }).catch(function (error) {
        try {
@@ -25,38 +37,11 @@ function Login() {
        catch {
          alert('Ocurrió un error.');
        }
-     })
+     }) 
   }
-
-  useEffect(() => {
-    axios.get("http://localhost:3001/login").then((response) => {
-      if (response.data.loggedIn) {
-        setLogueado(true);
-        setIdEstudiante(response.data.idEstudiante);
-      } else {
-        setLogueado(false);
-      }
-    })
-  }, [])
-
-  async function submit(e) {
-    e.preventDefault();
-
-    await axios.post('http://localhost:3001/login', { email, password })
-      .then(res => {
-        if (res.status === 200) {
-          window.location.reload(true);
-        }
-      }).catch(function (error) {
-        try {
-          alert('Ocurrió un error: ' + error.response.data.message);
-        }
-        catch {
-          alert('Ocurrió un error.');
-        }
-      })
-  }
-  if(!logueado){
+  if(loggedIn){
+    return <Navigate to='/Menu' />
+  }else{
     return (
       <div className="login">
         <h3>Iniciar sesión</h3>
@@ -72,9 +57,8 @@ function Login() {
         <a href="/registro"><p>Registrarse</p></a>
       </div>
     )
-  }else{
-    return <EstudianteMenu Id={IdEstudiante}/>
   }
+  
 }
 
 export default Login;
