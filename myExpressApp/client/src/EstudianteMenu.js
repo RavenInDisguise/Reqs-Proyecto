@@ -2,6 +2,8 @@ import React, { useEffect, useState, useContext } from "react";
 import { Navigate, useLocation} from "react-router-dom";
 import axios from 'axios';
 import { LoginContext, IdEstContext } from "./App";
+import './EstudianteMenu.css';
+import './Tarjeta.css';
 
 export default function EstudianteMenu(){
 
@@ -24,11 +26,10 @@ export default function EstudianteMenu(){
     }, [])
 
   return (
-        <div className='Menu-Estudiante'>
-            <h3>{Nombre}</h3>
-            <h3>{Carnet}</h3>
+        <div className='Menu-Estudiante tarjeta'>
             <div className='container'>
-                <h3>Reservar cubículos</h3>
+                <p><b>Usuario:</b> {Nombre} ({Carnet})</p>
+                <h1>Reservar cubículos</h1>
                 <ul>
                     <li>
                         <a>Ver cubículos disponibles</a>

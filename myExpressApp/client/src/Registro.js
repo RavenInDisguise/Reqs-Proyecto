@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './Registro.css'
+import './Tarjeta.css'
 import axios from 'axios';
 
 function Registro() {
@@ -29,9 +30,13 @@ function Registro() {
       .then(res => {
         switch (res.status){
           case 200:
-            alert(res.data.message)
+            alert(res.data.message);
+            break;
           case 422:
-            alert(res.data.message)
+            alert(res.data.message);
+            break;
+          default:
+            break;
         }
       }).catch(function (error) {
         try {
@@ -44,35 +49,35 @@ function Registro() {
   }
   
   return (
-    <div className='Registro'>
+    <div className='tarjeta Registro'>
       <h3>Registrarse</h3>
       <form action='post'>
         <div className='form-group' >
-          <input type='text' required placeholder='Nombre' onChange={e => setNombre(e.target.value)}/>
+          <input className="form-control" type='text' required placeholder='Nombre' onChange={e => setNombre(e.target.value)}/>
         </div>
         <div className='form-group'>
-          <input type='text'  placeholder='Apellido 1' required onChange={e => setApellido1(e.target.value)}/>
-          <input type='text' placeholder='Apellido 2' required onChange={e=> setApellido2(e.target.value)}/>
+          <input className="form-control" type='text'  placeholder='Primer apellido' required onChange={e => setApellido1(e.target.value)}/>
+          <input className="form-control" type='text' placeholder='Segundo apellido' required onChange={e=> setApellido2(e.target.value)}/>
         </div>
         <div className='form-group'>
-          <input type='number' placeholder='Número de Cédula' required onChange={e=> setCedula(e.target.value)}/>
+          <input className="form-control" type='number' placeholder='Número de cédula' required onChange={e=> setCedula(e.target.value)}/>
         </div>
         <div className='form-group' id='Nombre'>
-          <input type='number' placeholder='Número de Carné' required onChange={e=> setCarnet(e.target.value)}/>
+          <input className="form-control" type='number' placeholder='Número de carné' required onChange={e=> setCarnet(e.target.value)}/>
         </div>
         <div className='form-group' id='fechaNacimiento'>
-          <p>Nacimiento</p>
-          <input  type='date' placeholder='Nacimiento' required onChange={e=>setFechaDeNacimiento(e.target.value)}/>
+          <label>Fecha de nacimiento</label>
+          <input className="form-control" id="dateOfBirthInput" type='date' placeholder='Nacimiento' required onChange={e=>setFechaDeNacimiento(e.target.value)}/>
         </div>
         <div className='form-group'>
-          <input  type='email' placeholder='Correo institucional' required onChange={e=>setCorreo(e.target.value)}/>
+          <input className="form-control" type='email' placeholder='Correo institucional' required onChange={e=>setCorreo(e.target.value)}/>
         </div>
         <div className='form-group'>
-          <input  type='password' placeholder='Contraseña institucional' required onChange={e=>setClave(e.target.value)}/>
+          <input className="form-control" type='password' placeholder='Contraseña institucional' required onChange={e=>setClave(e.target.value)}/>
         </div>
         <input className="btn btn-primary" type="submit" value="Registrarse" onClick={submit} />
       </form>
-      <a href="/"><p>Iniciar Sesión</p></a>
+      <a href="/">Iniciar sesión</a>
     </div>
   )
 }

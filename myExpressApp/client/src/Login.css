@@ -1,33 +1,4 @@
-.login {
-  width: 350px;
-  height: fit-content ;
-  text-align: center;
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  color: rgb(1, 1, 69);
-  margin: auto;
-}
-
-.login h3 {
-  margin-bottom: 30px;
-}
-
-.login form .form-group {
-  margin-bottom: 30px;
-}
-
-.login form .form-group input {
-  border-radius: 15px;
-}
-
-.login form input[type="submit"] {
-  margin-bottom: 10px;
-  background-color: rgb(1, 1, 69);
-  border-radius: 15px;
-  width: 80%;
-}
-
-a {
-  text-decoration: none;
+.login h1 {
+  margin-bottom: 20px;
+  font-size: 1.75rem;
 }

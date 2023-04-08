@@ -3,6 +3,8 @@ import { Navigate, useLocation, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import './Login.css';
 import { LoginContext, IdEstContext } from "./App";
+import './Tarjeta.css';
+import EstudianteMenu from "./EstudianteMenu";
 
 function Login() {
   const location = useLocation();
@@ -43,8 +45,8 @@ function Login() {
     return <Navigate to='/Menu' />
   }else{
     return (
-      <div className="login">
-        <h3>Iniciar sesión</h3>
+      <div className="login tarjeta">
+        <h1>Iniciar sesión</h1>
         <form action="POST">
           <div className="form-group">
             <input className="form-control" type="email" placeholder="Correo electrónico" onChange={e => setEmail(e.target.value)} />
@@ -54,7 +56,7 @@ function Login() {
           </div>
           <input className="btn btn-primary" type="submit" value="Iniciar sesión" onClick={submit} />
         </form>
-        <a href="/registro"><p>Registrarse</p></a>
+        <a href="/registro">Registrarse</a>
       </div>
     )
   }
