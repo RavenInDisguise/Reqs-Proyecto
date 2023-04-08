@@ -4,8 +4,7 @@ import './EstudianteMenu.css';
 import './Tarjeta.css';
 
 export default function EstudianteMenu(props) {
-    const [Nombre, setNombre] = useState('')
-    const [Carnet, setCarnet] = useState('')
+    const [Nombre, setNombre] = useState('Cargando...');
 
     useEffect(() => {
         axios.get(`http://localhost:3001/estudiante?id=${props.Id}`).then((response) => {
@@ -16,7 +15,7 @@ export default function EstudianteMenu(props) {
   return (
         <div className='Menu-Estudiante tarjeta'>
             <div className='container'>
-                <p><b>Usuario:</b> {Nombre} ({Carnet})</p>
+                <p><b>Usuario:</b> {Nombre}</p>
                 <h1>Reservar cubículos</h1>
                 <ul>
                     <li>
