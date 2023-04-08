@@ -1,0 +1,58 @@
+.tarjeta {
+    min-width: 350px;
+    max-width: 85%;
+    height: fit-content;
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 5px 5px 5px #b9b9b9, -5px -5px 5px #b9b9b9;
+    margin: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tarjeta {
+        background-color: #363636;
+        box-shadow: none;
+        box-shadow: 5px 5px 5px #474747, -5px -5px 5px #474747;
+    }
+    .tarjeta p {
+        color: rgb(101, 101, 101);
+    }
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.tarjeta form .form-group {
+    margin-bottom: 30px;
+}
+
+.tarjeta form .form-group input {
+    border-radius: 15px;
+}
+
+.tarjeta form input[type="submit"] {
+    margin-bottom: 10px;
+    border-radius: 15px;
+    width: 80%;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tarjeta form input[type="submit"] {
+        color: #bdbdbd;
+    }
+}
+
+.tarjeta a, .tarjeta h1, .tarjeta h2, .tarjeta h3 {
+    color: #005085;
+    text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tarjeta a, .tarjeta h1, .tarjeta h2, .tarjeta h3 {
+        color: #0066aa;
+        text-decoration: none;
+    }
+}
