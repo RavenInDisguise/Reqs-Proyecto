@@ -843,13 +843,11 @@ router.put("/estudiante/actualizar",(req,res) =>{
 });
 
 
-
-
 //Crear 
 
 //crear usuario
-router.put("/estudiante/crear", (req, res) => {
-  const bod = req.query;
+router.post("/estudiante/crear", (req, res) => {
+  const bod = req.body;
   const nombre = bod.nombre;
   const apellido1 = bod.apellido1;
   const apellido2 = bod.apellido2;
@@ -859,13 +857,30 @@ router.put("/estudiante/crear", (req, res) => {
   const clave = bod.clave;
   const fechaDeNacimiento = bod.fechaDeNacimiento;
 
-  bcrypt.hash(clave, saltRounds, (err, hash) => {
+  bcrypt.hash(clave, 10, (err, hash) => {
 
     if (err) {
-      res.send({ err: err });
+      return res.send({ err: err });
     }
 
-    const quer = `
+    const queryS =`
+      SELECT id FROM Estudiantes E
+      WHERE E.carnet = ${carnet} OR E.cedula = ${cedula}
+      UNION 
+      SELECT id FROM Usuarios U
+      WHERE U.correo = '${correo}'
+      `
+    const consulta = new sqlcon.Request();
+
+    consulta.query(queryS, (err, result)=>{
+      if (err) {
+        return res.status(500).send({message:'Error al registrar el estudiante'});
+      } else {
+        if(result.recordset.length >= 1){
+          return res.status('422').send({message:'Ya existe el estudiante'})
+        }
+      }
+      const queryI = `
     INSERT INTO Usuarios (
       correo, 
       clave, 
@@ -897,16 +912,34 @@ router.put("/estudiante/crear", (req, res) => {
       @idUsuario, 
       1)
       `;
-    const consulta = new sqlcon.Request();
-    consulta.query(quer, (err, resultado) => {
+      const insertar = new sqlcon.Request();
+    insertar.query(queryI, (err, resultado) => {
       if (err) {
-        console.log(err);
-        res.status(500).send('Error al actualizar el estudiante');
+        res.status(500).send({message:'Error al registrar el estudiante'});
       } else {
-        res.send(resultado);
-        console.log('Consulta realizada');
+        const mailOptions = {
+          from: mail,
+          to: `${correo}` ,
+          subject: 'Registro Exitoso',
+          text: `Se ha registrado exitosamente al estudiante:
+          Nombre: ${nombre}
+          Apellidos: ${apellido1} ${apellido2}
+          Carné: ${carnet}
+          Cédula: ${cedula}`
+        };
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Correo enviado: ' + info.response);
+          }
+        });
+        res.status(200).send({message:'Registro Exitoso'});
       }
     });
+    })
+    
   })
 
 });

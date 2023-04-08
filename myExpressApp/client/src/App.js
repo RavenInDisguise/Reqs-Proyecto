@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import './App.css'
 import Login from './Login'
 import EstudianteMenu from './EstudianteMenu'
-import Registrarse from './Registrarse'
+import Registro from './Registro'
 
 
 
@@ -12,7 +12,7 @@ export default function App() {
       <>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/Registrarse" element={<Registrarse />} />
+        <Route path="/Registro" element={<Registro />} />
       </Routes>
       </>
       
