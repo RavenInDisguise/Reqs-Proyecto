@@ -69,7 +69,7 @@ function Login() {
           </div>
           <input className="btn btn-primary" type="submit" value="Iniciar sesión" onClick={submit} />
         </form>
-        <a href="/registrarse"><p>Registrarse</p></a>
+        <a href="/registro"><p>Registrarse</p></a>
       </div>
     )
   }else{
