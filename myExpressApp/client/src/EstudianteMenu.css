@@ -1,17 +1,15 @@
-.Menu-Estudiante{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 350px;
-    height: 180px;
-    background-color: white;
-    border: black solid 3px;
-    border-radius: 12px;
-}
-.Menu-Estudiante h3{
+.Menu-Estudiante h1 {
     margin-bottom: 20px;
+    font-size: 1.75rem;
 }
-.Menu-Estudiante ul > li{
+
+.Menu-Estudiante ul>li {
     text-decoration: underline;
-    color:rgb(102, 101, 101)
+    color: rgb(101, 101, 101);
+    text-align: start;
+    list-style: none;
+}
+
+.Menu-Estudiante ul {
+    padding-left: inherit;
 }

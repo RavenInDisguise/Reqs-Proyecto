@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import './EstudianteMenu.css';
+import './Tarjeta.css';
 
 export default function EstudianteMenu(props) {
     const [Nombre, setNombre] = useState('')
@@ -12,11 +14,10 @@ export default function EstudianteMenu(props) {
         })
     }, [])
   return (
-        <div className='Menu-Estudiante'>
-            <h3>{Nombre}</h3>
-            <h3>{Carnet}</h3>
+        <div className='Menu-Estudiante tarjeta'>
             <div className='container'>
-                <h3>Reservar cubículos</h3>
+                <p><b>Usuario:</b> {Nombre} ({Carnet})</p>
+                <h1>Reservar cubículos</h1>
                 <ul>
                     <li>
                         <a>Ver cubículos disponibles</a>

@@ -3,11 +3,17 @@ tspan {
 }
 
 .header {
-    height: 55px;
+    height: 45px;
     width: 100%;
     background-color: #005085;
     padding: 7px 15px;
     box-sizing: content-box;
+}
+
+@media (prefers-color-scheme: dark) {
+    .header {
+        background-color: #00395f;
+    }
 }
 
 a {
