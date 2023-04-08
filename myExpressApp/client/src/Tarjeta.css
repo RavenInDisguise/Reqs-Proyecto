@@ -6,7 +6,8 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 5px 5px 5px #b2b2b2, -5px -5px 5px #b2b2b2;
+    box-shadow: 7px 0px 7px #b2b2b2, -7px -0px 7px #b2b2b2,
+                0px 7px 7px #b2b2b2, -0px -7px 7px #b2b2b2;
     margin: auto;
 }
 
@@ -14,9 +15,12 @@
     .tarjeta {
         background-color: #363636;
         box-shadow: none;
-        box-shadow: 5px 5px 5px #575757, -5px -5px 5px #575757;
+        box-shadow: 7px 0px 7px #575757, -7px -0px 7px #575757,
+                    0px 7px 7px #575757, -0px -7px 7px #575757;
     }
-    .tarjeta p, label {
+
+    .tarjeta p,
+    label {
         color: rgb(205, 205, 205);
     }
 }
@@ -55,13 +59,19 @@ h1 {
     }
 }
 
-.tarjeta a, .tarjeta h1, .tarjeta h2, .tarjeta h3 {
+.tarjeta a,
+.tarjeta h1,
+.tarjeta h2,
+.tarjeta h3 {
     color: #005085;
     text-decoration: none;
 }
 
 @media (prefers-color-scheme: dark) {
-    .tarjeta h1, .tarjeta h2, .tarjeta h3 {
+
+    .tarjeta h1,
+    .tarjeta h2,
+    .tarjeta h3 {
         color: #0073c0;
     }
 
