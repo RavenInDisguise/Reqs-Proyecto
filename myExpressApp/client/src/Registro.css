@@ -1,23 +1,8 @@
-.Registro{
-    text-align: center;
-    background-color: white;
-    width: 400px;
-    padding: 10px 20px;
-}
-
 .Registro form .form-group {
     display: flex;
+    column-gap: 10px;
 }
 
-
-.Registro form .form-group input{
-    margin-left: 5px;
-    width: 100%;
-    margin-bottom: 20px;
-    border-radius: 12px;
-    height: 35px;
-}
-
-.Registro form .form-group p{
-    margin-bottom: 0px;
+.Registro form .form-group label {
+    margin: auto;
 }

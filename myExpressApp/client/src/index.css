@@ -41,11 +41,24 @@ button, input[type="submit"] {
 
 @media (prefers-color-scheme: dark) {
   button, input[type="submit"] {
-    background-color: #00395f;
+    background-color: #0073c0;
     border-color: #005085;
   }
 
   button:hover, input[type="submit"]:hover {
     background-color: #005085;
   }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
