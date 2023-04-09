@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Navigate, useLocation} from "react-router-dom";
+import { Navigate, useLocation, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import { LoginContext, IdEstContext } from "./App";
-import './EstudianteMenu.css';
+import './Menu.css';
 import './Tarjeta.css';
 
 export default function EstudianteMenu(){
 
+    const navigate = useNavigate()
     const [loggedIn, setLoggedIn] = useState('')
     const [IdEstudiante, setIdEstudiante] = useState('')
     const [Nombre, setNombre] = useState('Cargando...');
@@ -15,16 +16,19 @@ export default function EstudianteMenu(){
         axios.get("http://localhost:3001/login").then((response) => {
             setLoggedIn(response.data.loggedIn);
             setIdEstudiante((response.data.idEstudiante) ? response.data.idEstudiante : null)
-
-            axios.get(`http://localhost:3001/estudiante?id=${response.data.idEstudiante}`).then((response) => {
+            if(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante'){
+                axios.get(`http://localhost:3001/estudiante?id=${response.data.idEstudiante}`).then((response) => {
                 setNombre(`${response.data[0].nombre} ${response.data[0].apellido1} ${response.data[0].apellido2} (${response.data[0].carnet})`)
             })
+            }else{
+                navigate('/')
+            }
+            
         })
-
     }, [])
 
   return (
-        <div className='Menu-Estudiante tarjeta'>
+        <div className='Menu tarjeta'>
             <div className='container'>
                 <p><b>Usuario:</b> {Nombre}</p>
                 <h1>Reservar cubículos</h1>

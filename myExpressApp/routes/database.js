@@ -53,7 +53,8 @@ router.get('/login', (req, res) => {
       loggedIn : true,
       userId : saved.userId,
       email : saved.email,
-      idEstudiante: saved.idEstudiante
+      idEstudiante: saved.idEstudiante,
+      tipoUsuario: saved.TipoUsuario
     });
   } else {
     res.send({
@@ -67,17 +68,18 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const check = new sqlcon.Request();
   check.query(`
-  SELECT      U.id UsuarioID,
-              U.clave,
-              U.correo,
-              E.id EstudianteID
+  SELECT U.id UsuarioID,
+         U.clave,
+         U.correo,
+         E.id EstudianteID,
+	       U.idTipoUsuario,
+	       TU.descripcion TipoUsuario
   FROM Usuarios U
   INNER JOIN  TiposUsuario TU
   ON U.idTipoUsuario = TU.id
-  INNER JOIN Estudiantes E
+  LEFT JOIN Estudiantes E
   ON U.id = E.idUsuario   
-  WHERE       TU.id = 3
-    AND       U.correo = '${email}';
+  WHERE U.correo = '${email}'
   `, (err, result) => {
     if (err) {
       res.status(500).send({ message: 'Error al realizar la consulta' });
@@ -89,12 +91,14 @@ router.post('/login', async (req, res) => {
             req.session.user = {
               userId: result.recordset[0].UsuarioID,
               email: result.recordset[0].correo,
-              idEstudiante: result.recordset[0].EstudianteID
+              idEstudiante: result.recordset[0].EstudianteID,
+              tipoUsuario : result.recordset[0].TipoUsuario
             };
-            res.send({ message: "Sesión iniciada correctamente", correo: result.recordset[0].correo });
+            console.log(result.recordset[0].TipoUsuario)
+            res.send(req.session.user);
           } else {
             /* No coincide */
-            res.status(401).send({ message: "Credenciales incorrectas" });
+            res.status(401).send({  });
           }
         })
       } else {

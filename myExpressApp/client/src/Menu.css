@@ -1,30 +1,30 @@
-.Menu-Estudiante h1 {
+.Menu h1 {
     margin-bottom: 20px;
     font-size: 1.75rem;
 }
 
-.Menu-Estudiante ul>li {
+.Menu ul>li {
     color: rgb(101, 101, 101);
     text-align: start;
     list-style: none;
     text-decoration: none;
 }
 
-.Menu-Estudiante ul>li>a {
+.Menu ul>li>a {
     color: rgb(101, 101, 101);
     text-decoration: none;
 }
 
 @media (prefers-color-scheme: dark) {
-    .Menu-Estudiante ul>li {
+    .Menu ul>li {
         color: rgb(175, 175, 175);
     }
 
-    .Menu-Estudiante ul>li>a {
+    .Menu ul>li>a {
         color: rgb(175, 175, 175);
     }
 }
 
-.Menu-Estudiante ul {
+.Menu ul {
     padding-left: inherit;
 }
