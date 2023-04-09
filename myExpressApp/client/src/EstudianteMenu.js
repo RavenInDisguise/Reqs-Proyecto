@@ -9,8 +9,7 @@ export default function EstudianteMenu(){
 
     const [loggedIn, setLoggedIn] = useState('')
     const [IdEstudiante, setIdEstudiante] = useState('')
-    const [Nombre, setNombre] = useState('')
-    const [Carnet, setCarnet] = useState('')
+    const [Nombre, setNombre] = useState('Cargando...');
 
     useEffect(() => {
         axios.get("http://localhost:3001/login").then((response) => {
@@ -18,8 +17,7 @@ export default function EstudianteMenu(){
             setIdEstudiante((response.data.idEstudiante) ? response.data.idEstudiante : null)
 
             axios.get(`http://localhost:3001/estudiante?id=${response.data.idEstudiante}`).then((response) => {
-                setNombre(`${response.data[0].nombre} ${response.data[0].apellido1} ${response.data[0].apellido2}`)
-                setCarnet(response.data[0].carnet)
+                setNombre(`${response.data[0].nombre} ${response.data[0].apellido1} ${response.data[0].apellido2} (${response.data[0].carnet})`)
             })
         })
 
@@ -28,7 +26,7 @@ export default function EstudianteMenu(){
   return (
         <div className='Menu-Estudiante tarjeta'>
             <div className='container'>
-                <p><b>Usuario:</b> {Nombre} ({Carnet})</p>
+                <p><b>Usuario:</b> {Nombre}</p>
                 <h1>Reservar cubículos</h1>
                 <ul>
                     <li>

@@ -5,6 +5,7 @@ import Login from './Login'
 import EstudianteMenu from './EstudianteMenu'
 import Registro from './Registro'
 import Header from './Header'
+import ListaEstudiantes from "./MenuAdministrador/ListaEstudiantes";
 
 export const LoginContext = createContext();
 export const IdEstContext = createContext();
@@ -34,7 +35,8 @@ export default function App() {
               </IdEstContext.Provider>
               }/>
             <Route path="/Registro" element={<Registro />} />
-          </Routes>
+            <Route path="/Estudiantes" element={<ListaEstudiantes />} />
+        </Routes>
       </div>
       </>
   )
