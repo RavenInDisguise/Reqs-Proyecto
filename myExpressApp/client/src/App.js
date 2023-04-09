@@ -5,6 +5,7 @@ import Login from './Login'
 import EstudianteMenu from './EstudianteMenu'
 import Registro from './Registro'
 import Header from './Header'
+import ListaEstudiantes from "./MenuAdministrador/ListaEstudiantes";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/Registro" element={<Registro />} />
+          <Route path="/Estudiantes" element={<ListaEstudiantes />} />
         </Routes>
       </div>
       </>
