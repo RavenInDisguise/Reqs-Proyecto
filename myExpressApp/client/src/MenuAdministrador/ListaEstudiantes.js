@@ -5,8 +5,9 @@ import '../Tarjeta.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
+let listaCompleta = []
+
 export default () => {
-    let listaCompleta = []
     useEffect(() => {
         axios.get('http://localhost:3001/estudiantes').then((response) => {
             try {
@@ -29,7 +30,7 @@ export default () => {
     let listaFiltrada = [];
 
     const funcionFiltro = (elemento, nuevoFiltro) => {
-        return (elemento.Nombre.toLowerCase().normalize("NFD").indexOf(nuevoFiltro.toLowerCase()) != -1
+        return (elemento.Nombre.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").indexOf(nuevoFiltro.toLowerCase()) != -1
                 || elemento.Nombre.toLowerCase().indexOf(nuevoFiltro.toLowerCase()) != -1
                 || elemento.carnet.toString().indexOf(nuevoFiltro) != -1
                 || elemento.cedula.toString().indexOf(nuevoFiltro) != -1)
