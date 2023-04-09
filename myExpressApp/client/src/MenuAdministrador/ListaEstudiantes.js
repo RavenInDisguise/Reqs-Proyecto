@@ -38,10 +38,16 @@ export default () => {
     };
 
     const generarPagina = (nuevaPagina = pagina, tamano = porPagina, forzar = false, nuevoFiltro = filtro) => {
+        if (nuevaPagina < 1) {
+            nuevaPagina = 1;
+        } else if (nuevaPagina > paginas) {
+            nuevaPagina = paginas;
+        }
 
         if (pagina != nuevaPagina || tamano != porPagina || forzar || nuevoFiltro != filtro) {
             if (nuevoFiltro != filtro) {
                 setFiltro(nuevoFiltro);
+                nuevaPagina = 1;
             }
             if (!nuevoFiltro) {
                 listaFiltrada = listaCompleta.slice(0, listaCompleta.length);
@@ -99,9 +105,9 @@ export default () => {
                     </div>
                     <div className="filtro">
                         <label for="paginaInput">Página</label>
-                        <a href="javascript:void(0);" onClick={e => {generarPagina((pagina <= 1) ? 1 : pagina-1)}}>←</a>
+                        <a href="javascript:void(0);" onClick={e => {generarPagina(pagina -1)}}>←</a>
                         <input className="form-control" onChange={e => {generarPagina((e.target.value >= 1 && e.target.value <= paginas) ? e.target.value : pagina)}} type="number" id="paginaInput" min={1} max={paginas} value={pagina}></input>
-                        <a href="javascript:void(0);" onClick={e => {generarPagina((pagina >= paginas) ? paginas : pagina+1)}}>→</a>
+                        <a href="javascript:void(0);" onClick={e => {generarPagina(pagina + 1)}}>→</a>
                         <p>/ {paginas}</p>
                     </div>
                 </div>
