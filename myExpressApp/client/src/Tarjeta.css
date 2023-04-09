@@ -54,6 +54,16 @@ h1 {
         color: white;
     }
 
+    .tarjeta input.form-control {
+        background-color: #363636;
+        color: white;
+    }
+
+    .tarjeta input.form-control:active {
+        background-color: #363636;
+        color: white;
+    }
+
     .tarjeta form .form-group input::placeholder {
         color: #bdbdbd;
     }
@@ -84,4 +94,8 @@ h1 {
     .tarjeta a {
         color: white;
     }
+}
+
+.tarjeta > p:last-child {
+    margin-bottom: 0;
 }

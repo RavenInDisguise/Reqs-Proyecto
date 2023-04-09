@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(cors({
-  origin: ["http://localhost:3000"],
+  origin: ["http://localhost:3000", /http:\/\/localhost:3000\/.+/],
   methods: ["GET", "POST", "PUT"],
   credentials: true
 }));
