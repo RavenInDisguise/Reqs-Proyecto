@@ -36,18 +36,13 @@ export default () => {
     };
 
     const generarPagina = (nuevaPagina = pagina, tamano = porPagina, forzar = false, nuevoFiltro = filtro) => {
-        console.log(listaFiltrada);
-        console.log(filtro, nuevoFiltro);
 
         if (pagina != nuevaPagina || tamano != porPagina || forzar || nuevoFiltro != filtro) {
-            console.log(listaFiltrada)
             if (nuevoFiltro != filtro) {
-                console.log('a');
                 setFiltro(nuevoFiltro);
             }
             if (!nuevoFiltro) {
                 listaFiltrada = listaCompleta.slice(0, listaCompleta.length);
-                console.log('A');
             } else {
                 listaFiltrada = listaCompleta.filter((e) => {return funcionFiltro(e, nuevoFiltro)})
             }
