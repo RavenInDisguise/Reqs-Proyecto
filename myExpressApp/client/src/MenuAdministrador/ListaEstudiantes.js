@@ -27,6 +27,7 @@ export default () => {
     const [paginas, setPaginas] = useState(1);
     const [pagina, setPagina] = useState(1);
     const [filtro, setFiltro] = useState(null);
+    const [totalElementos, setTotalElementos] = useState(null);
 
     let listaFiltrada = [];
 
@@ -55,6 +56,7 @@ export default () => {
                 listaFiltrada = listaCompleta.filter((e) => {return funcionFiltro(e, nuevoFiltro)})
             }
             setPaginas((Math.ceil(listaFiltrada.length / tamano) < 1) ? 1 : Math.ceil(listaFiltrada.length / tamano));
+            setTotalElementos(listaFiltrada.length);
             setPagina(nuevaPagina);
             let inicio = tamano * (nuevaPagina - 1);
             let fin = tamano * nuevaPagina;
@@ -154,6 +156,7 @@ export default () => {
                         </div>))}
                 </div>
             ) : (<p>Cargando...</p>)}
+            {(totalElementos != null) ? (<p class="total"><b>Total de resultados:</b> {totalElementos}</p>) : (<p></p>)}
         </div>
     )
 };
