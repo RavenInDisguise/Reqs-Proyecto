@@ -5,7 +5,8 @@ import '../Tarjeta.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
-let listaCompleta = []
+let listaCompleta = [];
+const reactivarEstudiante = 'Puede volver a activar al estudiante desde el menú de edición';
 
 export default () => {
     useEffect(() => {
@@ -72,6 +73,15 @@ export default () => {
         generarPagina(Math.floor(indice / tamanoNuevo) + 1, tamanoNuevo, false, filtro);
     }
 
+    const desactivarUsuario = (idEstudiante) => {
+        for (let i = 0; i < listaCompleta.length; i++) {
+            if (listaCompleta[i].id == idEstudiante) {
+                listaCompleta[i].activo = false;
+                break;
+            }
+        }
+    }
+
     return (
         <div className="tarjeta Lista-Estudiantes">
             <h1>Gestión de estudiantes</h1>
@@ -109,9 +119,31 @@ export default () => {
                                 </div>
                             </div>
                             <div className="opciones">
-                                <FontAwesomeIcon className="iconoOpcion" icon={faEye} />
-                                <FontAwesomeIcon className="iconoOpcion" icon={faPenToSquare} />
-                                <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} />
+                                <FontAwesomeIcon className="iconoOpcion desactivado" icon={faEye} title="Ver historial" />
+                                <FontAwesomeIcon className="iconoOpcion desactivado" icon={faPenToSquare} title="Modificar estudiante" />
+                                {(e.activo) ? (
+                                    <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Desactivar estudiante" onClick={() => {
+                                        if (window.confirm('¿Desea desactivar al estudiante ' + e.Nombre + '?')) {
+                                            axios.put('http://localhost:3001/estudiante/eliminar?id=' + e.id).then((response) => {
+                                            try {
+                                                if (response.status == 200) {
+                                                    desactivarUsuario(e.id);
+                                                    generarPagina(pagina, porPagina, true, filtro);
+                                                    alert('Estudiante desactivado exitosamente');
+                                                } else {
+                                                    alert('Ocurrió un ejecutar la operación');
+                                                }
+                                            } catch (error) {
+                                                alert('Ocurrió un ejecutar la operación');
+                                            }
+                                        }).catch((error) => {
+                                            alert('Ocurrió un ejecutar la operación');
+                                        })
+                                        }
+                                    }} />
+                                ) : (
+                                    <FontAwesomeIcon className="iconoOpcion desactivado" icon={faTrashCan} title={reactivarEstudiante} />
+                                )}
                             </div>
                         </div>))}
                 </div>

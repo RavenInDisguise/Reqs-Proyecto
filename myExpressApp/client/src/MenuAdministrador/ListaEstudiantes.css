@@ -104,6 +104,11 @@
 
 .estudiante>div.opciones>svg {
     flex-direction: column;
+    cursor: pointer;
+}
+
+.estudiante>div.opciones>svg.desactivado {
+    cursor: not-allowed;
 }
 
 .estudiante>div.datos {
@@ -126,8 +131,16 @@
     color: #005085;
 }
 
+.iconoOpcion.desactivado {
+    color: rgb(101, 101, 101);
+}
+
 @media (prefers-color-scheme: dark) {
     .estudiante>div.datos>div.nombre, .iconoOpcion {
         color: #0073c0;
+    }
+
+    .iconoOpcion.desactivado {
+        color: rgb(175, 175, 175);
     }
 }

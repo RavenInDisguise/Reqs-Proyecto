@@ -153,7 +153,7 @@ router.get('/estudiantes', (req, res) => {
     // Crear una nueva consulta a la base de datos
     const consulta = new sqlcon.Request();
     var query = 'SELECT E.id, CONCAT(E.nombre,\' \',E.apellido1, \' \',E.apellido2) Nombre,'
-      + ' E.carnet, E.cedula, U.correo '
+      + ' E.carnet, E.cedula, U.correo, E.activo '
       + 'FROM Estudiantes AS E ' 
       + 'LEFT JOIN Usuarios AS U ON U.id = E.idUsuario;'
 
