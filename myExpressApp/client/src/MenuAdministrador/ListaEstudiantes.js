@@ -39,11 +39,6 @@ export default () => {
     };
 
     const generarPagina = (nuevaPagina = pagina, tamano = porPagina, forzar = false, nuevoFiltro = filtro) => {
-        if (nuevaPagina < 1) {
-            nuevaPagina = 1;
-        } else if (nuevaPagina > paginas) {
-            nuevaPagina = paginas;
-        }
 
         if (pagina != nuevaPagina || tamano != porPagina || forzar || nuevoFiltro != filtro) {
             if (nuevoFiltro != filtro) {
@@ -55,7 +50,15 @@ export default () => {
             } else {
                 listaFiltrada = listaCompleta.filter((e) => {return funcionFiltro(e, nuevoFiltro)})
             }
-            setPaginas((Math.ceil(listaFiltrada.length / tamano) < 1) ? 1 : Math.ceil(listaFiltrada.length / tamano));
+            let nuevoNumeroPaginas = (Math.ceil(listaFiltrada.length / tamano) < 1) ? 1 : Math.ceil(listaFiltrada.length / tamano);
+            setPaginas(nuevoNumeroPaginas);
+
+            if (nuevaPagina < 1) {
+                nuevaPagina = 1;
+            } else if (nuevaPagina > nuevoNumeroPaginas) {
+                nuevaPagina = nuevoNumeroPaginas;
+            }
+
             setTotalElementos(listaFiltrada.length);
             setPagina(nuevaPagina);
             let inicio = tamano * (nuevaPagina - 1);
@@ -78,6 +81,7 @@ export default () => {
         setPorPagina(tamanoNuevo);
         setPaginas(Math.ceil(listaFiltrada.length / tamanoNuevo));
         let indice = porPagina * (pagina - 1) // índice del primer elemento de la página actual
+        console.log(indice);
         generarPagina(Math.floor(indice / tamanoNuevo) + 1, tamanoNuevo, false, filtro);
     }
 
