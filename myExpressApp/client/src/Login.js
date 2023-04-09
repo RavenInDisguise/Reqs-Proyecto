@@ -2,16 +2,14 @@ import React, { useContext, useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import './Login.css';
-import { LoginContext, IdEstContext } from "./App";
+import { LoginContext } from "./App";
 import './Tarjeta.css';
-import EstudianteMenu from "./EstudianteMenu";
 
 function Login() {
-  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useContext(LoginContext)
-  const [IdEstudiante, setIdEstudiante] = useContext(IdEstContext)
+  const [tipoUsuario, setTipoUsuario] = useState('')
   axios.defaults.withCredentials = true;
   const navigate = useNavigate();
 
@@ -19,7 +17,12 @@ function Login() {
     axios.get("http://localhost:3001/login").then((response) => {
       if (response.data.loggedIn) {
         setLoggedIn(true);
-        navigate('/Menu')
+        setTipoUsuario(response.data.tipoUsuario)
+        if(response.data.tipoUsuario == 'Estudiante'){
+          navigate('/Menu')
+        }else{
+          navigate('/Admin')
+        }
       }
     })
   }, [])
@@ -30,7 +33,14 @@ function Login() {
      await axios.post('http://localhost:3001/login', { email, password })
      .then(res => {
        if (res.status == 200) {
-        navigate('/Menu')
+        setLoggedIn(true);
+        setTipoUsuario(res.data.tipoUsuario)
+        if(res.data.tipoUsuario == 'Estudiante'){
+ 
+          navigate('/Menu')
+        }else{
+          navigate('Admin')
+        }
        }
      }).catch(function (error) {
        try {
@@ -42,7 +52,12 @@ function Login() {
      }) 
   }
   if(loggedIn){
-    return <Navigate to='/Menu' />
+    if(tipoUsuario == 'Estudiante'){
+      return <Navigate to='/Menu'/>
+    }
+    else{
+      return <Navigate to='/Admin'/>
+    }
   }else{
     return (
       <div className="login tarjeta">
