@@ -23,7 +23,7 @@ html {
 #root {
   height: 100%;
   display: flex;
-  flex-flow: column;
+  flex-flow: column nowrap;
 }
 
 h1, h2, h3 {

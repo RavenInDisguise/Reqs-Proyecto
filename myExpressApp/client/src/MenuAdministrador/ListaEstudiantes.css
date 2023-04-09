@@ -1,3 +1,133 @@
 .Lista-Estudiantes {
-    min-width: 900px;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-height: 574px),
+(max-width: 899px) {
+    .Lista-Estudiantes {
+        min-width: initial;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .Lista-Estudiantes {
+            border-radius: 0;
+            box-shadow: none;
+        }
+    }
+}
+
+@media (min-height: 575px) and (not (max-width: 899px)) {
+    .Lista-Estudiantes {
+        min-width: 900px;
+        min-height: 500px;
+        max-height: calc(100% - 60px);
+        box-sizing: content-box;
+    }
+}
+
+.filtros {
+    display: flex;
+    flex-direction: row;
+    column-gap: 15px;
+    padding: 0 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.filtro:first-child {
+    flex-grow: 1;
+}
+
+.filtro {
+    display: flex;
+    flex-direction: row;
+    column-gap: 5px;
+}
+
+.filtro label, .filtro input, .filtro p, .filtro a {
+    margin: auto
+}
+
+.filtro input[type="number"] {
+    width: 3em;
+}
+
+.filtro .form-control {
+    height: 30px;
+}
+
+#filtroInput {
+    width: auto;
+    flex-grow: 1;
+}
+
+.lista {
+    overflow-y: scroll;
+    padding: 0 5px;
+    padding-bottom: 5px;
+}
+
+.estudiante {
+    display: flex;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 2px 0px 3px #d4d4d4, -2px -0px 3px #d4d4d4,
+        0px 2px 3px #d4d4d4, -0px -2px 3px #d4d4d4;
+}
+
+.estudiante:last-child {
+    margin-bottom: initial;
+}
+
+.estudiante>div {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.estudiante>div.opciones {
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    margin: auto;
+    flex-grow: 0;
+    padding: 10px;
+    column-gap: 15px;
+    padding-right: 20px;
+}
+
+.estudiante>div.opciones>svg {
+    flex-direction: column;
+}
+
+.estudiante>div.datos {
+    text-align: left;
+    padding: 5px 10px;
+}
+
+.estudiante>div.datos>div.otros-datos>p {
+    margin-bottom: auto;
+}
+
+.estudiante>div.datos>div.nombre {
+    text-transform: uppercase;
+    color: #005085;
+    font-weight: bold;
+    font-family: "Roboto Slab", "Source Serif Pro", "Noto Serif", "Liberation Serif", "Cambria", serif;
+}
+
+.iconoOpcion {
+    color: #005085;
+}
+
+@media (prefers-color-scheme: dark) {
+    .estudiante>div.datos>div.nombre, .iconoOpcion {
+        color: #0073c0;
+    }
 }
