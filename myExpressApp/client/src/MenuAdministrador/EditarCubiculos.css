@@ -1,15 +1,15 @@
-.cubiculo {
+.cubiculo-editar {
     min-width: 800px;
 }
 
-.cubiculo form .form-group {
+.cubiculo-editar form .form-group {
     display: flex;
     column-gap: 10px;
     flex-grow: 1;
     margin-bottom: 15px;
 }
 
-.cubiculo form .form-group label {
+.cubiculo-editar form .form-group label {
     margin: auto;
 }
 
@@ -61,7 +61,7 @@
     column-gap: 10px;
 }
 
-.cubiculo form .form-group .form-element label {
+.cubiculo-editar form .form-group .form-element label {
     flex-grow: 1;
     white-space: nowrap;
 }
@@ -97,7 +97,7 @@
     background-color: #850000;
 }
 
-.cubiculo form .form-group.acciones-adicionales {
+.cubiculo-editar form .form-group.acciones-adicionales {
     display: flex;
     column-gap: 20px;
     text-align: center;

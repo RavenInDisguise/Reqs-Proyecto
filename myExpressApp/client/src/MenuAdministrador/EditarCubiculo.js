@@ -129,7 +129,7 @@ export default () => {
     }
 
     return (
-        (infoCargada && estados && estadoActual) ? (<div className="tarjeta cubiculo">
+        (infoCargada && estados && estadoActual) ? (<div className="tarjeta cubiculo-editar">
             <h3>Modificar cubículo</h3>
             <form action="" onSubmit={(e) => handleSubmit(e)}>
                 <div className="form-group">
@@ -145,6 +145,7 @@ export default () => {
                 <div className="form-group">
                     <label for="estadoSelect">Estado</label>
                     <select id="estadoSelect" onChange={(e) => {setEstadoActual(e.target.value)}}>
+                        {(estados.indexOf(estadoActual) == -1) ? (<option value={estadoActual} selected disabled>{estadoActual}</option>) : <></>}
                         {estados.map((e) => ((e == estadoActual) ? <option value={e} selected>{e}</option> : <option value={e}>{e}</option>))}
                     </select>
                 </div>

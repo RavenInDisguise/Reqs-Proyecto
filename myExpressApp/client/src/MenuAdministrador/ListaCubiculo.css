@@ -152,3 +152,8 @@
     text-align: right;
     flex-grow: 0;
 }
+
+span.hoverInfo {
+    text-decoration: underline dashed;
+    cursor: help;
+}
