@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import './EditarCubiculos.css';
+import './EditarCubiculo.css';
 import '../Tarjeta.css';
 
 const opciones = [{nombre: "Disponible", activo: true}, {nombre: "En mantenimiento", activo: false}];
@@ -152,11 +152,11 @@ export default () => {
                 <div className="form-group">
                     <div class="form-element">
                         <label for="capacityInput">Capacidad</label>
-                        <input className="form-control" id="capacityInput" type='number' min={1} required value={capacidad} placeholder="Capacidad del cubículo" onChange={e => setCapacidad(e.target.value)}/>
+                        <input className="form-control" id="capacityInput" type='number' min={1} step={1} required value={capacidad} placeholder="Capacidad del cubículo" onChange={e => setCapacidad(e.target.value)}/>
                     </div>
                     <div class="form-element">
                         <label for="timeInput">Tiempo máximo (minutos)</label>
-                        <input className="form-control" id="timeInput" type='number' min={0} required value={tiempoMaximo} placeholder="Tiempo máximo de uso" onChange={e => setTiempoMaximo(e.target.value)}/>
+                        <input className="form-control" id="timeInput" type='number' min={1} step={1} required value={tiempoMaximo} placeholder="Tiempo máximo de uso" onChange={e => setTiempoMaximo(e.target.value)}/>
                     </div>
                 </div>
                 <div className="form-group servicios">
