@@ -27,7 +27,7 @@ function Disponibles() {
     const [capacidad, setCapacidad] = useState(1);
 
     function getData(){
-        axios.get(`http://localhost:3001/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
+        axios.get(`/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
             try {
                 setListaCubiculos(response.data);
             } catch (error) {
@@ -38,7 +38,7 @@ function Disponibles() {
 
     useEffect(() => {
         getData();
-        axios.get('http://localhost:3001/servicios').then((response) => {
+        axios.get('/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios.map((e) => ({label : e, value: e})))
             } catch (error) {

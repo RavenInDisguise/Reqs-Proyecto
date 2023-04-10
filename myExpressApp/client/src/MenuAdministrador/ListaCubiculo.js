@@ -12,7 +12,7 @@ const reactivarCubiculo = 'Puede volver a activar el cubículo desde el menú de
 export default () => {
     const navigate = useNavigate();
     useEffect(() => {
-        axios.get('http://localhost:3001/cubiculos').then((response) => {
+        axios.get('/cubiculos').then((response) => {
             try {
                 listaCompleta = response.data;
             } catch (error) {
@@ -139,7 +139,7 @@ export default () => {
                                 {(e.estado != 'Eliminado') ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Borrar cubículo" onClick={() => {
                                         if (window.confirm('¿Desea borrar el cubículo ' + e.nombre + '?')) { //a diferencia de estudiantes nombre va con minuscula
-                                            axios.put('http://localhost:3001/cubiculo/eliminar?id=' + e.id).then((response) => {
+                                            axios.put('/cubiculo/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {
                                                     desactivarCubiculo(e.id);

@@ -8,6 +8,9 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const usersRouter = require('./routes/users');
 const dbRouter = require('./routes/database');
+const {
+  createStaticHandler,
+} = require("react-router-dom/server");
 
 const app = express();
 
@@ -42,7 +45,8 @@ app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+  res.status(200).sendFile(path.join(__dirname, 'client/build', 'index.html'))
+  //next(createError(404));
 });
 
 // error handler

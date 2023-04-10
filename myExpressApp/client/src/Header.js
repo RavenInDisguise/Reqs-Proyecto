@@ -13,7 +13,7 @@ function Header() {
     const [loggedIn, setLoggedIn] = useContext(LoginContext)
     
     async function logout(){
-        await axios.get("http://localhost:3001/logout").then((response) => {
+        await axios.get("/logout").then((response) => {
             setLoggedIn(false)
             navigate('/')
         })

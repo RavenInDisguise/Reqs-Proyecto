@@ -28,7 +28,7 @@ export default () => {
         if (!idCubiculo) {
             navigate(-1);
         } else {
-            axios.get('http://localhost:3001/cubiculo?id=' + idCubiculo).then((response) => {
+            axios.get('/cubiculo?id=' + idCubiculo).then((response) => {
                 try {
                     let info = response.data;
                     let newServicios = info[0].servicios;
@@ -48,7 +48,7 @@ export default () => {
                     alert('Ocurrió un error al cargar la información');
                 }
             })
-            axios.get('http://localhost:3001/estados').then((response) => {
+            axios.get('/estados').then((response) => {
                 try {
                     setEstados(response.data.estados)
                 } catch (error) {
@@ -97,7 +97,7 @@ export default () => {
     }
 
     const handleSubmit = (e) => {
-        axios.put('http://localhost:3001/cubiculo', {
+        axios.put('/cubiculo', {
             idCubiculo,
             nombre,
             estado: estadoActual,
