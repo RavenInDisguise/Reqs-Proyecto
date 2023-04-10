@@ -14,7 +14,7 @@ function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("http://localhost:3001/login").then((response) => {
+    axios.get("/login").then((response) => {
       if (response.data.loggedIn) {
         setLoggedIn(true);
         setTipoUsuario(response.data.tipoUsuario)
@@ -30,7 +30,7 @@ function Login() {
   async function submit(e) {
     e.preventDefault();
 
-     await axios.post('http://localhost:3001/login', { email, password })
+     await axios.post('/login', { email, password })
      .then(res => {
        if (res.status == 200) {
         setLoggedIn(true);

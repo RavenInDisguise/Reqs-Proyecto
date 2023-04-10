@@ -13,11 +13,11 @@ export default function EstudianteMenu(){
     const [Nombre, setNombre] = useState('Cargando...');
 
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/login").then((response) => {
             setLoggedIn(response.data.loggedIn);
             setIdEstudiante((response.data.idEstudiante) ? response.data.idEstudiante : null)
             if(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante'){
-                axios.get(`http://localhost:3001/estudiante?id=${response.data.idEstudiante}`).then((response) => {
+                axios.get(`/estudiante?id=${response.data.idEstudiante}`).then((response) => {
                 setNombre(`${response.data[0].nombre} ${response.data[0].apellido1} ${response.data[0].apellido2} (${response.data[0].carnet})`)
             })
             }else{

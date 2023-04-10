@@ -1,61 +1,112 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import './Disponibles.css';
 import './Tarjeta.css';
+import Select from 'react-select';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
 
 var today = new Date()
 var fechaHoy = today.toISOString().replace(/T.+/, "")
 var hora = today.toISOString().replace(/.+T/, "").replace(/\..*/, "").split(":").slice(0,2).join(':')
+let ultimoTimestamp = null;
+const delayEntrada = 2000; // Milisegundos
 
 function Disponibles() {
+    const navigate = useNavigate();
     axios.defaults.withCredentials = true;
     const [listaCubiculos, setListaCubiculos] = useState([]);
+    const [listaFiltrada, setListaFiltrada] = useState([]);
     const [fecha, setFecha] = useState(fechaHoy)
     const [horaInicio, setHoraInicio] = useState(hora)
     const [horaFin, setHoraFin] = useState(hora)
+    const [servicios, setServicios] = useState([]);
+    const [serviciosFiltro, setServiciosFiltro] = useState([]);
+    const [totalElementos, setTotalElementos] = useState(null);
+    const [capacidad, setCapacidad] = useState(1);
+
+    function getData(){
+        axios.get(`/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
+            try {
+                setListaCubiculos(response.data);
+            } catch (error) {
+                alert('Ocurrió un error al cargar la información');
+            }
+        });
+    }  
 
     useEffect(() => {
-        async function getData(){
-            await axios.get(`http://localhost:3001/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
-                try {
-                    setListaCubiculos(response.data)
-                } catch (error) {
-                    alert('Ocurrió un error al cargar la información');
-                }
-            });
-        }  
         getData();
+        axios.get('/servicios').then((response) => {
+            try {
+                setServicios(response.data.servicios.map((e) => ({label : e, value: e})))
+            } catch (error) {
+                console.log(error)
+                alert('Ocurrió un error al cargar la información');
+            }
+        });
     }, []);
 
     useEffect(() => {
-        async function getData(){
-            await axios.get(`http://localhost:3001/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
-                try {
-                    console.log('Entras')
-                    setListaCubiculos(response.data)
-                } catch (error) {
-                    alert('Ocurrió un error al cargar la información');
-                }
-            });
-        }  
-        getData();
+        /* Esto espera cierto tiempo después de que se hace un cambio en la hora
+        o la fecha antes de volver a cargar la información */
+        const actual = new Date();
+        ultimoTimestamp = actual.getTime;
+        setTimeout((a=actual.getTime) => {
+            if (ultimoTimestamp == a) {
+                setListaCubiculos([]);
+                getData();
+            }
+        }, delayEntrada)
     }, [horaInicio, horaFin, fecha]);
 
+    useEffect(() => {
+        filtrarLista();
+    }, [serviciosFiltro, listaCubiculos, capacidad]);
+
+    const filtrarLista = () => {
+        let newListaFiltrada = listaCubiculos;
+        if (serviciosFiltro.length > 0) {
+            for (let serv = 0; serv < serviciosFiltro.length; serv++) {
+                const element = serviciosFiltro[serv];
+                newListaFiltrada = newListaFiltrada.filter((c) => ((c.capacidad >= capacidad) && (c.servicios.indexOf(element.value) != -1)));
+            }
+        } else {
+            newListaFiltrada = newListaFiltrada.filter((c) => (c.capacidad >= capacidad));
+        }
+        setListaFiltrada(newListaFiltrada);
+        setTotalElementos(newListaFiltrada.length);
+    };
+
   return (
-    <div className="tarjeta Lista-Cubiculos">
+    <div className="tarjeta Lista-Cubiculos disponible">
         <h1>Reservar un cubículo</h1>
-        <div className="filtros">
+        {((listaCubiculos.join('')!='' && servicios.join('')!='') || ultimoTimestamp) ? (<div className="filtros">
             <div className="filtro">
-                <label for='fecha'>Fecha:</label>
-                <input type="date" id="fecha" value={fecha} onChange={e=>{setFecha(e.target.value)}}/>
-                <label for="inicio">Hora de entrada:</label>
-                <input type="time" id="inicio" name="inicio" value={horaInicio} onChange={e=>{setHoraInicio(e.target.value)}}/>
-                <label for="fin">Hora de salida:</label>
-                <input type="time" id="fin" name="fin" value={horaFin} onChange={e=>{setHoraFin(e.target.value)}}/>
+                <label for='serviciosFiltro'>Servicios</label>
+                <Select placeholder="Filtrar por servicios..." noOptionsMessage={() => 'No hay más opciones disponibles'} options={servicios} isMulti onChange={(e) => {setServiciosFiltro(e);}} closeMenuOnSelect={false} />
+            </div>
+            <div className="filtro">
+                <label for='capacidad'>Capacidad mínima</label>
+                <input className="form-control" type="number" id="capacidad" value={capacidad} min={1} step={1} onChange={e=>{setCapacidad(e.target.value)}}/>
+            </div>
+            <div className="filtro">
+                <label for='fecha'>Fecha</label>
+                <input className="form-control" type="date" id="fecha" value={fecha} onChange={e=>{setFecha(e.target.value)}}/>
+            </div>
+            <div className="filtro">
+                <label for="inicio">Hora de entrada</label>
+                <input className="form-control" type="time" id="inicio" name="inicio" value={horaInicio} onChange={e=>{setHoraInicio(e.target.value)}}/>
+            </div>
+            <div className="filtro">
+                <label for="fin">Hora de salida</label>
+                <input className="form-control" type="time" id="fin" name="fin" value={horaFin} onChange={e=>{setHoraFin(e.target.value)}}/>
             </div>  
-        </div>
+        </div>) : <p>Cargando...</p>}
+        {(listaCubiculos.join('')!='' && servicios.join('')!='') ? (
         <div className="lista" id="lista-disponibles">
-            {listaCubiculos.map((e) => (
+            {listaFiltrada.map((e) => (
                 <div className="cubiculo">
                     <div className="datos">
                         <div className="nombre">
@@ -65,8 +116,12 @@ function Disponibles() {
                             <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo máximo:</b> {(e.minutosMax >= 60 ? (Math.floor(e.minutosMax/60) + " h") : <></>)} {(e.minutosMax % 60 ? (e.minutosMax % 60 + " min") : <></>)} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
                         </div>
                     </div>
+                    <div className="opciones">
+                        <FontAwesomeIcon className="iconoOpcion" icon={faCalendarPlus} onClick={() => {navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}`)}} title="Reservar cubículo" />
+                    </div>
                 </div>))}
-        </div>
+        </div>) : ((ultimoTimestamp) ? <p>Cargando...</p> : <></>)}
+        {((listaCubiculos.join('')!='' && servicios.join('')!='') && totalElementos != null) ? (<p class="total"><b>Total de resultados:</b> {totalElementos}</p>) : (<p></p>)}
     </div>
   )
 }

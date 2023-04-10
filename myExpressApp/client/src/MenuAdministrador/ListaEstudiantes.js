@@ -10,7 +10,7 @@ const reactivarEstudiante = 'Puede volver a activar al estudiante desde el menú
 
 export default () => {
     useEffect(() => {
-        axios.get('http://localhost:3001/estudiantes').then((response) => {
+        axios.get('/estudiantes').then((response) => {
             try {
                 listaCompleta = response.data;
             } catch (error) {
@@ -136,7 +136,7 @@ export default () => {
                                 {(e.activo) ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Desactivar estudiante" onClick={() => {
                                         if (window.confirm('¿Desea desactivar al estudiante ' + e.Nombre + '?')) {
-                                            axios.put('http://localhost:3001/estudiante/eliminar?id=' + e.id).then((response) => {
+                                            axios.put('/estudiante/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {
                                                     desactivarUsuario(e.id);
