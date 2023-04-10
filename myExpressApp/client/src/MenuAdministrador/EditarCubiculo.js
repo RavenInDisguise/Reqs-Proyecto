@@ -175,18 +175,28 @@ export default () => {
                     </div>
                 </div>
                 <div className="form-group acciones-adicionales">
-                    <div className="accion">
-                        <input type="checkbox" id="notificarUsuarios" onChange={(e) => setNotificar(e.target.checked)} />
-                        <label for="notificarUsuarios">Notificar usuarios con reservas activas</label>
-                    </div>
-                    <div className="accion">
-                        {((reservas>0) ? (
+                    {((reservas>0) ? (
+                        <div className="accion">
+                            <input type="checkbox" id="notificarUsuarios" onChange={(e) => setNotificar(e.target.checked)} />
+                            <label for="notificarUsuarios">Notificar usuarios con reservas activas</label>
+                        </div>
+                    ) : (
+                        <div className="accion">
+                            <input type="checkbox" id="notificarUsuarios" disabled />
+                            <label for="notificarUsuarios" title="No hay reservas activas">Notificar usuarios con reservas activas</label>
+                        </div>
+                    ))}
+                    {((reservas>0) ? (
+                        <div className="accion">
                             <input type="checkbox" id="cancelarReservas" onChange={(e) => setCancelar(e.target.checked)} />
-                        ) : (<input type="checkbox" id="cancelarReservas" disabled />))}
-                        {((reservas>0)? (
-                            <label for="cancelarReservas">Cancelar reservas activas (total: {reservas})</label>
-                        ) : (<label for="cancelarReservas">Cancelar reservas activas (no hay)</label>))}
-                    </div>
+                            <label  for="cancelarReservas">Cancelar reservas activas (total: {reservas})</label>
+                        </div>
+                    ) : (
+                        <div className="accion">
+                            <input type="checkbox" id="cancelarReservas" disabled />
+                            <label for="cancelarReservas">Cancelar reservas activas (no hay)</label>
+                        </div>
+                    ))}
                 </div>
                 <input className="btn btn-primary" type="submit" value="Guardar" />
             </form>

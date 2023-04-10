@@ -582,14 +582,53 @@ router.put('/estudiante/eliminar', (req, res) => {
 router.put("/cubiculo/eliminar",(req,res) =>{
   const idCubiculo = req.query.id;
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Cubiculos SET idEstado = 5 WHERE id =` + idCubiculo;
+  const query = `
+  UPDATE Cubiculos SET idEstado = 5 WHERE id ='${idCubiculo}';
+  SELECT    U.[correo]
+  FROM      [dbo].[Usuarios] U
+  INNER JOIN    [dbo].[Estudiantes] E
+    ON  E.[idUsuario] = U.[id]
+  INNER JOIN    [dbo].[Reservas] R
+    ON  R.[idEstudiante] = E.[id]
+  WHERE R.[idCubiculo] = '${idCubiculo}'
+    AND R.[activo] = 1
+    AND R.[horaInicio] > GETUTCDATE();
+  UPDATE  R
+  SET     R.[activo] = 0,
+          R.[confirmado] = 0
+  FROM    [dbo].[Reservas] R
+  WHERE R.[idCubiculo] = '${idCubiculo}'
+    AND R.[horaInicio] > GETUTCDATE();`;
 
   consulta.query(query, (err, resultado) => {
     if (err) {
       console.log(err);
       res.status(500).send('Error al realizar la consulta');
     } else {
-      res.status(200).send(resultado.recordset);
+      const salidaCorreos = resultado.recordset.map((s) => s.correo);
+      if (salidaCorreos.length > 0) {
+        const textoCorreo = `Hola:
+
+Se han hecho cambios en un cubículo, lo cual ocasionó que se cancelara su reserva.
+
+Puede hacer otra reserva a través del sitio web.`;
+
+        const mailOptions = {
+          from: mail,
+          bcc: salidaCorreos ,
+          subject: 'Actualización de cubículo',
+          text: textoCorreo
+        };
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Correo enviado: ' + info.response);
+          }
+        });
+      }
+      res.status(200).send({});
       console.log('Consulta realizada');
     }
   });
@@ -613,8 +652,6 @@ router.put("/cubiculo", (req, res) => {
   const cancelarReservas = cuerpo.cancelarReservas;
   const minutosMaximo = cuerpo.minutosMaximo;
   const notificarUsuarios = cuerpo.notificarUsuarios;
-
-  console.log(cuerpo);
 
   if (!cuerpo || !id || !servicios || !capacidad || !nombre || !estado
       || minutosMaximo == null || minutosMaximo == undefined || !(minutosMaximo == parseInt(minutosMaximo).toString())
@@ -650,7 +687,8 @@ router.put("/cubiculo", (req, res) => {
   VALUES  ${serviciosString};
 
   DECLARE @salida TABLE (
-      error VARCHAR(64)
+      error VARCHAR(64) NULL,
+      correo VARCHAR(128) NULL
   );
   DECLARE @idEstadoNuevo INT;
 
@@ -791,9 +829,9 @@ router.put("/cubiculo", (req, res) => {
           END;
 
           -- ----- CAMBIO DE SERVICIOS -----
-  
+
           -- Se desactivan los servicios que se cambiaron de 1 a 0
-  
+
           UPDATE  SdC
           SET     SdC.[activo] = 0
           FROM    [dbo].[ServiciosDeCubiculo] SdC
@@ -804,9 +842,9 @@ router.put("/cubiculo", (req, res) => {
           WHERE   tS.[activo] = 0
               AND SdC.[activo] = 1
               AND SdC.[idCubiculo] = @idCubiculo;
-  
+
           -- Se reactivan los servicios que cambiaron de 0 a 1
-  
+
           UPDATE  SdC
           SET     SdC.[activo] = 1
           FROM    [dbo].[ServiciosDeCubiculo] SdC
@@ -817,9 +855,9 @@ router.put("/cubiculo", (req, res) => {
           WHERE   tS.[activo] = 1
               AND SdC.[activo] = 0
               AND SdC.[idCubiculo] = @idCubiculo;
-  
+
           -- Se agregan los servicios que no se hayan agregado antes
-  
+
           INSERT INTO [dbo].[ServiciosDeCubiculo]
           (
               [idCubiculo],
@@ -840,7 +878,32 @@ router.put("/cubiculo", (req, res) => {
                   AND SdC.[idCubiculo] = @idCubiculo
           );
 
-      COMMIT TRANSACTION tActualizarCubiculo;
+          -- Se guardan los correos de quienes tienen reservas
+
+          INSERT INTO @salida ([correo])
+          SELECT    U.[correo]
+          FROM      [dbo].[Usuarios] U
+          INNER JOIN    [dbo].[Estudiantes] E
+            ON  E.[idUsuario] = U.[id]
+          INNER JOIN    [dbo].[Reservas] R
+            ON  R.[idEstudiante] = E.[id]
+          WHERE R.[idCubiculo] = @idCubiculo
+            AND R.[activo] = 1
+            AND R.[horaInicio] > GETUTCDATE();
+
+          -- Se desactivan las reservas en caso de haberse seleccionado la opción
+
+          IF @cancelarReservas = 1
+          BEGIN
+            UPDATE  R
+            SET     R.[activo] = 0,
+                    R.[confirmado] = 0
+            FROM    [dbo].[Reservas] R
+            WHERE R.[idCubiculo] = @idCubiculo
+              AND R.[horaInicio] > GETUTCDATE();
+          END;
+
+          COMMIT TRANSACTION tActualizarCubiculo;
 
   END TRY
   BEGIN CATCH
@@ -855,7 +918,8 @@ router.put("/cubiculo", (req, res) => {
 
   END CATCH;
 
-  SELECT  S.[error]
+  SELECT  S.[error],
+          S.[correo]
   FROM    @salida S;`;
   
   consulta.query(query, (err, resultado) => {
@@ -863,15 +927,55 @@ router.put("/cubiculo", (req, res) => {
       console.log(err);
       res.status(500).send('Error al realizar la consulta');
     } else {
-      if (resultado.recordset.length > 0) {
+      if (resultado.recordset.filter((e) => e.error != null).length > 0) {
+        const salidaErrores = resultado.recordset.filter((e) => e.error != null);
         let errores = []
-        for (let i = 0; i < resultado.recordset.length; i++) {
-          errores.push(resultado.recordset[i].error);
+        for (let i = 0; i < salidaErrores.length; i++) {
+          errores.push(salidaErrores[i].error);
         }
         res.status(401).send({ errores : errores });
       } else {
-        /* [FALTA] Código para notificar usuarios */
-        res.status(200).send(resultado.recordset);
+        const salidaCorreos = resultado.recordset.filter((e) => e.correo != null).map((s) => s.correo);
+        if (notificarUsuarios) {
+          let textoCorreo = '';
+          if (cancelarReservas) {
+            textoCorreo = `Hola:
+
+Se han hecho cambios en el cubículo ${nombre}, lo cual ocasionó que se cancelara su reserva.
+
+Puede hacer otra reserva a través del sitio web.`;
+          } else {
+            const serviciosActivos = servicios.filter((s) => s.activo).map((se) => se.nombre);
+            textoCorreo = `Hola:
+
+Se han hecho cambios en el cubículo ${nombre}, para el cual usted tiene una reserva activa.
+
+La nueva información del cubículo es la siguiente:
+- Nombre: ${nombre}
+- Capacidad: ${capacidad + ' ' + ((capacidad == 1) ? 'persona' : 'personas')}
+- Estado: ${estado}
+- Servicios disponibles:${(serviciosActivos.length > 0 ? (serviciosActivos.map((se, ind) => (" " + (ind + 1) + ". " + se))) : " Ninguno")}
+- Tiempo máximo de uso: ${minutosMaximo} minutos
+
+Su reserva sigue activa. Puede hacer cambios a sus reservas ingresando al sitio web.`;
+          }
+
+          const mailOptions = {
+            from: mail,
+            bcc: salidaCorreos ,
+            subject: 'Actualización de cubículo',
+            text: textoCorreo
+          };
+          
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Correo enviado: ' + info.response);
+            }
+          });
+        }
+        res.status(200).send({ errores: []});
       }
     }
   });

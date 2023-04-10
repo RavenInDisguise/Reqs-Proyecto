@@ -138,13 +138,13 @@ export default () => {
                                 <FontAwesomeIcon className="iconoOpcion" icon={faPenToSquare} onClick={() => {navigate('/EditarCubiculo?id=' + e.id)}} title="Modificar cubículo" />
                                 {(e.estado != 'Eliminado') ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Borrar cubículo" onClick={() => {
-                                        if (window.confirm('¿Desea borrar el cubículo ' + e.nombre + '?')) { //a diferencia de estudiantes nombre va con minuscula
+                                        if (window.confirm('¿Desea borrar el cubículo ' + e.nombre + '?\n\nEn caso de haber reservas activas, serán canceladas y se notificará a los respectivos usuarios.')) { //a diferencia de estudiantes nombre va con minuscula
                                             axios.put('/cubiculo/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {
                                                     desactivarCubiculo(e.id);
                                                     generarPagina(pagina, porPagina, true, filtro);
-                                                    alert('Cubiculo eliminado exitosamente');
+                                                    alert('Cubículo eliminado exitosamente');
                                                 } else {
                                                     alert('Ocurrió un ejecutar la operación');
                                                 }
