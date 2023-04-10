@@ -157,3 +157,7 @@ span.hoverInfo {
     text-decoration: underline dashed;
     cursor: help;
 }
+
+.tarjeta.Lista-Cubiculos select {
+    width: fit-content;
+}

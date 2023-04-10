@@ -48,9 +48,9 @@ function Disponibles() {
             <div className="filtro">
                 <label for='fecha'>Fecha:</label>
                 <input type="date" id="fecha" value={fecha} onChange={e=>{setFecha(e.target.value)}}/>
-                <label for="inicio">Hora de Entrada:</label>
+                <label for="inicio">Hora de entrada:</label>
                 <input type="time" id="inicio" name="inicio" value={horaInicio} onChange={e=>{setHoraInicio(e.target.value)}}/>
-                <label for="fin">Hora de Salida:</label>
+                <label for="fin">Hora de salida:</label>
                 <input type="time" id="fin" name="fin" value={horaFin} onChange={e=>{setHoraFin(e.target.value)}}/>
             </div>  
         </div>
@@ -62,7 +62,7 @@ function Disponibles() {
                             <a href={`/Reservar?id=${e.id}`}> {e.nombre}</a>
                         </div>
                         <div className="otros-datos">
-                            <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo Maximo (Minutos):</b> {e.minutosMax} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
+                            <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo máximo:</b> {(e.minutosMax >= 60 ? (Math.floor(e.minutosMax/60) + " h") : <></>)} {(e.minutosMax % 60 ? (e.minutosMax % 60 + " min") : <></>)} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
                         </div>
                     </div>
                 </div>))}
