@@ -84,10 +84,10 @@ export default () => {
         generarPagina(Math.floor(indice / tamanoNuevo) + 1, tamanoNuevo, false, filtro);
     }
 
-    const desactivarCubiculo = (idCubiculo) => {       //No estoy seguro si es .estado = 5 o si debería ser .estado = 'Elminado'
+    const desactivarCubiculo = (idCubiculo) => {       
         for (let i = 0; i < listaCompleta.length; i++) {
             if (listaCompleta[i].id == idCubiculo) {
-                listaCompleta[i].estado = 5;
+                listaCompleta[i].estado = 'Eliminado';
                 break;
             }
         }
@@ -132,7 +132,7 @@ export default () => {
                             <div className="opciones">
                                 <FontAwesomeIcon className="iconoOpcion desactivado" icon={faEye} title="Ver historial" />
                                 <FontAwesomeIcon className="iconoOpcion desactivado" icon={faPenToSquare} title="Modificar Cubiculo" />
-                                {(e.activo) ? (
+                                {(e.estado) ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Borrar Cubiculo" onClick={() => {
                                         if (window.confirm('¿Desea Borrar el cubiculo ' + e.nombre + '?')) { //a diferencia de estudiantes nombre va con minuscula
                                             axios.put('http://localhost:3001/cubiculo/eliminar?id=' + e.id).then((response) => {
