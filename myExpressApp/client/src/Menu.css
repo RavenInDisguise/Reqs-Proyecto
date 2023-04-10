@@ -15,6 +15,11 @@
     text-decoration: none;
 }
 
+.Menu ul>li>a:hover {
+    color: #0073c0;
+    text-decoration: underline;
+}
+
 @media (prefers-color-scheme: dark) {
     .Menu ul>li {
         color: rgb(175, 175, 175);
