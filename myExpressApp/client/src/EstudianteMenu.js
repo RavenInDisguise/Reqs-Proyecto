@@ -34,7 +34,7 @@ export default function EstudianteMenu(){
                 <h1>Reservar cubículos</h1>
                 <ul>
                     <li>
-                        <a href='/Cubiculos'>Ver cubículos disponibles</a>
+                        <a href='/Disponibles'>Ver cubículos disponibles</a>
                     </li>
                     <li>
                         <a href='/Apartados'>Ver lista de cubículos apartados</a>

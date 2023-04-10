@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Navigate, useLocation, useNavigate} from "react-router-dom";
 import axios from 'axios';
-import { LoginContext, IdEstContext } from "./App";
-import './Menu.css';
-import './Tarjeta.css';
+import { LoginContext, IdEstContext } from "../App";
+import '../Menu.css';
+import '../Tarjeta.css';
 
 function Admin() {
     const navigate = useNavigate()
