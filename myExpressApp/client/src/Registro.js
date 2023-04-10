@@ -51,7 +51,7 @@ function Registro() {
   return (
     <div className='tarjeta Registro'>
       <h3>Registrarse</h3>
-      <form action='post'>
+      <form onSubmit={(e) => submit(e)}>
         <div className='form-group' >
           <input className="form-control" type='text' required placeholder='Nombre' onChange={e => setNombre(e.target.value)}/>
         </div>
@@ -75,7 +75,7 @@ function Registro() {
         <div className='form-group'>
           <input className="form-control" type='password' placeholder='Contraseña institucional' required onChange={e=>setClave(e.target.value)}/>
         </div>
-        <input className="btn btn-primary" type="submit" value="Registrarse" onClick={submit} />
+        <input className="btn btn-primary" type="submit" value="Registrarse" />
       </form>
       <a href="/">Iniciar sesión</a>
     </div>

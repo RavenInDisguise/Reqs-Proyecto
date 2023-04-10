@@ -33,7 +33,7 @@ h1 {
     margin-bottom: 20px;
 }
 
-.tarjeta form .form-group input {
+.tarjeta form .form-group input, .tarjeta select {
     border-radius: 15px;
     width: 100%;
     padding-left: 5px;
@@ -46,6 +46,10 @@ h1 {
     margin-bottom: 10px;
     border-radius: 15px;
     width: 80%;
+}
+
+.tarjeta form input[type="checkbox"] {
+    accent-color: #005085;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -66,6 +70,10 @@ h1 {
 
     .tarjeta form .form-group input::placeholder {
         color: #bdbdbd;
+    }
+
+    .tarjeta form input[type="checkbox"] {
+        accent-color: #0073c0;
     }
 }
 
@@ -98,4 +106,16 @@ h1 {
 
 .tarjeta > p:last-child {
     margin-bottom: 0;
+}
+
+.tarjeta select {
+    background-color: white;
+    border: solid 1px gray;
+}
+
+@media (prefers-color-scheme: dark) {
+    .tarjeta select {
+        background-color: #363636;
+        color: white;
+    }
 }

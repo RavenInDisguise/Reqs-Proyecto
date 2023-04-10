@@ -253,6 +253,22 @@ router.get('/cubiculos', (req, res) => {
   });
 });
 
+//Ruta para los estados de los cubículos
+router.get('/estados', (req, res) => {
+  const consulta = new sqlcon.Request();
+  const query = `
+  SELECT [descripcion]
+  FROM [dbo].[EstadosCubiculo]
+  WHERE [descripcion] != 'Eliminado';`
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+        console.log(err);
+        res.status(500).send('Error al realizar la consulta');
+    } else {
+        res.send({estados: resultado.recordset.map((r) => r.descripcion)});
+    }
+  });
+});
 
 //ruta de 1 cubiculo
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
@@ -533,18 +549,21 @@ router.put("/cubiculo", (req, res) => {
       (la idea es mostrar los errores al usuario)
   */
   const cuerpo = req.body;
-  const id = cuerpo.id;
+  const id = cuerpo.idCubiculo;
   const servicios = cuerpo.servicios;
   const capacidad = cuerpo.capacidad;
   const nombre = cuerpo.nombre;
   const estado = cuerpo.estado;
   const cancelarReservas = cuerpo.cancelarReservas;
   const minutosMaximo = cuerpo.minutosMaximo;
+  const notificarUsuarios = cuerpo.notificarUsuarios;
+
+  console.log(cuerpo);
 
   if (!cuerpo || !id || !servicios || !capacidad || !nombre || !estado
       || minutosMaximo == null || minutosMaximo == undefined || !(minutosMaximo == parseInt(minutosMaximo).toString())
       || !(capacidad == parseInt(capacidad).toString()) || !(id == parseInt(id).toString()) || cancelarReservas == null
-      || cancelarReservas == undefined) {
+      || cancelarReservas == undefined || notificarUsuarios == undefined) {
     res.status(401).send({ errores : ['Datos incorrectos'] });
   }
 
@@ -555,8 +574,6 @@ router.put("/cubiculo", (req, res) => {
   } catch (error) {
     res.status(401).send({ errores : ['Datos incorrectos'] });
   }
-
-  console.log(serviciosString);
   const consulta = new sqlcon.Request();
 
   const query = `

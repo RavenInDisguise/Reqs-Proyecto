@@ -8,6 +8,7 @@ import Header from './Header'
 import ListaEstudiantes from "./MenuAdministrador/ListaEstudiantes";
 import Admin from './Admin'
 import ListaCubiculo from './MenuAdministrador/ListaCubiculo'
+import EditarCubiculo from "./MenuAdministrador/EditarCubiculo";
 export const LoginContext = createContext();
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/Registro" element={<Registro />} />
             <Route path="/Estudiantes" element={<ListaEstudiantes />} />
             <Route path="/Cubiculos" element={<ListaCubiculo />} />
+            <Route path="/EditarCubiculo" element={<EditarCubiculo />} />
         </Routes>
       </div>
       </>
