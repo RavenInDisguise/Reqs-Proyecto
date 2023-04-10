@@ -13,6 +13,10 @@
     margin: auto;
 }
 
+.cubiculo-editar form .form-group input:disabled {
+    cursor: not-allowed;
+}
+
 .form-group.servicios {
     flex-direction: column;
     flex-wrap: wrap;

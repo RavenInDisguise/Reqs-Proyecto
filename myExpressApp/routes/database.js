@@ -270,6 +270,22 @@ router.get('/estados', (req, res) => {
   });
 });
 
+//Ruta para los servicios de los cubículos
+router.get('/servicios', (req, res) => {
+  const consulta = new sqlcon.Request();
+  const query = `
+  SELECT [descripcion]
+  FROM [dbo].[ServiciosEspeciales];`
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+        console.log(err);
+        res.status(500).send('Error al realizar la consulta');
+    } else {
+        res.send({servicios: resultado.recordset.map((r) => r.descripcion)});
+    }
+  });
+});
+
 //ruta de 1 cubiculo
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
 router.get('/cubiculo', (req, res) => {

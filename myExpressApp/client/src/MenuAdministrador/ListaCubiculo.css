@@ -53,6 +53,10 @@
     margin: auto
 }
 
+.filtro label, .filtro p {
+    white-space: nowrap;
+}
+
 .filtro input[type="number"] {
     width: 3em;
 }

@@ -135,7 +135,7 @@ export default () => {
                 <div className="form-group">
                     <div class="form-element">
                         <label for="idNumber">ID</label>
-                        <input className="form-control" id="idNumber" type='number' disabled value={idCubiculo}/>
+                        <input className="form-control" id="idNumber" type='number' title='No es posible cambiar el ID del cubículo' disabled value={idCubiculo}/>
                     </div>
                     <div class="form-element">
                         <label for="nameInput">Nombre</label>
