@@ -7,6 +7,7 @@ import Registro from './Registro'
 import Header from './Header'
 import ListaEstudiantes from "./MenuAdministrador/ListaEstudiantes";
 import Admin from './Admin'
+import ListaCubiculo from './MenuAdministrador/ListaCubiculo'
 export const LoginContext = createContext();
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/Admin" element={<Admin />}/>
             <Route path="/Registro" element={<Registro />} />
             <Route path="/Estudiantes" element={<ListaEstudiantes />} />
+            <Route path="/Cubiculos" element={<ListaCubiculo />} />
         </Routes>
       </div>
       </>
