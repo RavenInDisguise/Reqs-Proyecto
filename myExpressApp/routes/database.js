@@ -54,7 +54,7 @@ router.get('/login', (req, res) => {
       userId : saved.userId,
       email : saved.email,
       idEstudiante: saved.idEstudiante,
-      tipoUsuario: saved.TipoUsuario
+      tipoUsuario: saved.tipoUsuario
     });
   } else {
     res.send({
@@ -333,48 +333,87 @@ router.get('/cubiculo', (req, res) => {
 //ruta de cubiculos disponibles 
 //retorna una lista cubiculos disponibles, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
 router.get('/cubiculos/disponibles', (req, res) => {
+
+  const horaInicio =  req.query.horaInicio;
+  const horaFin = req.query.horaFin;
+  console.log(req.query)
   const consulta = new sqlcon.Request();
-  const query = `SELECT C.id, C.nombre, EC.descripcion AS estado, C.capacidad, SE.descripcion AS servicio 
-                 FROM Cubiculos AS C 
-                 LEFT JOIN EstadosCubiculo AS EC ON C.idEstado = EC.id 
-                 LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo AND SC.activo = 1
-                 LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id
-                 WHERE EC.descripcion = 'Disponible';`;
+  const query = `
+      SELECT  C.[id],
+      C.[nombre],
+      EC.[descripcion] AS [estado],
+      C.[capacidad],
+      C.[minutosMax],
+      SE.[descripcion] AS [servicio]
+      FROM    [dbo].[Cubiculos] AS C
+      INNER JOIN  [dbo].[EstadosCubiculo] EC ON  EC.[id] = C.[idEstado]
+      LEFT JOIN ServiciosDeCubiculo AS SC ON C.[id] = SC.idCubiculo AND SC.activo = 1 
+      LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id
+      WHERE   EC.[descripcion] = 'Disponible'
+      AND
+      (   SELECT COUNT(*)
+      FROM    [dbo].[Reservas] R
+      WHERE   R.[idCubiculo] = C.[id]
+          AND R.[activo] = 1
+          AND
+          (
+              (
+                  '${horaInicio}' >= R.[horaInicio]
+              AND '${horaInicio}' < R.[horaFin]
+              )
+              OR
+              (
+                '${horaFin}' > R.[horaInicio]
+              AND '${horaFin}' <= R.[horaFin]
+              )
+              OR
+              (
+                  R.[horaInicio] > '${horaInicio}'
+              AND R.[horaInicio] < '${horaFin}'
+              )
+              OR
+              (
+                  R.[horaFin] > '${horaInicio}'
+              AND R.[horaFin] < '${horaFin}'
+              )
+          )
+        ) < 1;`;
   
   consulta.query(query, (err, resultado) => {
       if (err) {
           console.log(err);
           res.status(500).send('Error al realizar la consulta');
       } else {
-          const cubiculos = {};
+        const cubiculos = {};
 
-          // Agrupar servicios por cubículo
-          for (let i = 0; i < resultado.recordset.length; i++) {
-              const cubiculo = resultado.recordset[i];
-              const idCubiculo = cubiculo.id;
-              const servicio = cubiculo.servicio;
+        // Agrupar servicios por cubículo
+        for (let i = 0; i < resultado.recordset.length; i++) {
+            const cubiculo = resultado.recordset[i];
+            const idCubiculo = cubiculo.id;
+            const servicio = cubiculo.servicio;
 
-              if (cubiculos[idCubiculo]) {
-                  cubiculos[idCubiculo].servicios.push(servicio);
-              } else {
-                  const { id, nombre, capacidad, estado } = cubiculo;
-                  cubiculos[idCubiculo] = {
-                      id,
-                      nombre,
-                      capacidad,
-                      estado,
-                      servicios: ((servicio) ? [servicio] : [])
-                      /* Cuando no hay servicios, da un arreglo vacío
-                      en lugar de un arreglo con un elemento nulo */
-                  };
-              }
-          }
+            if (cubiculos[idCubiculo]) {
+                cubiculos[idCubiculo].servicios.push(servicio);
+            } else {
+                const { id, nombre, estado, capacidad, minutosMax, servicio } = cubiculo;
 
-          // Convertir objetos a array
-          const resultadoFinal = Object.values(cubiculos);
+                cubiculos[idCubiculo] = {
+                    id,
+                    nombre,                    
+                    estado,
+                    capacidad,
+                    minutosMax,
+                    servicios: ((servicio) ? [servicio] : [])
+                    /* Cuando no hay servicios, da un arreglo vacío
+                    en lugar de un arreglo con un elemento nulo */
+                };
+            }
+        }
 
-          res.send(resultadoFinal);
-          console.log('Consulta realizada');
+        // Convertir objetos a array
+        const resultadoFinal = Object.values(cubiculos);
+
+        res.send(resultadoFinal);
       }
   });
 });

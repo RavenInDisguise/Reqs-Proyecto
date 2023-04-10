@@ -6,7 +6,8 @@ import EstudianteMenu from './EstudianteMenu'
 import Registro from './Registro'
 import Header from './Header'
 import ListaEstudiantes from "./MenuAdministrador/ListaEstudiantes";
-import Admin from './Admin'
+import Admin from './MenuAdministrador/Admin'
+import Disponibles from "./Disponibles";
 export const LoginContext = createContext();
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="/Admin" element={<Admin />}/>
             <Route path="/Registro" element={<Registro />} />
             <Route path="/Estudiantes" element={<ListaEstudiantes />} />
+            <Route path="/Disponibles" element={<Disponibles />} />
         </Routes>
       </div>
       </>
