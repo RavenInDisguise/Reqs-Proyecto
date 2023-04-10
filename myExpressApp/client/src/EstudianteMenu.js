@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Navigate, useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import axios from 'axios';
-import { LoginContext, IdEstContext } from "./App";
 import './Menu.css';
 import './Tarjeta.css';
 
 export default function EstudianteMenu(){
 
+    axios.defaults.withCredentials = true;
     const navigate = useNavigate()
     const [loggedIn, setLoggedIn] = useState('')
     const [IdEstudiante, setIdEstudiante] = useState('')

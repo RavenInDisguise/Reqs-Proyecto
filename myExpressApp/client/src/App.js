@@ -10,7 +10,7 @@ import Admin from './MenuAdministrador/Admin'
 import Disponibles from "./Disponibles";
 import ListaCubiculo from './MenuAdministrador/ListaCubiculo'
 import EditarCubiculo from "./MenuAdministrador/EditarCubiculo";
-
+import Reservar from "./Reservar";
 export const LoginContext = createContext();
 
 export default function App() {
@@ -18,7 +18,7 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   return (
-      <>
+    <>
       <LoginContext.Provider value={[loggedIn,setLoggedIn]}>
         <Header />
       </LoginContext.Provider>
@@ -36,9 +36,9 @@ export default function App() {
             <Route path="/Disponibles" element={<Disponibles />} />
             <Route path="/Cubiculos" element={<ListaCubiculo />} />
             <Route path="/EditarCubiculo" element={<EditarCubiculo />} />
-
+            <Route path="/Reservar" element={<Reservar />} />
         </Routes>
       </div>
-      </>
+    </>
   )
 }

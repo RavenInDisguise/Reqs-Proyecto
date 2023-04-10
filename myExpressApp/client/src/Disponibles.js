@@ -59,7 +59,7 @@ function Disponibles() {
                 <div className="cubiculo">
                     <div className="datos">
                         <div className="nombre">
-                            <a href={`/Reservar?id=${e.id}`}> {e.nombre}</a>
+                            <a href={`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}`}> {e.nombre}</a>
                         </div>
                         <div className="otros-datos">
                             <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo Maximo (Minutos):</b> {e.minutosMax} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>

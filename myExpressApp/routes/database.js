@@ -2,6 +2,7 @@ var express = require('express');
 var sqlcon = require('mssql');
 var router = express.Router();
 var cors = require("cors");
+var qr = require('qrcode')
 const nodemailer = require("nodemailer");
 const bcrypt = require('bcrypt')
 const saltRounds = 10
@@ -1004,6 +1005,44 @@ router.post("/estudiante/crear", (req, res) => {
 
 });
 
+router.post('/Reservar/Cubiculo',(req, res)=>{
+  const {idCubiculo, IdEstudiante,horaInicio, horaFin, email, nombre} = req.body;
 
+  const query = `INSERT INTO Reservas(idCubiculo, idEstudiante, fecha, horaInicio, horaFin, activo, confirmado)
+                 VALUES('${idCubiculo}', '${IdEstudiante}',getUTCDate(),'${horaInicio}','${horaFin}',1,0)`;
+  const consulta = new sqlcon.Request();
+
+  consulta.query(query,(err,resultado)=>{
+    if(err){
+      console.log(err)
+      res.status(500).send({message:'Error al registrar la reserva'});
+    }else{
+      res.send({message:'Se inserto correctamente'})
+      let stJson = JSON.stringify({idCubiculo:idCubiculo,idEstudiante:IdEstudiante,inicio:horaInicio,fin:horaFin})
+      qr.toDataURL(stJson,(err,url)=>{
+
+        console.log(url);
+        const mailOptions = {
+          from: mail,
+          to: `${email}` ,
+          subject: 'Reserva',
+          text: `Se ha reservado el cubículo Nombre: ${nombre}
+          para la fecha:
+          Desde ${horaInicio} hasta ${horaFin}`,
+          html:`<img src='${url}'/>`
+        };
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Correo enviado: ' + info.response);
+          }
+        });
+      })
+    }
+    
+  })
+})
 
 module.exports = router;
