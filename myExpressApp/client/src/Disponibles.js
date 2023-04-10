@@ -7,7 +7,6 @@ var today = new Date()
 var fechaHoy = today.toISOString().replace(/T.+/, "")
 var hora = today.toISOString().replace(/.+T/, "").replace(/\..*/, "").split(":").slice(0,2).join(':')
 
-console.log(today)   
 function Disponibles() {
     axios.defaults.withCredentials = true;
     const [listaCubiculos, setListaCubiculos] = useState([]);
@@ -17,7 +16,7 @@ function Disponibles() {
 
     useEffect(() => {
         async function getData(){
-            await axios.get(`http://localhost:3001/cubiculos/disponibles?horaInicio=${horaInicio}&horaFin=${horaFin}`,).then((response) => {
+            await axios.get(`http://localhost:3001/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
                 try {
                     setListaCubiculos(response.data)
                 } catch (error) {
@@ -30,8 +29,9 @@ function Disponibles() {
 
     useEffect(() => {
         async function getData(){
-            await axios.get(`http://localhost:3001/cubiculos/disponibles?horaInicio=${horaInicio}&horaFin=${horaFin}`,).then((response) => {
+            await axios.get(`http://localhost:3001/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
                 try {
+                    console.log('Entras')
                     setListaCubiculos(response.data)
                 } catch (error) {
                     alert('Ocurrió un error al cargar la información');
@@ -39,8 +39,7 @@ function Disponibles() {
             });
         }  
         getData();
-    }, [horaInicio]);
-
+    }, [horaInicio, horaFin, fecha]);
 
   return (
     <div className="tarjeta Lista-Cubiculos">
@@ -53,7 +52,6 @@ function Disponibles() {
                 <input type="time" id="inicio" name="inicio" value={horaInicio} onChange={e=>{setHoraInicio(e.target.value)}}/>
                 <label for="fin">Hora de Salida:</label>
                 <input type="time" id="fin" name="fin" value={horaFin} onChange={e=>{setHoraFin(e.target.value)}}/>
-                <input type="submit" onClick={()=>{}}/>
             </div>  
         </div>
         <div className="lista" id="lista-disponibles">
@@ -64,7 +62,7 @@ function Disponibles() {
                             <a href={`/Reservar?id=${e.id}`}> {e.nombre}</a>
                         </div>
                         <div className="otros-datos">
-                            <p><b>· Capacidad:</b> {e.capacidad} <b> · Maximo de Tiempo:</b> {e.minutosMax}<b> · Servicios: </b> <span title={e.servicios.join('\n')} id='ver-servicios'>Ver servicios</span></p>
+                            <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo Maximo (Minutos):</b> {e.minutosMax} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
                         </div>
                     </div>
                 </div>))}
