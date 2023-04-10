@@ -22,7 +22,7 @@ function Header() {
     return (
         <div className="header">
             <a href="/"><Logo /></a>
-            {loggedIn? <button onClick={logout}>Cerrar Sesión</button>:<></>}
+            {loggedIn? <button className="btn" onClick={logout}>Cerrar sesión</button>:<></>}
         </div>
     )
 }

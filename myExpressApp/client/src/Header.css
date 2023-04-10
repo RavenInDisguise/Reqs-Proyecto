@@ -16,6 +16,7 @@ tspan {
 @media (prefers-color-scheme: dark) {
     .header {
         background-color: #00395f;
+        border-bottom: solid 1px white;
     }
 }
 
@@ -26,4 +27,26 @@ a {
 svg {
     height: inherit;
     width: auto;
+}
+
+.header button {
+    border-radius: 15px;
+    background-color: white;
+    height: 38px;
+}
+
+.header button:hover {
+    background-color: gray;
+}
+
+@media (prefers-color-scheme: dark) {
+    .header button {
+        color: white;
+        background-color: #353535;
+        border: solid 1px white;
+    }
+    
+    .header button:hover {
+        background-color: rgb(175, 175, 175);
+    }
 }
