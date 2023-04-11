@@ -163,8 +163,12 @@ span.estadoReserva.activo {
     background-color: orange;
 }
 
-.reserva-lista>div.datos>p>span.estadoReserva.confirmado {
+span.estadoReserva.confirmado {
     background-color: green;
+}
+
+.total span.estadoReserva {
+    margin-left: 5px;
 }
 
 .iconoOpcion {

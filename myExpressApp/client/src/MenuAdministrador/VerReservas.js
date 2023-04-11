@@ -218,11 +218,11 @@ export default () => {
             ) : (<p>Cargando...</p>)}
             {(totalElementos != null) ? (<p class="total">
                 <b>Total de reservas:</b> {totalElementos} {(totalElementos > 0) ? (
-                    "(" + [
-                        (reservasConfirmadas > 0 ? ((reservasConfirmadas > 1 ? (reservasConfirmadas + " confirmadas") : "1 confirmada" )) : ""),
-                        (reservasActivas > 0 ? (reservasActivas > 1 ? (reservasActivas + " activas") : "1 activa" ) : ""),
-                        (reservasInactivas > 0 ? (reservasInactivas > 1 ? (reservasInactivas + " inactivas") : "1 inactiva" ) : "")
-                    ].filter((f) => f != '').join(', ') +")") : <></>}
+                    <span>({[
+                        { clase: "confirmado", valor: (reservasConfirmadas > 0 ? ((reservasConfirmadas > 1 ? (reservasConfirmadas + " confirmadas") : "1 confirmada" )) : "")},
+                        { clase: "activo", valor: (reservasActivas > 0 ? (reservasActivas > 1 ? (reservasActivas + " activas") : "1 activa" ) : "")},
+                        { clase: "inactivo", valor: (reservasInactivas > 0 ? (reservasInactivas > 1 ? (reservasInactivas + " inactivas") : "1 inactiva" ) : "")}
+                    ].filter((f) => f.valor != '').map((r, i, a) => (<span><span className={"estadoReserva " + r.clase}></span> {r.valor + (i < a.length - 1 ? ", " : "")}</span>))})</span>) : <></>}
                 </p>) : (<p></p>)}
         </div>
     )
