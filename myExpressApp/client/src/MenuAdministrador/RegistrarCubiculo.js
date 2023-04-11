@@ -5,7 +5,7 @@ import './RegistrarCubiculo.css';
 import '../Tarjeta.css';
 
 const opciones = [{nombre: "Disponible", activo: true}, {nombre: "En mantenimiento", activo: false}];
-
+/* 
 export default () => {
     const navigate = useNavigate();
     //const parametros = new URLSearchParams('?' + document.URL.split('/').at(-1).split('?').at(-1));
@@ -28,9 +28,9 @@ export default () => {
     useEffect(() => {
         if (!idCubiculo) {
             navigate(-1);
-        } else {/* */
+        } else {/* 
             axios.get('/cubiculo?id=' + idCubiculo).then((response) => {
-                try {/* */
+                try {
                     let info = response.data;
                     let newServicios = info[0].servicios;
                     
@@ -38,7 +38,7 @@ export default () => {
                         newServicios[i].anterior = !(!(newServicios[i].activo))
                     }
                     setServicios(newServicios);
-                    console.log(newServicios)
+                    //console.log(newServicios)
 
                     //setActivos(newServicios.filter((s) => (s.activo)).length);
                     //setEstadoActual(info[0].estado)
@@ -47,7 +47,7 @@ export default () => {
                     
                     //setCapacidad(info[0].capacidad);
                     //setTiempoMaximo(info[0].minutosMaximo);
-                    
+                /*     
                     setInfoCargada(true);
                 } catch (error) {
                     console.log(error)
@@ -61,15 +61,15 @@ export default () => {
                         estados[i] = response.data.estados[i]
                     }
                     setInfoCargada(true);
-                    console.log('Los estados',estados);*/
+                    console.log('Los estados',estados);
                     setInfoCargada(true);
                 } catch (error) {
                     console.log(error)
                     alert('Ocurrió un error al cargar la información');
                 }
             })
-            axios.get('/servicios').then((response) => {/* */
-                try {/*
+            axios.get('/servicios').then((response) => {
+                try {
                     let info = response.data;
                     let serv = info.servicios;
                     for (let i = 0; i < serv.length; i++) {
@@ -79,9 +79,9 @@ export default () => {
                     //console.log('Respuesta recibida',typeof response.data.servicios);
                     for (let i = 0; i < response.data.servicios.length; i++) {
                         servicios[i] = response.data.servicios[i]
-                    }*/ 
+                    }
                     //setServicios(servicios)
-                    //console.log('Servicios cargados', servicios);
+              /*      //console.log('Servicios cargados', servicios);
                 } catch (error) {
                     console.log(error)
                     alert('Ocurrió un error al cargar la información');
@@ -141,7 +141,7 @@ export default () => {
                 window.location.reload();
                 break;
               default:
-                alert('Ocurrió un error');
+                alert('Ocurrió un error al registrar');
                 break;
             }
           }).catch(function (error) {
@@ -149,7 +149,7 @@ export default () => {
               alert('Ocurrió un error:\n\n- ' + error.response.data.errores.join('\n- '));
             }
             catch {
-              alert('Ocurrió un error.');
+              alert('Ocurrió un error al Registrar.');
             }
           })
         
@@ -232,7 +232,7 @@ export default () => {
         </div>) : <></>
     )
 }
- /* 
+*/
 function Registrar () {
     const navigate = useNavigate();
     const [nombre, setNombre] = useState();
@@ -273,7 +273,7 @@ function Registrar () {
               alert('Ocurrió un error: ' + error.response.data.message);
             }
             catch {
-              alert('Ocurrió un error.');
+              alert('Ocurrió un error Registrando.');
             }
           })
     }
@@ -282,10 +282,7 @@ function Registrar () {
     useEffect(() => {
         axios.get('/estados').then((response) => {
             try {
-                //setEstados(response.data.estados)
-                for (let i = 0; i < response.data.estados.length; i++) {
-                    estados[i] = response.data.estados[i]
-                }
+                setEstados(response.data.estados)
             } catch (error) {
                 console.log(error)
                 alert('Ocurrió un error al cargar la información');
@@ -293,10 +290,7 @@ function Registrar () {
         })
         axios.get('/servicios').then((response) => {
             try {
-                //setServicios(response.data.servicios)
-                for (let i = 0; i < response.data.servicios.length; i++) {
-                    servicios[i] = response.data.servicios[i]
-                }
+                setServicios(response.data.servicios)
             } catch (error) {
                 console.log(error)
                 alert('Ocurrió un error al cargar la información');
@@ -340,21 +334,18 @@ function Registrar () {
 
         document.getElementById('serviciosSelect').blur();
     }
-    /*
+    
     const handleSubmit = (e) => {
-        axios.put('/cubiculo', {
-            idCubiculo,
+        axios.put('/cubiculo/crear', {
+            estadoActual,
             nombre,
-            estado: estadoActual,
             capacidad,
-            cancelarReservas,
-            notificarUsuarios,
-            minutosMaximo: tiempoMaximo,
-            servicios: servicios
+            tiempoMaximo
+            //servicios: servicios
           }).then(res => {
             switch (res.status){
               case 200:
-                alert('Cambio existoso');
+                alert('Registro existoso');
                 window.location.reload();
                 break;
               default:
@@ -366,17 +357,17 @@ function Registrar () {
               alert('Ocurrió un error:\n\n- ' + error.response.data.errores.join('\n- '));
             }
             catch {
-              alert('Ocurrió un error.');
+              alert('Ocurrió un error al Registrar.');
             }
           })
         
         e.preventDefault();
-    } */ /*
+    } 
 
     return (
         (infoCargada) ? (<div className="tarjeta cubiculo-registrar">
             <h3>Registrar cubículo</h3>
-            <form onSubmit={(e) => submit(e)}>
+            <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="form-group">
                     <div class="form-element">
                         <label for="idNumber">ID</label>
@@ -451,4 +442,3 @@ function Registrar () {
 }
 
 export default Registrar 
-*/

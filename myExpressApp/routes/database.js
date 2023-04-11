@@ -1257,12 +1257,35 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
 })
 
 //Crear Cubiculo
-router.post('/cubiculo/crear', (req, res) => {
+router.put('/cubiculo/crear', (req, res) => {
+  //console.log("Esto esta llegando: ", req.body)
   const bod = req.body;
-  const idEstado = bod.idEstado;
+  const idEstado = bod.estadoActual;
   const nombre = bod.nombre;
-  const capacidad = bod.capacidad;
-  const minutosMax = bod.minutosMax;
+  let capacidad = bod.capacidad;
+  let minutosMax = bod.tiempoMaximo;
+  let idFinal = 2;
+  console.log("Valor de tiempo", minutosMax);
+  //convertir a entero la capacidad y el tiempo
+  capacidad = parseInt(capacidad);
+  minutosMax = parseInt(minutosMax);
+
+  //id para estado
+  switch (idEstado) {
+    case "Habilitado":
+      idFinal = 2;
+      break;
+    case "Ocupado":
+      idFinal = 3;
+      break;
+    case "En mantenimiento":
+      idFinal = 4;
+      break;
+    default:
+      idFinal = 2;
+      break;
+  }
+  console.log("Valor de capacidad", capacidad);
 
   const queryI = `
   INSERT INTO Cubiculos (
@@ -1271,7 +1294,7 @@ router.post('/cubiculo/crear', (req, res) => {
     capacidad,
     minutosMax)
   VALUES (
-    '${idEstado}',
+    '${idFinal}',
     '${nombre}',
     '${capacidad}',
     '${minutosMax}')
