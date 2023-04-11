@@ -531,7 +531,8 @@ router.get('/estudiante/reservas', (req, res) => {
                           R.horaFin AS horaFin
                     FROM Reservas AS R 
                     INNER JOIN Cubiculos AS C ON R.idCubiculo = C.id
-                    WHERE R.activo = 1 AND R.idEstudiante = '${id}'`
+                    WHERE R.idEstudiante = '${id}'
+                    ORDER BY Activo DESC, Confirmado ASC`
 
   // Ejecutar la consulta
   consulta.query(query, (err, resultado) => {
@@ -611,7 +612,14 @@ router.put('/reserva/eliminar', (req, res) => {
 
 //confirmar reserva
 router.put('/reserva/confirmar', (req, res) => {
+  const saved = req.session.user;
   const idReserva = req.query.id;
+  const nombre = req.query.nombre;
+  const horaInicio = req.query.horaInicio;
+  const horaFin = req.query.horaFin;
+  const estudiante = saved.idEstudiante;
+  const fecha = new Date();
+  const email = saved.email;
   const consulta = new sqlcon.Request();
   const query = `UPDATE Reservas SET confirmado = 1 WHERE id =` + idReserva;
 
@@ -622,6 +630,28 @@ router.put('/reserva/confirmar', (req, res) => {
     } else {
       res.send(resultado.recordset);
       console.log('Consulta realizada');
+      const stJson = JSON.stringify({idReserva,nombre,fecha,estudiante})
+
+      qr.toDataURL(stJson,(err,url)=>{
+
+        const mailOptions = {
+          from: mail,
+          to: `${email}` ,
+          subject: 'Confirmación de Reserva',
+          html:`<p>Se ja confirmado su reserva para el cubículo: ${nombre}
+          para la fecha:
+          Desde ${horaInicio} hasta ${horaFin}</p>
+          <img src='${url}'/>`
+        };
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Correo enviado: ' + info.response);
+          }
+        });
+      })
     }
   });
 });
@@ -1203,29 +1233,24 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
       res.status(500).send({message:'Error al registrar la reserva'});
     }else{
       res.send({message:'Se inserto correctamente'})
-      let stJson = JSON.stringify({idCubiculo:idCubiculo,idEstudiante:IdEstudiante,inicio:horaInicio,fin:horaFin})
-      let strin = 
-      qr.toDataURL(stJson,(err,url)=>{
-
-        console.log(url);
-        const mailOptions = {
-          from: mail,
-          to: `${email}` ,
-          subject: 'Reserva',
-          html:`<p>Se ha reservado el cubículo: ${nombre}
-          para la fecha:
-          Desde ${horaInicio} hasta ${horaFin}</p>
-          <img src='${url}'/>`
-        };
-        
-        transporter.sendMail(mailOptions, function(error, info){
-          if (error) {
-            console.log(error);
-          } else {
-            console.log('Correo enviado: ' + info.response);
-          }
-        });
-      })
+      
+      const mailOptions = {
+        from: mail,
+        to: `${email}` ,
+        subject: 'Reserva de Cubículo',
+        html:`<p>Se ha reservado el cubículo: ${nombre}
+        para la fecha:
+        Desde ${horaInicio} hasta ${horaFin}</p>
+        Para solicitar el QR de la reserva debe confirmarla desde la pagina.`
+      };
+      
+      transporter.sendMail(mailOptions, function(error, info){
+        if (error) {
+          console.log(error);
+        } else {
+          console.log('Correo enviado: ' + info.response);
+        }
+      });
     }
     
   })

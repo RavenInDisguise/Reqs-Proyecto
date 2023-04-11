@@ -55,6 +55,41 @@ function Apartados() {
         }
     }
 
+    const eliminarReserva = (id) =>{
+        if (window.confirm('¿Desea borrar la reserva actual?')) {
+            axios.put('/reserva/eliminar?id=' + id).then((response) => {
+            try {
+                if (response.status == 200) {
+                    alert('Reserva eliminada');
+                    window.location.reload(true);
+                } else {
+                    alert('Ocurrió un ejecutar la operación');
+                }
+            } catch (error) {
+                alert('Ocurrió un ejecutar la operación');
+            }
+            }).catch((error) => {
+                alert('Ocurrió un ejecutar la operación');
+            })
+        }
+    }
+
+    const confirmarReserva = (id, nombre, horaInicio, horaFin)=>{
+        axios.put(`/reserva/confirmar?id=${id}&nombre=${nombre}&horaInicio=${horaInicio}&horaFin=${horaFin}`).then((response) => {
+            try {
+                if (response.status == 200) {
+                    alert('Reserva confirmada');
+                    window.location.reload(true);
+                } else {
+                    alert('Ocurrió un ejecutar la operación');
+                }
+            } catch (error) {
+                alert('Ocurrió un ejecutar la operación');
+            }
+            }).catch((error) => {
+                alert('Ocurrió un ejecutar la operación');
+        })
+    }
     return (
         <div className="tarjeta Lista-Reservas">
             <h1>Lista de Reservas</h1>
@@ -70,13 +105,18 @@ function Apartados() {
                                 <b></b>
                             </p>
                             <div className="otros-datos">
-                                <p><b>Estado:{(e.confirmado?'Confirmado':'Sin Confirmar')}</b><b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
+                                <p><b>Estado:{(e.confirmado?'Confirmado':(e.activo?'Sin Confirmar':'Eliminada'))}</b><b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
                             </div>
                         </div>
                         <div className="opciones">
-                            <FontAwesomeIcon className="iconoOpcion desactivado" icon={faTrashCan} title="Eliminar reserva" />
-                            {e.confirmado?(<FontAwesomeIcon className="iconoOpcion desactivado" icon={faCheck} title="Confirmar reserva" />)
-                                          :<FontAwesomeIcon className="iconoOpcion" icon={faCheck} title="Confirmar reserva" />}
+                            {e.activo?(<FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Eliminar reserva" onClick={()=>{
+                                eliminarReserva(e.id);
+                            }}/>):
+                            <FontAwesomeIcon className="iconoOpcion desactivado" icon={faTrashCan} title="Eliminar reserva"/>}
+                            {e.confirmado || !e.activo ?(<FontAwesomeIcon id={e.id} className="iconoOpcion desactivado" icon={faCheck} title="Confirmar reserva" />)
+                                          :<FontAwesomeIcon id={e.id} className="iconoOpcion" icon={faCheck} title="Confirmar reserva" onClick={()=>{
+                                            confirmarReserva(e.id,e.nombre,e.horaInicio,e.horaFin)
+                                        }}/>}
                         </div>
                     </div>
                 ))}

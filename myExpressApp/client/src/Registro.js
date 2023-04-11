@@ -70,7 +70,7 @@ function Registro() {
           <input className="form-control" id="dateOfBirthInput" type='date' placeholder='Nacimiento' required onChange={e=>setFechaDeNacimiento(e.target.value)}/>
         </div>
         <div className='form-group'>
-          <input className="form-control" type='email' placeholder='Correo institucional' required onChange={e=>setCorreo(e.target.value)}/>
+          <input className="form-control" type='email' pattern=".+@estudiantec\.cr" placeholder='Correo institucional' required onChange={e=>setCorreo(e.target.value)}/>
         </div>
         <div className='form-group'>
           <input className="form-control" type='password' placeholder='Contraseña institucional' required onChange={e=>setClave(e.target.value)}/>
