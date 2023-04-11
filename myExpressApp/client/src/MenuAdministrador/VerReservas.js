@@ -19,6 +19,7 @@ const ayudaFiltro = `También puede usar los siguientes filtros:
 · estudiante:24, para ver solo las reservas del estudiante cuyo ID es 24`;
 
 export default () => {
+    const navigate = useNavigate();
     const parametros = new URLSearchParams('?' + document.URL.split('/').at(-1).split('?').at(-1));
     const idCubiculo = parametros.get('idCubiculo');
     const idEstudiante = parametros.get('idEstudiante');
@@ -189,10 +190,10 @@ export default () => {
                                 </div>
                             </div>
                             <div className="opciones">
-                                <FontAwesomeIcon className="iconoOpcion desactivado" icon={faPenToSquare} title="Modificar reserva" />
+                                <FontAwesomeIcon className="iconoOpcion" icon={faPenToSquare} title="Modificar reserva" onClick={() => navigate('/EditarReserva?id=' + e.id)} />
                                 {(e.activo) ? (
-                                    <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Borrar reserva" onClick={() => {
-                                        if (window.confirm('¿Desea borrar la reserva actual?')) {
+                                    <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Desactivar reserva" onClick={() => {
+                                        if (window.confirm('¿Desea desactivar la reserva actual?')) {
                                             axios.put('/reserva/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {

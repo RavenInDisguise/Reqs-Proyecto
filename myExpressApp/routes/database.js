@@ -154,12 +154,15 @@ router.get('/prueba', (req, res) => {
 //ruta de estudiantes 
 //retorna una lista de estudiantes con su nombre(completo), carnet, cedula y correo
 router.get('/estudiantes', (req, res) => {
+    const soloNombre = req.query.soloNombre;
     // Crear una nueva consulta a la base de datos
     const consulta = new sqlcon.Request();
-    var query = 'SELECT E.id, CONCAT(E.nombre,\' \',E.apellido1, \' \',E.apellido2) Nombre,'
+    var query = (soloNombre ? `SELECT E.id, CONCAT(E.nombre, ' ', E.apellido1, ' ' ,E.apellido2) Nombre
+      FROM Estudiantes E
+      WHERE E.activo = 1;` : 'SELECT E.id, CONCAT(E.nombre,\' \',E.apellido1, \' \',E.apellido2) Nombre,'
       + ' E.carnet, E.cedula, U.correo, E.activo '
       + 'FROM Estudiantes AS E ' 
-      + 'LEFT JOIN Usuarios AS U ON U.id = E.idUsuario;'
+      + 'LEFT JOIN Usuarios AS U ON U.id = E.idUsuario;');
 
     // Ejecutar la consulta
     consulta.query(query, (err, resultado) => {
@@ -211,12 +214,16 @@ router.get('/estudiante', (req, res) => {
 //ruta de cubiculos 
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
 router.get('/cubiculos', (req, res) => {
+  const soloNombre = req.query.soloNombre;
   const consulta = new sqlcon.Request();
-  const query = `SELECT C.id, C.nombre, EC.descripcion AS estado, C.capacidad, SE.descripcion AS servicio 
+  const query = (soloNombre ? `SELECT C.id, C.nombre
+                 FROM Cubiculos AS C
+                 INNER JOIN EstadosCubiculo AS EC ON C.idEstado = EC.id
+                 WHERE EC.[descripcion] = 'Habilitado'` : `SELECT C.id, C.nombre, EC.descripcion AS estado, C.capacidad, SE.descripcion AS servicio 
                  FROM Cubiculos AS C 
                  LEFT JOIN EstadosCubiculo AS EC ON C.idEstado = EC.id 
                  LEFT JOIN ServiciosDeCubiculo AS SC ON C.id = SC.idCubiculo AND SC.activo = 1 
-                 LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id;`;
+                 LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id;`);
   
   consulta.query(query, (err, resultado) => {
       if (err) {
@@ -226,7 +233,20 @@ router.get('/cubiculos', (req, res) => {
           const cubiculos = {};
 
           // Agrupar servicios por cubículo
-          for (let i = 0; i < resultado.recordset.length; i++) {
+          if (soloNombre) {
+            for (let i = 0; i < resultado.recordset.length; i++) {
+              const cubiculo = resultado.recordset[i];
+              const idCubiculo = cubiculo.id;
+
+              const { id, nombre } = cubiculo;
+
+              cubiculos[idCubiculo] = {
+                  id,
+                  nombre
+              };
+            }
+          } else {
+            for (let i = 0; i < resultado.recordset.length; i++) {
               const cubiculo = resultado.recordset[i];
               const idCubiculo = cubiculo.id;
               const servicio = cubiculo.servicio;
@@ -246,6 +266,7 @@ router.get('/cubiculos', (req, res) => {
                       en lugar de un arreglo con un elemento nulo */
                   };
               }
+            }
           }
 
           // Convertir objetos a array
@@ -473,7 +494,7 @@ router.get('/reservas', (req, res) => {
                 E.[id] AS idEstudiante
               FROM Reservas AS R 
               LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
-              INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante];`
+              INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]`
 
   // Ejecutar la consulta
   consulta.query(query, (err, resultado) => {
@@ -487,6 +508,40 @@ router.get('/reservas', (req, res) => {
     
   });
 });
+
+// Datos de una reserva
+router.get('/reserva', (req, res) => {
+  // Crear una nueva consulta a la base de datos
+  const idReserva =  req.query.idReserva;
+  const consulta = new sqlcon.Request();
+  var query = `SELECT R.id,
+                C.[nombre] nombreCubiculo, 
+                C.[id] idCubiculo, 
+                R.fecha AS fecha,
+                R.horaInicio AS horaInicio,
+                R.horaFin AS horaFin,
+                R.activo AS activo,
+                R.confirmado AS confirmado,
+                CONCAT(E.[nombre], ' ', E.[apellido1], ' ', E.[apellido2]) AS nombreEstudiante,
+                E.[id] AS idEstudiante
+              FROM Reservas AS R 
+              LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
+              INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]
+              WHERE R.[id] = '${idReserva}';`
+
+  // Ejecutar la consulta
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al realizar la consulta');
+    } else {
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+    
+  });
+});
+
 //ruta de reservas 
 //Reservasd de 1 cubiculo (por nombre)
 router.get('/reservas/cubiculo', (req, res) => {
@@ -694,6 +749,179 @@ router.put('/reserva/confirmar', async (req, res) => {
           }
         });
       })
+    }
+  });
+});
+
+//actualizar reserva
+router.put('/reserva', (req, res) => {
+  const cuerpo = req.body;
+  const consulta = new sqlcon.Request();
+  
+  const query = `DECLARE @idReserva INT = '${cuerpo.id}';
+  DECLARE @idCubiculo INT = '${cuerpo.idCubiculo}';
+  DECLARE @idEstudiante INT = '${cuerpo.idEstudiante}';
+  DECLARE @horaInicio DATETIME = '${cuerpo.horaInicio}';
+  DECLARE @horaFin DATETIME = '${cuerpo.horaFin}';
+  DECLARE @activo BIT = '${(cuerpo.activo) ? '1' : '0'}';
+  DECLARE @confirmado BIT = '${(cuerpo.confirmado) ? '1' : '0'}';
+  
+  DECLARE @salida TABLE (
+      [error] VARCHAR(128)
+  );
+  
+  -- COMPROBACIONES
+  
+  -- Comprobación de la fecha
+  
+  IF @horaFin <= @horaInicio
+  BEGIN
+      INSERT INTO @salida ([error])
+      VALUES ('La hora final no puede ser menor o igual que la inicial');
+  END;
+  
+  IF (@horaInicio < GETUTCDATE() OR @horaFin < GETUTCDATE())
+  BEGIN
+      INSERT INTO @salida ([error])
+      VALUES ('Al menos una de las horas indicadas ya pasó');
+  END;
+  
+  -- Comprobación del cubículo
+  
+  IF (SELECT  R.[idCubiculo]
+      FROM    [dbo].[Reservas] R
+      WHERE   R.[id] = @idReserva) != @idCubiculo
+  BEGIN
+      -- Cambió el ID del cubículo
+      IF NOT EXISTS(  SELECT  1
+                  FROM    [dbo].[Cubiculos] C
+                  WHERE   C.[id] = @idCubiculo    )
+      BEGIN
+          -- No existe el cubículo
+          INSERT INTO @salida ([error])
+          VALUES ('No existe el cubículo proporcionado');
+      END;
+  END;
+  
+  -- Comprobación del estudiante
+  
+  IF (SELECT  R.[idEstudiante]
+      FROM    [dbo].[Reservas] R
+      WHERE   R.[id] = @idReserva) != @idEstudiante
+  BEGIN
+      -- Cambió el ID del estudiante
+      IF NOT EXISTS(  SELECT  1
+                  FROM    [dbo].[Estudiantes] E
+                  WHERE   E.[id] = @idEstudiante
+                      AND E.[activo] = 1)
+      BEGIN
+          -- No existe el estudiante
+          INSERT INTO @salida ([error])
+          VALUES ('El estudiante proporcionado no coincide con un estudiante activo en el sistema');
+      END;
+  END;
+  
+  -- Se revisa si hay un choque
+  
+  -- Choque con otra reserva del mismo cubículo
+  
+  IF (   SELECT COUNT(*)
+  FROM    [dbo].[Reservas] R
+  WHERE   R.[idCubiculo] = @idCubiculo
+      AND R.[activo] = 1
+      AND R.[id] != @idReserva
+      AND
+      (
+          (
+              @horaInicio >= R.[horaInicio]
+          AND @horaInicio < R.[horaFin]
+          )
+          OR
+          (
+          @horaFin > R.[horaInicio]
+          AND @horaFin <= R.[horaFin]
+          )
+          OR
+          (
+              R.[horaInicio] > @horaInicio
+          AND R.[horaInicio] < @horaFin
+          )
+          OR
+          (
+              R.[horaFin] > @horaInicio
+          AND R.[horaFin] < @horaFin
+          )
+      )
+  ) != 0
+  BEGIN
+      INSERT INTO @salida ([error])
+      VALUES ('Hay un choque con otra reserva activa del cubículo indicado');
+  END;
+  
+  -- Choque con otra reserva del mismo estudiante
+  
+  IF (   SELECT COUNT(*)
+  FROM    [dbo].[Reservas] R
+  WHERE   R.[idEstudiante] = @idEstudiante
+      AND R.[activo] = 1
+      AND R.[id] != @idReserva
+      AND
+      (
+          (
+              @horaInicio >= R.[horaInicio]
+          AND @horaInicio < R.[horaFin]
+          )
+          OR
+          (
+          @horaFin > R.[horaInicio]
+          AND @horaFin <= R.[horaFin]
+          )
+          OR
+          (
+              R.[horaInicio] > @horaInicio
+          AND R.[horaInicio] < @horaFin
+          )
+          OR
+          (
+              R.[horaFin] > @horaInicio
+          AND R.[horaFin] < @horaFin
+          )
+      )
+  ) != 0
+  BEGIN
+      INSERT INTO @salida ([error])
+      VALUES ('Hay un choque con otra reserva activa del estudiante indicado');
+  END;
+  
+  IF (SELECT  COUNT(*)
+      FROM    @salida) = 0
+  BEGIN
+      UPDATE  R
+      SET     R.[idCubiculo] = @idCubiculo,
+              R.[idEstudiante] = @idEstudiante,
+              R.[horaInicio] = @horaInicio,
+              R.[horaFin] = @horaFin,
+              R.[activo] = @activo,
+              R.[confirmado] = @confirmado
+      FROM    [dbo].[Reservas] R
+      WHERE   R.[id] = 1;
+  END;
+  
+  SELECT  S.[error]
+  FROM    @salida S;`;
+
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send({errores:['Error desconocido']});
+    } else {
+      const salida = resultado.recordset;
+      if (salida.length > 0) {
+        res.status(401).send({errores: salida.map(s => s.error)})
+      } else {
+        res.status(200).send({});
+      }
+      console.log('Consulta realizada');
     }
   });
 });
@@ -1322,6 +1550,7 @@ router.post('/cubiculo/crear', (req, res) => {
 
   insertar.query(queryI, (err, resultado)=>{
     if (err) {
+      console.log(resultado);
       res.status(500).send({message:'Error al registrar cubiculo'});
     } else {
       res.status(200).send({message:'Registro Exitoso'});

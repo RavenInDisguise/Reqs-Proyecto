@@ -1,0 +1,144 @@
+.reserva-editar {
+    min-width: 800px;
+}
+
+.reserva-editar form .form-group p {
+    margin-bottom: 0;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.reserva-editar form .form-group {
+    display: flex;
+    column-gap: 10px;
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+.reserva-editar form .form-group label {
+    margin: auto;
+    white-space: nowrap;
+}
+
+.reserva-editar form .form-group input:disabled {
+    cursor: not-allowed;
+}
+
+input:disabled+label {
+    cursor: not-allowed;
+    color: rgb(101, 101, 101);
+}
+
+@media (prefers-color-scheme: dark) {
+    input:disabled+label {
+        color: rgb(175, 175, 175);
+    }
+}
+
+.form-group.servicios {
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+}
+
+#serviciosLabel {
+    flex-grow: 1;
+    margin-bottom: 5px;
+    cursor: help;
+}
+
+#serviciosSelect {
+    min-height: 100px;
+    outline: none;
+    width: fit-content;
+}
+
+#serviciosSelect option.activo {
+    background-color: #850000;
+    color: white;
+}
+
+#serviciosSelect option.inactivo:checked {
+    background-color: #008528;
+    color: white;
+}
+
+#serviciosSelect option.activo:checked {
+    background-color: #005085;
+    color: white;
+}
+
+.tarjeta form .form-group.leyendas {
+    flex-direction: row;
+    text-align: center;
+    margin-bottom: 0;
+    margin-top: 5px;
+}
+
+.form-group .form-element {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    column-gap: 10px;
+}
+
+.reserva-editar form .form-group .form-element label {
+    flex-grow: 1;
+    white-space: nowrap;
+}
+
+.leyenda {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: row;
+    column-gap: 10px;
+}
+
+.leyenda p {
+    margin-bottom: auto;
+}
+
+.leyenda span {
+    width: 20px;
+    height: 20px;
+    display: block;
+    border-radius: 5px;
+}
+
+.leyenda span.activo {
+    background-color: #005085;
+}
+
+.leyenda span.activado {
+    background-color: #008528;
+}
+
+.leyenda span.desactivado {
+    background-color: #850000;
+}
+
+.reserva-editar form .form-group.acciones-adicionales {
+    display: flex;
+    column-gap: 20px;
+    text-align: center;
+}
+
+.accion {
+    display: flex;
+    column-gap: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.accion label {
+    flex-grow: 1;
+}
+
+.tarjeta form .form-group .accion input {
+    flex-grow: 0;
+    width: 25px;
+}
