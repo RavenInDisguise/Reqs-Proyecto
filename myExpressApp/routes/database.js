@@ -480,6 +480,34 @@ router.get('/reservas', (req, res) => {
     
   });
 });
+//ruta de reservas 
+//Reservasd de 1 cubiculo (por nombre)
+router.get('/reservas/cubiculo', (req, res) => {
+  const cubNombre = req.query.nombre;
+  // Crear una nueva consulta a la base de datos
+  const consulta = new sqlcon.Request();
+  var query = `SELECT R.id,
+                C.nombre, 
+                C.capacidad, 
+                FORMAT(R.fecha, 'dd/MM/yyyy') AS fecha,
+                FORMAT(R.horaInicio, 'HH:mm') AS horaInicio,
+                FORMAT(R.horaFin, 'HH:mm') AS horaFin
+              FROM Reservas AS R 
+              LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
+              WHERE R.activo = 1 AND C.nombre = '${cubNombre}'`
+
+  // Ejecutar la consulta
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al realizar la consulta');
+    } else {
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+    
+  });
+});
 
 
 //ruta de reseervas de estudiante
