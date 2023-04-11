@@ -1299,7 +1299,7 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
 })
 
 //Crear Cubiculo
-router.post("/cubiculo/crear", (req, res) => {
+router.post('/cubiculo/crear', (req, res) => {
   const bod = req.body;
   const idEstado = bod.idEstado;
   const nombre = bod.nombre;
