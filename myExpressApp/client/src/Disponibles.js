@@ -7,10 +7,12 @@ import Select from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarPlus } from "@fortawesome/free-solid-svg-icons";
 
-var today = new Date()
-var fechaHoy = today.toISOString().replace(/T.+/, "")
-var hora = today.toISOString().replace(/.+T/, "").replace(/\..*/, "").split(":").slice(0,2).join(':')
 let ultimoTimestamp = null;
+const horaActual = new Date();
+let horaFinInicial = new Date();
+const horaActualString = ("0" + horaActual.getHours().toString()).slice(-2) + ":" + ("0" + horaActual.getMinutes().toString()).slice(-2);
+const fechaActualString = (horaActual.getFullYear().toString() + "-" + ("0" + (horaActual.getMonth() + 1).toString()).slice(-2) + "-" + ("0" + horaActual.getDate().toString()).slice(-2));
+horaFinInicial.setHours(horaFinInicial.getHours() + 1);
 const delayEntrada = 2000; // Milisegundos
 
 function Disponibles() {
@@ -18,16 +20,18 @@ function Disponibles() {
     axios.defaults.withCredentials = true;
     const [listaCubiculos, setListaCubiculos] = useState([]);
     const [listaFiltrada, setListaFiltrada] = useState([]);
-    const [fecha, setFecha] = useState(fechaHoy)
-    const [horaInicio, setHoraInicio] = useState(hora)
-    const [horaFin, setHoraFin] = useState(hora)
+    const [fecha, setFecha] = useState(fechaActualString);
+    const [horaInicio, setHoraInicio] = useState(horaActualString);
+    const [horaFin, setHoraFin] = useState(("0" + horaFinInicial.getHours().toString()).slice(-2) + ":" + ("0" + horaFinInicial.getMinutes().toString()).slice(-2));
     const [servicios, setServicios] = useState([]);
     const [serviciosFiltro, setServiciosFiltro] = useState([]);
     const [totalElementos, setTotalElementos] = useState(null);
     const [capacidad, setCapacidad] = useState(1);
 
     function getData(){
-        axios.get(`/cubiculos/disponibles?horaInicio=${fecha +' '+ horaInicio}&horaFin=${fecha + ' '+ horaFin}`,).then((response) => {
+        const fechaInicio = (new Date(fecha + ' ' + horaInicio)).toISOString().replace("T", " ").split(".")[0];
+        const fechaFinal = (new Date(fecha + ' ' + horaFin)).toISOString().replace("T", " ").split(".")[0]
+        axios.get(`/cubiculos/disponibles?horaInicio=${fechaInicio}&horaFin=${fechaFinal}`,).then((response) => {
             try {
                 setListaCubiculos(response.data);
             } catch (error) {
@@ -37,7 +41,6 @@ function Disponibles() {
     }  
 
     useEffect(() => {
-        getData();
         axios.get('/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios.map((e) => ({label : e, value: e})))
@@ -52,8 +55,8 @@ function Disponibles() {
         /* Esto espera cierto tiempo después de que se hace un cambio en la hora
         o la fecha antes de volver a cargar la información */
         const actual = new Date();
-        ultimoTimestamp = actual.getTime;
-        setTimeout((a=actual.getTime) => {
+        ultimoTimestamp = actual.getTime();
+        setTimeout((a=actual.getTime()) => {
             if (ultimoTimestamp == a) {
                 setListaCubiculos([]);
                 getData();
@@ -93,7 +96,7 @@ function Disponibles() {
             </div>
             <div className="filtro">
                 <label for='fecha'>Fecha</label>
-                <input className="form-control" type="date" id="fecha" value={fecha} onChange={e=>{setFecha(e.target.value)}}/>
+                <input className="form-control" type="date" id="fecha" value={fecha} min={fechaActualString} onChange={e=>{setFecha(e.target.value)}}/>
             </div>
             <div className="filtro">
                 <label for="inicio">Hora de entrada</label>

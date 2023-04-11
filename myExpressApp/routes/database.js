@@ -382,7 +382,7 @@ router.get('/cubiculos/disponibles', (req, res) => {
       INNER JOIN  [dbo].[EstadosCubiculo] EC ON  EC.[id] = C.[idEstado]
       LEFT JOIN ServiciosDeCubiculo AS SC ON C.[id] = SC.idCubiculo AND SC.activo = 1 
       LEFT JOIN ServiciosEspeciales AS SE ON SC.idServiciosEspeciales = SE.id
-      WHERE   EC.[descripcion] = 'Disponible'
+      WHERE   EC.[descripcion] = 'Habilitado'
       AND
       (   SELECT COUNT(*)
       FROM    [dbo].[Reservas] R

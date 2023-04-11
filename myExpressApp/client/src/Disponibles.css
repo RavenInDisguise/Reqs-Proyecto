@@ -1,6 +1,6 @@
-@media (min-height: 575px) and (not (max-width: 899px)) {
+@media (min-height: 575px) and (not (max-width: 999px)) {
     .Lista-Cubiculos.disponible {
-        width: 900px;
+        width: 1000px;
         min-height: 500px;
         max-height: calc(100% - 75px);
         box-sizing: content-box;
