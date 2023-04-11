@@ -701,7 +701,7 @@ router.put('/reserva/confirmar', async (req, res) => {
   const fecha = new Date();
   const email = saved.email;
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Reservas SET confirmado = 1 WHERE id =` + idReserva;
+  const query = `UPDATE Reservas SET confirmado = 1 WHERE id = ${idReserva}`;
 
   consulta.query(query,(err, resultado) => {
     if (err) {
@@ -712,21 +712,25 @@ router.put('/reserva/confirmar', async (req, res) => {
       console.log('Consulta realizada');
       const stJson = JSON.stringify({idReserva,nombre,fecha,estudiante})
 
+      //creacion del qr
       qr.toDataURL(stJson, async(err,url)=>{
 
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage([612, 792]);
         const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
+        //configuracion del pdf
         const response = await fetch(url);
         const imageBytes = await response.arrayBuffer();
-        const qrImage = await pdfDoc.embedPng(imageBytes);
 
+        //insersion qr y texto en el pdf 
+        const qrImage = await pdfDoc.embedPng(imageBytes);
         const qrDims = qrImage.scale(3);
         const text = `Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}`;
         page.drawText(text, { x: 50, y: 700, font, size: 24 });
         page.drawImage(qrImage, { x: 50, y: 200, width: qrDims.width, height: qrDims.height });
 
+        //guardado del pdf
         const pdfBytes = await pdfDoc.save();
 
         const mailOptions = {
