@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import './ListaEstudiantes.css';
 import '../Tarjeta.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faAddressBook, faCalendarDays, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 let listaCompleta = [];
 const reactivarEstudiante = 'Puede volver a activar al estudiante desde el menú de edición';
 
 export default () => {
+    const navigate = useNavigate();
+
     useEffect(() => {
         axios.get('/estudiantes').then((response) => {
             try {
@@ -131,7 +134,8 @@ export default () => {
                                 </div>
                             </div>
                             <div className="opciones">
-                                <FontAwesomeIcon className="iconoOpcion desactivado" icon={faEye} title="Ver historial" />
+                                <FontAwesomeIcon className="iconoOpcion desactivado" icon={faAddressBook} title="Ver detalles del estudiante" />
+                                <FontAwesomeIcon className="iconoOpcion" icon={faCalendarDays} title="Ver historial" onClick={() => {navigate('/AdminReservas?idEstudiante=' + e.id)}} />
                                 <FontAwesomeIcon className="iconoOpcion desactivado" icon={faPenToSquare} title="Modificar estudiante" />
                                 {(e.activo) ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Desactivar estudiante" onClick={() => {
