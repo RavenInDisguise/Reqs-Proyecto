@@ -561,6 +561,23 @@ router.put('/reserva/eliminar', (req, res) => {
   });
 });
 
+//confirmar reserva
+router.put('/reserva/confirmar', (req, res) => {
+  const idReserva = req.query.id;
+  const consulta = new sqlcon.Request();
+  const query = `UPDATE Reservas SET confirmado = 1 WHERE id =` + idReserva;
+
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+      console.log(err);
+      res.status(500).send('Error al realizar la consulta');
+    } else {
+      res.send(resultado.recordset);
+      console.log('Consulta realizada');
+    }
+  });
+});
+
 //eliminar estudiante
 router.put('/estudiante/eliminar', (req, res) => {
   const idEstudiante = req.query.id;
