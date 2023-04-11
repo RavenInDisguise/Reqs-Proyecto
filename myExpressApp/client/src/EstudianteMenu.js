@@ -37,7 +37,7 @@ export default function EstudianteMenu(){
                         <a href='/Disponibles'>Ver cubículos disponibles</a>
                     </li>
                     <li>
-                        <a href='/Apartados'>Ver lista de cubículos apartados</a>
+                        <a href={`/Apartados?id=${IdEstudiante}`}>Ver lista de cubículos apartados</a>
                     </li>
                 </ul>
             </div>

@@ -518,18 +518,20 @@ router.get('/reservas/cubiculo', (req, res) => {
 //esta contiene eel id de reserva, el nombre, 
 //la capacidad y la fecha y hora de reserva
 router.get('/estudiante/reservas', (req, res) => {
-  const estID = req.query.id;
+  const id = req.query.id;
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
-  var query = `SELECT R.id,
-                C.nombre, 
-                C.capacidad, 
-                FORMAT(R.fecha, 'dd/MM/yyyy') AS fecha,
-                FORMAT(R.horaInicio, 'HH:mm') AS horaInicio,
-                FORMAT(R.horaFin, 'HH:mm') AS horaFin
-              FROM Reservas AS R 
-              LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
-              WHERE R.activo = 1 AND R.idEstudiante =` + estID;
+    var query = `SELECT R.id,
+                        C.nombre, 
+                        C.capacidad,
+                        R.activo,
+                        R.confirmado,
+                        R.fecha AS fecha,
+                          R.horaInicio AS horaInicio,
+                          R.horaFin AS horaFin
+                    FROM Reservas AS R 
+                    INNER JOIN Cubiculos AS C ON R.idCubiculo = C.id
+                    WHERE R.activo = 1 AND R.idEstudiante = '${id}'`
 
   // Ejecutar la consulta
   consulta.query(query, (err, resultado) => {
