@@ -4,8 +4,6 @@ import axios from 'axios';
 import './EditarCubiculo.css';
 import '../Tarjeta.css';
 
-const opciones = [{nombre: "Disponible", activo: true}, {nombre: "En mantenimiento", activo: false}];
-
 export default () => {
     const navigate = useNavigate();
     const parametros = new URLSearchParams('?' + document.URL.split('/').at(-1).split('?').at(-1));
@@ -118,7 +116,7 @@ export default () => {
             }
           }).catch(function (error) {
             try {
-              alert('Ocurrió un error:\n\n- ' + error.response.data.errores.join('\n- '));
+              alert('Ocurrieron uno o más errores al intentar aplicar los cambios:\n\n- ' + error.response.data.errores.join('\n- '));
             }
             catch {
               alert('Ocurrió un error.');

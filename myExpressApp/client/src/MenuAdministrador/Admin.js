@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Navigate, useLocation, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import axios from 'axios';
 import { LoginContext, IdEstContext } from "../App";
 import '../Menu.css';
@@ -23,15 +23,16 @@ function Admin() {
         <div className='container' id='cubiculos-menu'>
             <h1>Gestionar cubículos</h1>
             <ul>
-                <li><a href="/RegistrarCubiculo">Agregar cubículo</a></li>
-                <li><a href="/Cubiculos">Gestionar cubículos existentes</a></li>
-                <li><a href="/Asignaciones">Ver asignaciones</a></li>
+                <li><a href="/RegistrarCubiculo" onClick={(e) => {navigate("/RegistrarCubiculo"); e.preventDefault();}}>Agregar cubículo</a></li>
+                <li><a href="/Cubiculos" onClick={(e) => {navigate("/Cubiculos"); e.preventDefault();}}>Gestionar cubículos existentes</a></li>
             </ul>
-        </div>
-        <div className='container' id='estudiantes-menu'>
             <h1>Gestionar estudiantes</h1>
             <ul>
-                <li><a href="/Estudiantes">Ver estudiantes</a></li>
+                <li><a href="/Estudiantes" onClick={(e) => {navigate("/Estudiantes"); e.preventDefault();}}>Ver estudiantes</a></li>
+            </ul>
+            <h1>Gestionar reservas</h1>
+            <ul>
+                <li><a href="/AdminReservas" onClick={(e) => {navigate("/AdminReservas"); e.preventDefault();}}>Ver reservas</a></li>
             </ul>
         </div>
     </div>
