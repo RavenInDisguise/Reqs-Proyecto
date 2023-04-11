@@ -676,7 +676,7 @@ router.put('/reserva/confirmar', async (req, res) => {
 
         const mailOptions = {
           from: mail,
-          to: `efmz2000@outlook.es`,
+          to: `${email}`,
           subject: 'Confirmación de Reserva',
           html: `<p>Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,
           attachments: [{
