@@ -459,14 +459,18 @@ router.get('/reservas', (req, res) => {
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
   var query = `SELECT R.id,
-                C.nombre, 
-                C.capacidad, 
-                FORMAT(R.fecha, 'dd/MM/yyyy') AS fecha,
-                FORMAT(R.horaInicio, 'HH:mm') AS horaInicio,
-                FORMAT(R.horaFin, 'HH:mm') AS horaFin
+                C.[nombre] nombreCubiculo, 
+                C.[id] idCubiculo, 
+                R.fecha AS fecha,
+                R.horaInicio AS horaInicio,
+                R.horaFin AS horaFin,
+                R.activo AS activo,
+                R.confirmado AS confirmado,
+                CONCAT(E.[nombre], ' ', E.[apellido1], ' ', E.[apellido2]) AS nombreEstudiante,
+                E.[id] AS idEstudiante
               FROM Reservas AS R 
               LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
-              WHERE R.activo = 1`
+              INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante];`
 
   // Ejecutar la consulta
   consulta.query(query, (err, resultado) => {
@@ -590,7 +594,7 @@ router.get('/correo', (req, res) => {
 router.put('/reserva/eliminar', (req, res) => {
   const idReserva = req.query.id;
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Reservas SET activo = 0 WHERE id =` + idReserva;
+  const query = `UPDATE Reservas SET activo = 0, confirmado = 0 WHERE id =` + idReserva;
 
   consulta.query(query, (err, resultado) => {
     if (err) {

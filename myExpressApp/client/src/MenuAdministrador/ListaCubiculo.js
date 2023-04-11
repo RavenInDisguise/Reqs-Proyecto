@@ -4,7 +4,7 @@ import axios from 'axios';
 import './ListaCubiculo.css';
 import '../Tarjeta.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEye, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
+import { faCalendarDays, faPenToSquare, faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
 let listaCompleta = [];
 const reactivarCubiculo = 'Puede volver a activar el cubículo desde el menú de edición';
@@ -134,7 +134,7 @@ export default () => {
                                 </div>
                             </div>
                             <div className="opciones">
-                                <FontAwesomeIcon className="iconoOpcion desactivado" icon={faEye} title="Ver historial" />
+                                <FontAwesomeIcon className="iconoOpcion" icon={faCalendarDays} title="Ver historial" onClick={() => {navigate('/AdminReservas?idCubiculo=' + e.id)}} />
                                 <FontAwesomeIcon className="iconoOpcion" icon={faPenToSquare} onClick={() => {navigate('/EditarCubiculo?id=' + e.id)}} title="Modificar cubículo" />
                                 {(e.estado != 'Eliminado') ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Borrar cubículo" onClick={() => {
