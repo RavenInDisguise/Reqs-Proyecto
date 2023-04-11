@@ -6,6 +6,9 @@ var qr = require('qrcode')
 const nodemailer = require("nodemailer");
 const bcrypt = require('bcrypt')
 const saltRounds = 10
+const { PDFDocument, StandardFonts } = require('pdf-lib');
+
+
 
 const mail = 'bibliotec.itcr@gmail.com'
 
@@ -550,44 +553,66 @@ router.get('/estudiante/reservas', (req, res) => {
 
 
 //prueba para el correo
-router.get('/correo', (req, res) => {
+
+router.get('/correo', async (req, res) => {
   const correo = req.query.correo;
+  const nombre = `Pedro`
+  const estudiante = `Pedro`
   const clave = req.query.clave;
   const fecha = '2020-15-20'
   const horaInicio = '10:00:00'
   const horaFin = '11:00:00'
   const cubiculo = 2
-  const id = 1
-  // Crear una nueva consulta a la base de datos
-  const qrInfo = `id=${id}&fecha=${fecha}&horaInicio=${horaInicio}&horaFin=${horaFin}&cubiculo=${cubiculo}&clave=${clave}`;
-  // Crea el código QR con la información deseada
-  qr.toDataURL(qrInfo, function (err, url) {
+  const idReserva = 1
 
-    if (err) throw err;
+  const stJson = `hilbas jbflsnc si;dc BI?ANCLHBZC`
 
-    let  mailOptions = {
-    from: mail,
-    to: `efmz2000@outlook.es` ,
-    subject: 'inicio de sesion exitoso',
-    html: `Contenido del correo
-          <img src="${url}"/>`, // Agrega el código QR a la plantilla de correo electrónico
-    };
-    
-    
-    console.log(mailOptions)
 
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-        console.log(error);
-        res.status(500).send('Error al enviar el correo');
-      } else {
-        console.log('Correo enviado: ' + info.response);
-        res.send('Correo enviado');
-      }
+  qr.toDataURL(stJson, async (err, url) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+  
+    const pdfDoc = await PDFDocument.create();
+const page = pdfDoc.addPage([612, 792]);
+const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-    
-    
-    });  
+const response = await fetch(url);
+const imageBytes = await response.arrayBuffer();
+const qrImage = await pdfDoc.embedPng(imageBytes);
+
+const qrDims = qrImage.scale(3);
+const text = `Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}`;
+page.drawText(text, { x: 50, y: 700, font, size: 24 });
+page.drawImage(qrImage, { x: 50, y: 200, width: qrDims.width, height: qrDims.height });
+
+const pdfBytes = await pdfDoc.save();
+
+const mailOptions = {
+  from: mail,
+  to: `efmz2000@outlook.es`,
+  subject: 'Confirmación de Reserva',
+  html: `<p>Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,
+  attachments: [{
+    filename: 'Confirmación.pdf',
+    content: pdfBytes,
+    contentType: 'application/pdf',
+  }],
+};
+    // ...
+  
+
+  // Enviar el correo electrónico
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+      res.status(500).send('Error al enviar el correo');
+    } else {
+      console.log('Correo enviado: ' + info.response);
+      res.send('Correo enviado');
+    }
+  });
   });
 });
 //Rutas PUT
@@ -611,7 +636,7 @@ router.put('/reserva/eliminar', (req, res) => {
 });
 
 //confirmar reserva
-router.put('/reserva/confirmar', (req, res) => {
+router.put('/reserva/confirmar', async (req, res) => {
   const saved = req.session.user;
   const idReserva = req.query.id;
   const nombre = req.query.nombre;
@@ -623,7 +648,7 @@ router.put('/reserva/confirmar', (req, res) => {
   const consulta = new sqlcon.Request();
   const query = `UPDATE Reservas SET confirmado = 1 WHERE id =` + idReserva;
 
-  consulta.query(query, (err, resultado) => {
+  consulta.query(query,(err, resultado) => {
     if (err) {
       console.log(err);
       res.status(500).send('Error al realizar la consulta');
@@ -632,16 +657,33 @@ router.put('/reserva/confirmar', (req, res) => {
       console.log('Consulta realizada');
       const stJson = JSON.stringify({idReserva,nombre,fecha,estudiante})
 
-      qr.toDataURL(stJson,(err,url)=>{
+      qr.toDataURL(stJson, async(err,url)=>{
+
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([612, 792]);
+        const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+        const response = await fetch(url);
+        const imageBytes = await response.arrayBuffer();
+        const qrImage = await pdfDoc.embedPng(imageBytes);
+
+        const qrDims = qrImage.scale(3);
+        const text = `Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}`;
+        page.drawText(text, { x: 50, y: 700, font, size: 24 });
+        page.drawImage(qrImage, { x: 50, y: 200, width: qrDims.width, height: qrDims.height });
+
+        const pdfBytes = await pdfDoc.save();
 
         const mailOptions = {
           from: mail,
-          to: `${email}` ,
+          to: `efmz2000@outlook.es`,
           subject: 'Confirmación de Reserva',
-          html:`<p>Se ja confirmado su reserva para el cubículo: ${nombre}
-          para la fecha:
-          Desde ${horaInicio} hasta ${horaFin}</p>
-          <img src='${url}'/>`
+          html: `<p>Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,
+          attachments: [{
+            filename: 'Confirmación.pdf',
+            content: pdfBytes,
+            contentType: 'application/pdf',
+          }],
         };
         
         transporter.sendMail(mailOptions, function(error, info){
