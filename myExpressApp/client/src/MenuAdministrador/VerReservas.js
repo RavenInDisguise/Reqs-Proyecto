@@ -143,6 +143,7 @@ export default () => {
         for (let i = 0; i < listaCompleta.length; i++) {
             if (listaCompleta[i].id == idReserva) {
                 listaCompleta[i].activo = false;
+                listaCompleta[i].confirmado = false;
                 break;
             }
         }
