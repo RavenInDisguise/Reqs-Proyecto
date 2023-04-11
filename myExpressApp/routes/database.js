@@ -505,7 +505,6 @@ router.get('/reservas/cubiculo', (req, res) => {
       res.send(resultado.recordset);
       console.log('Consulta realizada');
     }
-    
   });
 });
 
@@ -547,26 +546,41 @@ router.get('/estudiante/reservas', (req, res) => {
 router.get('/correo', (req, res) => {
   const correo = req.query.correo;
   const clave = req.query.clave;
+  const fecha = '2020-15-20'
+  const horaInicio = '10:00:00'
+  const horaFin = '11:00:00'
+  const cubiculo = 2
+  const id = 1
   // Crear una nueva consulta a la base de datos
-  
+  const qrInfo = `id=${id}&fecha=${fecha}&horaInicio=${horaInicio}&horaFin=${horaFin}&cubiculo=${cubiculo}&clave=${clave}`;
+  // Crea el código QR con la información deseada
+  qr.toDataURL(qrInfo, function (err, url) {
 
-  const mailOptions = {
+    if (err) throw err;
+
+    let  mailOptions = {
     from: mail,
-    to: `${correo}` ,
+    to: `efmz2000@outlook.es` ,
     subject: 'inicio de sesion exitoso',
-    text: 'Contenido del correo'
-  };
-  
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-      console.log(error);
-    } else {
-      console.log('Correo enviado: ' + info.response);
-    }
-
-  
-  res.send('Correo enviado');
+    html: `Contenido del correo
+          <img src="${url}"/>`, // Agrega el código QR a la plantilla de correo electrónico
+    };
     
+    
+    console.log(mailOptions)
+
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+        res.status(500).send('Error al enviar el correo');
+      } else {
+        console.log('Correo enviado: ' + info.response);
+        res.send('Correo enviado');
+      }
+
+    
+    
+    });  
   });
 });
 //Rutas PUT
@@ -1184,6 +1198,7 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
     }else{
       res.send({message:'Se inserto correctamente'})
       let stJson = JSON.stringify({idCubiculo:idCubiculo,idEstudiante:IdEstudiante,inicio:horaInicio,fin:horaFin})
+      let strin = 
       qr.toDataURL(stJson,(err,url)=>{
 
         console.log(url);
@@ -1191,10 +1206,10 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
           from: mail,
           to: `${email}` ,
           subject: 'Reserva',
-          text: `Se ha reservado el cubículo Nombre: ${nombre}
+          html:`<p>Se ha reservado el cubículo: ${nombre}
           para la fecha:
-          Desde ${horaInicio} hasta ${horaFin}`,
-          html:`<img src='${url}'/>`
+          Desde ${horaInicio} hasta ${horaFin}</p>
+          <img src='${url}'/>`
         };
         
         transporter.sendMail(mailOptions, function(error, info){
