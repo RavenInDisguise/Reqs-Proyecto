@@ -1231,4 +1231,37 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
   })
 })
 
+//Crear Cubiculo
+router.post("/cubiculo/crear", (req, res) => {
+  const bod = req.body;
+  const idEstado = bod.idEstado;
+  const nombre = bod.nombre;
+  const capacidad = bod.capacidad;
+  const minutosMax = bod.minutosMax;
+
+  const queryI = `
+  INSERT INTO Cubiculos (
+    idEstado,
+    nombre,
+    capacidad,
+    minutosMax)
+  VALUES (
+    '${idEstado}',
+    '${nombre}',
+    '${capacidad}',
+    '${minutosMax}')
+  `
+  const insertar = new sqlcon.Request();
+
+  insertar.query(queryI, (err, resultado)=>{
+    if (err) {
+      res.status(500).send({message:'Error al registrar cubiculo'});
+    } else {
+      res.status(200).send({message:'Registro Exitoso'});
+    }
+  });
+
+
+});
+
 module.exports = router;

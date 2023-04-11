@@ -23,7 +23,7 @@ function Admin() {
         <div className='container' id='cubiculos-menu'>
             <h1>Gestionar cubículos</h1>
             <ul>
-                <li><a href="/Agregar">Agregar cubículo</a></li>
+                <li><a href="/RegistrarCubiculo">Agregar cubículo</a></li>
                 <li><a href="/Cubiculos">Gestionar cubículos existentes</a></li>
                 <li><a href="/Asignaciones">Ver asignaciones</a></li>
             </ul>
