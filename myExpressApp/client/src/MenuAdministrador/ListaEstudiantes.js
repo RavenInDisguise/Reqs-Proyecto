@@ -136,7 +136,9 @@ export default () => {
                             <div className="opciones">
                                 <FontAwesomeIcon className="iconoOpcion desactivado" icon={faAddressBook} title="Ver detalles del estudiante" />
                                 <FontAwesomeIcon className="iconoOpcion" icon={faCalendarDays} title="Ver historial" onClick={() => {navigate('/AdminReservas?idEstudiante=' + e.id)}} />
-                                <FontAwesomeIcon className="iconoOpcion desactivado" icon={faPenToSquare} title="Modificar estudiante" />
+                                <FontAwesomeIcon className="iconoOpcion" icon={faPenToSquare} title="Modificar estudiante" onClick={()=>
+                                    navigate(`/Estudiante?id=${e.id}`)
+                                }/>
                                 {(e.activo) ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Desactivar estudiante" onClick={() => {
                                         if (window.confirm('¿Desea desactivar al estudiante ' + e.Nombre + '?')) {

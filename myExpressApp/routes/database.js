@@ -191,8 +191,7 @@ router.get('/estudiante', (req, res) => {
                 E.cedula,
                 E.carnet,
                 FORMAT(E.fechaDeNacimiento, 'dd/MM/yyyy') fechaDeNacimiento,
-                U.correo,
-                U.clave
+                U.correo
               FROM Estudiantes AS E 
               LEFT JOIN Usuarios AS U 
               ON U.id = E.idUsuario

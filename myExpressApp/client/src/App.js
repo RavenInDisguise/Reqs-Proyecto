@@ -15,6 +15,7 @@ import VerReservas from "./MenuAdministrador/VerReservas";
 import Apartados from "./Apartados";
 import RegistrarCubiculo from "./MenuAdministrador/RegistrarCubiculo"
 import EditarReserva from "./MenuAdministrador/EditarReserva";
+import EditarEstudiante from "./MenuAdministrador/EditarEstudiante";
 
 export const LoginContext = createContext();
 
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/AdminReservas" element={<VerReservas />} />
             <Route path="/RegistrarCubiculo" element={<RegistrarCubiculo />} />
             <Route path="/EditarReserva" element={<EditarReserva />}/>
+            <Route path="/Estudiante" element={<EditarEstudiante/>}/>
         </Routes>
       </div>
     </>

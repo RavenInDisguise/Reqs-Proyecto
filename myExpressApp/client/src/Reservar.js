@@ -19,7 +19,6 @@ function Reservar() {
 
     useEffect(() => {
         axios.get("http://localhost:3001/login").then((response) => {
-            console.log(response.data.idEstudiante)
             if(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante'){
                 setIdEstudiante(response.data.idEstudiante);
                 setEmail(response.data.email);
