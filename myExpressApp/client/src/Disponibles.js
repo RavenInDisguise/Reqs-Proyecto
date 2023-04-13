@@ -41,6 +41,12 @@ function Disponibles() {
     }  
 
     useEffect(() => {
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante')){
+                navigate('/')
+            }
+        })
+
         axios.get('/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios.map((e) => ({label : e, value: e})))

@@ -102,7 +102,7 @@ router.post('/login', async (req, res) => {
             res.send(req.session.user);
           } else {
             /* No coincide */
-            res.status(401).send({  });
+            res.status(401).send({message:'No coincide el usuario o contraseña'});
           }
         })
       } else {
@@ -190,7 +190,7 @@ router.get('/estudiante', (req, res) => {
                 E.apellido2,
                 E.cedula,
                 E.carnet,
-                FORMAT(E.fechaDeNacimiento, 'dd/MM/yyyy') fechaDeNacimiento,
+                E.fechaDeNacimiento fechaDeNacimiento,
                 U.correo
               FROM Estudiantes AS E 
               LEFT JOIN Usuarios AS U 
@@ -1351,8 +1351,8 @@ Su reserva sigue activa. Puede hacer cambios a sus reservas ingresando al sitio 
 
 //editar estudiantes
 router.put("/estudiante/actualizar",(req,res) =>{
-  const bod = req.query
-  const id = bod.id
+  const bod = req.body
+  const id = bod.idEstudiante
   const nombre = bod.nombre
   const apellido1 = bod.apellido1
   const apellido2 = bod.apellido2
@@ -1360,35 +1360,49 @@ router.put("/estudiante/actualizar",(req,res) =>{
   const carnet = bod.carnet
   const correo = bod.correo
   const clave = bod.clave
-  const fechaDeNacimiento = bod.fechaDeNacimiento
+  const fechaDeNacimiento = bod.fechaNacimiento.split("T")[0]
 
-  const consulta = new sqlcon.Request();
-  const query1 = `UPDATE Estudiantes
-                  SET 
-                    nombre = '${nombre}', 
-                    apellido1 = '${apellido1}', 
-                    apellido2 = '${apellido2}', 
-                    cedula = ${cedula}, 
-                    carnet = ${carnet}, 
-                    fechaDeNacimiento = '${fechaDeNacimiento}'
-                  WHERE id = ${id};`;
+  bcrypt.hash(clave, 10, (err, hash) => {
 
-  const query2 = `UPDATE Usuarios
-                  SET 
-                    correo = '${correo}',
-                    clave = '${clave}'
-                  WHERE id = (SELECT idUsuario FROM Estudiantes WHERE id = ${id});`;
-
-
-  consulta.query(query1 + ";" + query2, (err, resultado) => {
     if (err) {
-      console.log(err);
-      res.status(500).send('Error al actualizar el estudiante');
-    } else {
-      res.send(resultado);
-      console.log('Consulta realizada');
+      console.log(err)
+      return res.send({ message: err });
     }
-  });
+    const consulta = new sqlcon.Request();
+
+    const query1 = `UPDATE Estudiantes
+                    SET 
+                      nombre = '${nombre}', 
+                      apellido1 = '${apellido1}', 
+                      apellido2 = '${apellido2}', 
+                      cedula = '${cedula}', 
+                      carnet = '${carnet}', 
+                      fechaDeNacimiento = '${fechaDeNacimiento}'
+                    WHERE id = '${id}';`;
+  
+    const query2 = (clave == ''? `UPDATE Usuarios
+                                  SET 
+                                   correo = '${correo}'
+                                  WHERE id = (SELECT idUsuario FROM Estudiantes WHERE id = '${id}');`:
+                                 `UPDATE Usuarios
+                                  SET 
+                                    correo = '${correo}',
+                                    clave = '${hash}'
+                                  WHERE id = (SELECT idUsuario FROM Estudiantes WHERE id = '${id}');`) 
+    
+  
+  
+    consulta.query(query1 + ";" + query2, (err, resultado) => {
+      if (err) {
+        console.log(err);
+        res.status(500).send({message:'Error al actualizar el estudiante'});
+      }else{
+        res.send({message:'Cambio Exitoso'});
+        console.log('Consulta realizada');
+      }
+    });
+    
+    })
 });
 
 

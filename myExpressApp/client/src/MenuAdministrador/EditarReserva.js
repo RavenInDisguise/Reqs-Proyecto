@@ -35,6 +35,12 @@ export default () => {
     const [estudiante, setEstudiante] = useState(null);
 
     useEffect(() => {
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
+                navigate('/')
+            }
+        })
+        
         if (!idReserva) {
             navigate(-1);
         } else {

@@ -12,6 +12,12 @@ const reactivarCubiculo = 'Puede volver a activar el cubículo desde el menú de
 export default () => {
     const navigate = useNavigate();
     useEffect(() => {
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
+                navigate('/')
+            }
+        })
+        
         axios.get('/cubiculos').then((response) => {
             try {
                 listaCompleta = response.data;

@@ -12,26 +12,31 @@ function EditarEstudiante() {
     const idEstudiante =  parametros.get('id');
     const [nombre, setNombre] = useState(null)
     const [apellido1, setApellido1] = useState(null)
-    const [apellido2, setApellido2] = useState(null)
-    const [carnet, setCarnet] = useState(null)
-    const [cedula, setCedula] = useState(null)
-    const [correo, setCorreo] = useState(null)
-    const [fechaNacimiento, setFechaNacimiento] = useState(null)
-    const [clave, setClave] = useState(null)
+    const [apellido2, setApellido2] = useState('')
+    const [carnet, setCarnet] = useState('')
+    const [cedula, setCedula] = useState('')
+    const [correo, setCorreo] = useState('')
+    const [fechaNacimiento, setFechaNacimiento] = useState('')
+    const [clave, setClave] = useState('')
 
     useEffect(()=>{
-
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
+                navigate('/')
+            }
+        })
+        
         axios.get(`estudiante?id=${idEstudiante}`)
         .then((response) => {
             try {
                 console.log(response.data)
-                setNombre(response.data.nombre);
-                setApellido1(response.data.apellido1);
-                setApellido2(response.data.apellido2);
-                setCarnet(response.data.carnet);
-                setCedula(response.data.cedula);
-                setCorreo(response.data.correo);
-                setFechaNacimiento(response.data.fechaDeNacimiento);
+                setNombre(response.data[0].nombre);
+                setApellido1(response.data[0].apellido1);
+                setApellido2(response.data[0].apellido2);
+                setCarnet(response.data[0].carnet);
+                setCedula(response.data[0].cedula);
+                setCorreo(response.data[0].correo);
+                setFechaNacimiento(response.data[0].fechaDeNacimiento);
             } catch (error) {
                 alert('Ocurrió un error al cargar la información');
             }
@@ -40,7 +45,30 @@ function EditarEstudiante() {
 
     function handleSubmit(e){
         e.preventDefault();
-        
+
+        axios.put('/estudiante/actualizar',{
+            idEstudiante,
+            nombre,
+            apellido1,
+            apellido2,
+            cedula,
+            carnet,
+            correo,
+            fechaNacimiento,
+            clave
+        }).then(res=>{
+            alert(res.data.message);
+            navigate('/Estudiantes')
+
+            
+        }).catch(function (error) {
+            try {
+              alert('Ocurrieron uno o más errores al intentar aplicar los cambios:\n\n- ' + error.response.data.errores.join('\n- '));
+            }
+            catch {
+              alert('Ocurrió un error.');
+            }
+          });
     }
 
     return (
@@ -77,7 +105,7 @@ function EditarEstudiante() {
                 </div>
                 <div className="form-group">
                     <label for='Fecha'>Fecha de Nacimiento</label>
-                    <input className="form-control" id="Fecha" type="date" value={fechaNacimiento} onChange={e=>setFechaNacimiento(e.target.value)} />
+                    <input className="form-control" id="Fecha" type="date" value={fechaNacimiento.split("T")[0]} onChange={e=>setFechaNacimiento(e.target.value)} />
                 </div>
                 <div className="form-group">
                     <label for='Clave'>Clave</label>

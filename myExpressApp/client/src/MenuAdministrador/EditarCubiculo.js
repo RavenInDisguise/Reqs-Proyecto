@@ -23,6 +23,12 @@ export default () => {
     const [estadoActual, setEstadoActual] = useState();
 
     useEffect(() => {
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
+                navigate('/')
+            }
+        })
+
         if (!idCubiculo) {
             navigate(-1);
         } else {

@@ -13,6 +13,12 @@ export default () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
+                navigate('/')
+            }
+        })
+        
         axios.get('/estudiantes').then((response) => {
             try {
                 listaCompleta = response.data;

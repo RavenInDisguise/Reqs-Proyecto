@@ -53,6 +53,12 @@ function Registrar () {
 
    
     useEffect(() => {
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
+                navigate('/')
+            }
+        })
+        
         axios.get('/estados').then((response) => {
             try {
                 setEstados(response.data.estados)

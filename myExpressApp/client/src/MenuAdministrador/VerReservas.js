@@ -29,6 +29,12 @@ export default () => {
     ].filter((e) => (e != null)).join(' ');
 
     useEffect(() => {
+        axios.get("http://localhost:3001/login").then((response) => {
+            if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
+                navigate('/')
+            }
+        })
+        
         axios.get('/reservas').then((response) => {
             try {
                 listaCompleta = response.data;
