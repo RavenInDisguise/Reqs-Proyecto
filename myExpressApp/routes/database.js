@@ -615,7 +615,7 @@ const imageBytes = await response.arrayBuffer();
 const qrImage = await pdfDoc.embedPng(imageBytes);
 
 const qrDims = qrImage.scale(3);
-const text = `Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}`;
+const text = `Se ha confirmado su reserva para el cubículo:\nNombre:${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}`;
 page.drawText(text, { x: 50, y: 700, font, size: 24 });
 page.drawImage(qrImage, { x: 50, y: 200, width: qrDims.width, height: qrDims.height });
 
@@ -624,8 +624,8 @@ const pdfBytes = await pdfDoc.save();
 const mailOptions = {
   from: mail,
   to: `efmz2000@outlook.es`,
-  subject: 'Confirmación de Reserva',
-  html: `<p>Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,
+  subject: 'Confirmación de reserva',
+  html: `<p>Se ha confirmado su reserva para el cubículo:\nNombre:${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,
   attachments: [{
     filename: 'Confirmación.pdf',
     content: pdfBytes,
@@ -1461,7 +1461,7 @@ router.post("/api/estudiante/crear", (req, res) => {
         const mailOptions = {
           from: mail,
           to: `${correo}` ,
-          subject: 'Registro Exitoso',
+          subject: 'Registro exitoso',
           text: `Se ha registrado exitosamente al estudiante:
           Nombre: ${nombre}
           Apellidos: ${apellido1} ${apellido2}
@@ -1476,7 +1476,7 @@ router.post("/api/estudiante/crear", (req, res) => {
             console.log('Correo enviado: ' + info.response);
           }
         });
-        res.status(200).send({message:'Registro Exitoso'});
+        res.status(200).send({message:'Registro exitoso'});
       }
     });
     })
@@ -1497,12 +1497,12 @@ router.post('/api/Reservar/Cubiculo',(req, res)=>{
       console.log(err)
       res.status(500).send({message:'Error al registrar la reserva'});
     }else{
-      res.send({message:'Se inserto correctamente'})
+      res.send({message:'Reserva registrada existosamente'})
       
       const mailOptions = {
         from: mail,
         to: `${email}` ,
-        subject: 'Reserva de Cubículo',
+        subject: 'Reserva de cubículo',
         html:`<p>Se ha reservado el cubículo: ${nombre}
         para la fecha:
         Desde ${horaInicio} hasta ${horaFin}</p>

@@ -13,9 +13,10 @@ const formatoHora = {hour12: true, hour: 'numeric', minute: 'numeric'};
 function Apartados() {
 
     const navigate = useNavigate();
-    const [listaReservas,setListaReservas]=useState([])
-    const [IdEstudiante, setIdEstudiante] = useState(null)
+    const [listaReservas,setListaReservas]=useState([]);
+    const [IdEstudiante, setIdEstudiante] = useState(null);
     const [email, setEmail] = useState('')
+    const [infoCargada, setInfoCargada] = useState(false);
 
     useEffect(() => {
 
@@ -27,6 +28,7 @@ function Apartados() {
                 axios.get(`/api/estudiante/reservas?id=${res.data.idEstudiante}`).then((response) => {
                     try {
                         setListaReservas(response.data);
+                        setInfoCargada(true);
                     } catch (error) {
                         alert('Ocurrió un error al cargar la información');
                     }
@@ -92,7 +94,8 @@ function Apartados() {
     }
     return (
         <div className="tarjeta Lista-Reservas">
-            <h1>Lista de Reservas</h1>
+            <h1>Lista de reservas</h1>
+            {(infoCargada ?
             <div className="lista">
                 {listaReservas.map((e)=>(
                     <div className="reserva-lista">
@@ -105,7 +108,7 @@ function Apartados() {
                                 <b></b>
                             </p>
                             <div className="otros-datos">
-                                <p><b>Estado:{(e.confirmado?'Confirmado':(e.activo?'Sin Confirmar':'Eliminada'))}</b><b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
+                                <p><b>Estado:</b> {(e.confirmado?'Confirmado':(e.activo?'Sin confirmar':'Eliminada'))} <b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
                             </div>
                         </div>
                         <div className="opciones">
@@ -120,7 +123,7 @@ function Apartados() {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> : <p>Cargando...</p>)}
         </div>
     )
 }

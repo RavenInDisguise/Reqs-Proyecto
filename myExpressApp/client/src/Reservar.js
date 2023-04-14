@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import './Tarjeta.css';
+import './Reservar.css'
 
 function Reservar() {
 
@@ -49,7 +50,8 @@ function Reservar() {
         }
     }, [])
 
-        function reservar(){
+        function reservar(e){
+            e.preventDefault();
             const nuevaHora = new Date(horaInicio.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/, '$3-$2-$1T$4:$5'));
             nuevaHora.setMinutes(nuevaHora.getMinutes() + tiempoMaximo);
             const horaFin = nuevaHora.toISOString().replace("T", " ").replace("Z", "")
@@ -67,30 +69,34 @@ function Reservar() {
 
 
   return (
-    <div className="tarjeta reserva">
-        <h1>Reservar Cubículo</h1>
-        <div className='Cubiculo-datos'>
-            <div className="Dato">
-                <label for='nombre-cubiculo'>Nombre:</label>
-                <input id='nombre-cubiculo' value={nombre} disabled/>
+    <div className="tarjeta reservar">
+        <h1>Reservar cubículo</h1>
+        {(nombre) ?
+        <form action="" onSubmit={(e) => {reservar(e)}}>
+            <div className='Cubiculo-datos'>
+                <div className="form-group">
+                    <label for='nombre-cubiculo'>Nombre</label>
+                    <input id='nombre-cubiculo' value={nombre} disabled/>
+                </div>
+                <div className="form-group">
+                    <label for='capacidad-cubiculo'>Capacidad</label>
+                    <input id='capacidad-cubiculo' value={capacidad} disabled/>
+                </div>
+                <div className="form-group">
+                    <label for='TiempoMax-cubiculo'>Tiempo máximo</label>
+                    <input id='TiempoMax-cubiculo' value={tiempoMaximo + ' minutos'} disabled/>
+                </div>
+                <div className="form-group">
+                    <p>Servicios especiales</p>
+                    <ul style={ {"text-align": "left" } }>
+                        {servicios.filter((servicio) => (servicio.activo)).map(servicio =>(<li>{servicio.nombre}</li>))}
+                    </ul>
+                </div>
             </div>
-            <div className="Dato">
-                <label for='capacidad-cubiculo'>Capacidad:</label>
-                <input id='capacidad-cubiculo' value={capacidad} disabled/>
-            </div>
-            <div className="Dato">
-                <label for='TiempoMax-cubiculo'>Tiempo Maximo:</label>
-                <input id='TiempoMax-cubiculo' value={tiempoMaximo + ' minutos'} disabled/>
-            </div>
-            <div className="Dato">
-                <ul>
-                    {servicios.filter((servicio) => (servicio.activo)).map(servicio =>(<li>{servicio.nombre}</li>))}
-                </ul>
-            </div>
-        </div>
-        <button onClick={e=>{reservar()}}>Reservar</button>
+            <input className="btn btn-primary" type="submit" value="Reservar" />
+        </form> : <p>Cargando...</p>}
     </div>
   )
 }
 
-export default Reservar
+export default Reservar;

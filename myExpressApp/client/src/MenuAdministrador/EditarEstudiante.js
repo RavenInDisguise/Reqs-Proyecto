@@ -73,46 +73,51 @@ function EditarEstudiante() {
 
     return (
         <div className="tarjeta estudiante-editar">
-            <h3>Editar Estudiante</h3>
+            <h3>Editar estudiante</h3>
+            {((nombre) ?
             <form action="" onSubmit={(e)=>{handleSubmit(e)}}>
                 <div className="form-group">
                     <label for='idEstudiante'>ID</label>
-                    <input className="form-control" id="idEstudiante" type='number' title='No es posible cambiar el ID del estudiante' disabled value={idEstudiante}/>
+                    <input className="form-control" id="idEstudiante" required type='number' title='No es posible cambiar el ID del estudiante' disabled value={idEstudiante}/>
                 </div>
                 <div className="form-group">
                     <label for='nombreEst'>Nombre</label>
-                    <input className="form-control" id="nombreEst" type="text" value={nombre} onChange={e => setNombre(e.target.value)} />
+                    <input className="form-control" id="nombreEst" required type="text" value={nombre} onChange={e => setNombre(e.target.value)} />
                 </div>
                 <div className="form-group">
-                    <label for='apellido1'>Apellido 1</label>
-                    <input className="form-control" id="apellido1" type="text" value={apellido1} onChange={e=>setApellido1(e.target.value)} />
+                    <div className="form-element">
+                        <label for='apellido1'>Primer apellido</label>
+                        <input className="form-control" id="apellido1" required type="text" value={apellido1} onChange={e=>setApellido1(e.target.value)} />
+                    </div>
+                    <div className="form-element">
+                        <label for='apellido2'>Segundo apellido</label>
+                        <input className="form-control" id="apellido2" required type="text" value={apellido2} onChange={e=>setApellido2(e.target.value)} />
+                    </div>
                 </div>
                 <div className="form-group">
-                    <label for='apellido2'>Apellido 2</label>
-                    <input className="form-control" id="apellido2" type="text" value={apellido2} onChange={e=>setApellido2(e.target.value)} />
+                    <div className="form-element">
+                        <label for='cedula'>Cédula</label>
+                        <input className="form-control" id="cedula" required type="number" value={cedula} onChange={e=>setCedula(e.target.value)} />
+                    </div>
+                    <div className="form-element">
+                        <label for='carnet'>Carné</label>
+                        <input className="form-control" id="carnet" required type="number" value={carnet} onChange={e=>setCarnet(e.target.value)} />
+                    </div>
                 </div>
                 <div className="form-group">
-                    <label for='cedula'>Cedula</label>
-                    <input className="form-control" id="cedula" type="number" value={cedula} onChange={e=>setCedula(e.target.value)} />
+                    <label for=''>Correo institucional</label>
+                    <input className="form-control" id="correo" required type='email' value={correo} onChange={e=>setCorreo(e.target.value)} />
                 </div>
                 <div className="form-group">
-                    <label for='carnet'>Carnet</label>
-                    <input className="form-control" id="carnet" type="number" value={carnet} onChange={e=>setCarnet(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label for=''>Correo Institucional</label>
-                    <input className="form-control" id="correo" type='email' value={correo} onChange={e=>setCorreo(e.target.value)} />
-                </div>
-                <div className="form-group">
-                    <label for='Fecha'>Fecha de Nacimiento</label>
-                    <input className="form-control" id="Fecha" type="date" value={fechaNacimiento.split("T")[0]} onChange={e=>setFechaNacimiento(e.target.value)} />
+                    <label for='Fecha'>Fecha de nacimiento</label>
+                    <input className="form-control" id="Fecha" required type="date" value={fechaNacimiento.split("T")[0]} onChange={e=>setFechaNacimiento(e.target.value)} />
                 </div>
                 <div className="form-group">
                     <label for='Clave'>Clave</label>
                     <input className="form-control" id="Clave" type="password" value={clave} onChange={e=>setClave(e.target.value)} />
                 </div>
                 <input className="btn btn-primary" type="submit" value="Guardar" />
-            </form>
+            </form> : <p>Cargando...</p>)}
         </div>
     )
 }

@@ -1,0 +1,30 @@
+.reservar {
+    min-width: 800px;
+}
+
+.reservar form .form-group {
+    display: flex;
+    column-gap: 10px;
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+.reservar form .form-group label {
+    margin: auto;
+    white-space: nowrap;
+}
+
+.reservar form .form-group input:disabled {
+    cursor: not-allowed;
+}
+
+input:disabled+label {
+    cursor: not-allowed;
+    color: rgb(101, 101, 101);
+}
+
+@media (prefers-color-scheme: dark) {
+    input:disabled+label {
+        color: rgb(175, 175, 175);
+    }
+}
