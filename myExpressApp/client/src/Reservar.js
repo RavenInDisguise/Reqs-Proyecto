@@ -18,7 +18,7 @@ function Reservar() {
     const [email, setEmail] = useState('')
 
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             if(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante'){
                 setIdEstudiante(response.data.idEstudiante);
                 setEmail(response.data.email);
@@ -30,7 +30,7 @@ function Reservar() {
         if (!idCubiculo) {
             navigate(-1);
         } else {
-            axios.get('http://localhost:3001/cubiculo?id=' + idCubiculo).then((response) => {
+            axios.get('/api/cubiculo?id=' + idCubiculo).then((response) => {
                 try {
                     let info = response.data;
                     let newServicios = info[0].servicios;
@@ -53,7 +53,7 @@ function Reservar() {
             const nuevaHora = new Date(horaInicio.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/, '$3-$2-$1T$4:$5'));
             nuevaHora.setMinutes(nuevaHora.getMinutes() + tiempoMaximo);
             const horaFin = nuevaHora.toISOString().replace("T", " ").replace("Z", "")
-            axios.post('http://localhost:3001/Reservar/Cubiculo',{idCubiculo, IdEstudiante,horaInicio,horaFin,email, nombre}).then((response)=>{
+            axios.post('/api/Reservar/Cubiculo',{idCubiculo, IdEstudiante,horaInicio,horaFin,email, nombre}).then((response)=>{
                 try{
                     alert(response.data.message)
                     navigate('/Menu')

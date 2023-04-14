@@ -31,7 +31,7 @@ function Disponibles() {
     function getData(){
         const fechaInicio = (new Date(fecha + ' ' + horaInicio)).toISOString().replace("T", " ").split(".")[0];
         const fechaFinal = (new Date(fecha + ' ' + horaFin)).toISOString().replace("T", " ").split(".")[0]
-        axios.get(`/cubiculos/disponibles?horaInicio=${fechaInicio}&horaFin=${fechaFinal}`,).then((response) => {
+        axios.get(`/api/cubiculos/disponibles?horaInicio=${fechaInicio}&horaFin=${fechaFinal}`,).then((response) => {
             try {
                 setListaCubiculos(response.data);
             } catch (error) {
@@ -41,13 +41,13 @@ function Disponibles() {
     }  
 
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante')){
                 navigate('/')
             }
         })
 
-        axios.get('/servicios').then((response) => {
+        axios.get('/api/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios.map((e) => ({label : e, value: e})))
             } catch (error) {

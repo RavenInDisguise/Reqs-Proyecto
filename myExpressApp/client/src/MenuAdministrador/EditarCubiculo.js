@@ -23,7 +23,7 @@ export default () => {
     const [estadoActual, setEstadoActual] = useState();
 
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
                 navigate('/')
             }
@@ -32,7 +32,7 @@ export default () => {
         if (!idCubiculo) {
             navigate(-1);
         } else {
-            axios.get('/cubiculo?id=' + idCubiculo).then((response) => {
+            axios.get('/api/cubiculo?id=' + idCubiculo).then((response) => {
                 try {
                     let info = response.data;
                     let newServicios = info[0].servicios;
@@ -52,7 +52,7 @@ export default () => {
                     alert('Ocurrió un error al cargar la información');
                 }
             })
-            axios.get('/estados').then((response) => {
+            axios.get('/api/estados').then((response) => {
                 try {
                     setEstados(response.data.estados)
                 } catch (error) {
@@ -101,7 +101,7 @@ export default () => {
     }
 
     const handleSubmit = (e) => {
-        axios.put('/cubiculo', {
+        axios.put('/api/cubiculo', {
             idCubiculo,
             nombre,
             estado: estadoActual,

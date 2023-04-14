@@ -13,13 +13,13 @@ export default () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
                 navigate('/')
             }
         })
         
-        axios.get('/estudiantes').then((response) => {
+        axios.get('/api/estudiantes').then((response) => {
             try {
                 listaCompleta = response.data;
             } catch (error) {
@@ -148,7 +148,7 @@ export default () => {
                                 {(e.activo) ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Desactivar estudiante" onClick={() => {
                                         if (window.confirm('¿Desea desactivar al estudiante ' + e.Nombre + '?')) {
-                                            axios.put('/estudiante/eliminar?id=' + e.id).then((response) => {
+                                            axios.put('/api/estudiante/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {
                                                     desactivarUsuario(e.id);

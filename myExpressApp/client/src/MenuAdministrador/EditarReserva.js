@@ -35,7 +35,7 @@ export default () => {
     const [estudiante, setEstudiante] = useState(null);
 
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
                 navigate('/')
             }
@@ -44,7 +44,7 @@ export default () => {
         if (!idReserva) {
             navigate(-1);
         } else {
-            axios.get('/reserva?idReserva=' + idReserva).then((response) => {
+            axios.get('/api/reserva?idReserva=' + idReserva).then((response) => {
                 try {
                     const horaInicioInicial = new Date(response.data[0].horaInicio);
                     const horaFinInicial = new Date(response.data[0].horaFin);
@@ -60,7 +60,7 @@ export default () => {
                     alert('Ocurrió un error al cargar la información');
                 }
             })
-            axios.get('http://localhost:3001/cubiculos?soloNombre=1').then((response) => {
+            axios.get('/api/cubiculos?soloNombre=1').then((response) => {
                 try {
                     setCubiculos(response.data)
                 } catch (error) {
@@ -68,7 +68,7 @@ export default () => {
                     alert('Ocurrió un error al cargar la información');
                 }
             })
-            axios.get('http://localhost:3001/estudiantes?soloNombre=1').then((response) => {
+            axios.get('/api/estudiantes?soloNombre=1').then((response) => {
                 try {
                     setEstudiantes(response.data)
                 } catch (error) {
@@ -102,7 +102,7 @@ export default () => {
         } else {
             const horaInicioString = (new Date(fecha + ' ' + horaInicio)).toISOString().replace("T", " ").split(".")[0];
             const horaFinString = (new Date(fecha + ' ' + horaFin)).toISOString().replace("T", " ").split(".")[0];
-            axios.put('/reserva', {
+            axios.put('/api/reserva', {
                 id : idReserva,
                 idCubiculo : cubiculo,
                 idEstudiante : estudiante,

@@ -16,7 +16,7 @@ function Registro() {
   async function submit(e) {
     e.preventDefault();
 
-    await axios.post('/estudiante/crear',
+    await axios.post('/api/estudiante/crear',
     {
       nombre,
       apellido1,
