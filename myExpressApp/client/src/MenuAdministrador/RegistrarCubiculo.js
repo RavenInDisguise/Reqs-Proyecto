@@ -4,50 +4,17 @@ import axios from 'axios';
 import './RegistrarCubiculo.css';
 import '../Tarjeta.css';
 
-const opciones = [{nombre: "Disponible", activo: true}, {nombre: "En mantenimiento", activo: false}];
-
 function Registrar () {
     const navigate = useNavigate();
     const [nombre, setNombre] = useState();
     const [capacidad, setCapacidad] = useState(0);
-    const [idEstado, setidEstado] = useState(2);
     const [servicios, setServicios] = useState([]);
-    const [activados, setActivados] = useState(0);
-    const [desactivados, setDesactivados] = useState(0);
-    const [activos, setActivos] = useState(0);
     const [tiempoMaximo, setTiempoMaximo] = useState(0);
-    const [infoCargada, setInfoCargada] = useState(true);
     const [estados, setEstados] = useState([]);
     const [estadoActual, setEstadoActual] = useState();
+    const [serviciosCargados, setServiciosCargados] = useState(false);
+    const [estadosCargados, setEstadosCargados] = useState(false);
 
-    async function submit(e) {
-        e.preventDefault();
-    
-        await axios.post('/api/cubiculo/crear',
-        {
-          estadoActual,
-          nombre,
-          capacidad,
-          tiempoMaximo
-        })
-          .then(res => {
-            switch (res.status){
-              case 200:
-                alert(res.data.message);
-                break;
-              default:
-                break;
-            }
-          }).catch(function (error) {
-            try {
-              alert('Ocurrió un error: ' + error.response.data.message);
-            }
-            catch {
-              alert('Ocurrió un error Registrando.');
-            }
-          })
-    }
- 
     useEffect(() => {
         axios.get("/api/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
@@ -57,7 +24,8 @@ function Registrar () {
         
         axios.get('/api/estados').then((response) => {
             try {
-                setEstados(response.data.estados)
+                setEstados(response.data.estados);
+                setEstadosCargados(true);
             } catch (error) {
                 console.log(error)
                 alert('Ocurrió un error al cargar la información');
@@ -66,7 +34,8 @@ function Registrar () {
 
         axios.get('/api/serviResi').then((response) => {
             try {
-                setServicios(response.data.servicios)
+                setServicios(response.data.servicios);
+                setServiciosCargados(true);
             } catch (error) {
                 console.log(error)
                 alert('Ocurrió un error al cargar la información');
@@ -79,7 +48,6 @@ function Registrar () {
 
     const actualizarServicios = (elemento) => {
         let newServicios = servicios;
-        console.log("REGISTRO: ", newServicios);
         let serviciosActivos = [];
         let hijo;
         
@@ -90,29 +58,14 @@ function Registrar () {
             }
         }
 
-        let activados = 0, desactivados = 0, activos = 0;
-
         for (let i = 0; i < newServicios.length; i++) {
             if (serviciosActivos.indexOf(newServicios[i].nombre) != -1) {
                 newServicios[i].activo = true;
-                if (!newServicios[i].anterior) {
-                    activados++;
-                } else {
-                    activos++;
-                }
             } else {
                 newServicios[i].activo = false;
-                if (newServicios[i].anterior) {
-                    desactivados++;
-                }
             }
         }
-        setServicios(newServicios);
-        setActivados(activados);
-        setDesactivados(desactivados);
-        setActivos(activos);
-
-        document.getElementById('serviciosSelect').blur();
+        setServicios(servicios);
     }
     
     const handleSubmit = (e) => {
@@ -120,8 +73,8 @@ function Registrar () {
             estadoActual,
             nombre,
             capacidad,
-            tiempoMaximo
-            //servicios: servicios
+            tiempoMaximo,
+            servicios: servicios.filter((s) => s.activo).map((s) => s.nombre)
           }).then(res => {
             switch (res.status){
               case 200:
@@ -145,8 +98,9 @@ function Registrar () {
     } 
 
     return (
-        (infoCargada) ? (<div className="tarjeta cubiculo-registrar">
+        <div className="tarjeta cubiculo-registrar">
             <h3>Registrar cubículo</h3>
+            {(estadosCargados && serviciosCargados) ? (
             <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="form-group">
                     <div class="form-element">
@@ -178,18 +132,15 @@ function Registrar () {
                 <div className="form-group servicios">
                     <label for="serviciosSelect" id="serviciosLabel" title="Utilice la tecla Ctrl para marcar o desmarcar elementos">Servicios especiales</label>
                     <select id="serviciosSelect" multiple size="4" onChange={(e) => actualizarServicios(e.target)} title="Utilice la tecla Ctrl para marcar o desmarcar elementos">
-                        {servicios.map((s) => ((s.activo) ? (
-                            <option className={((s.anterior) ? "activo" : "inactivo") + " servicioOption"} selected>{s.nombre}</option>
-                        ) : (
-                            <option className={((s.anterior) ? "activo" : "inactivo") + " servicioOption"}>{s.nombre}</option>
-                        )))}
+                        {servicios.map((s) => (<option>{s.nombre}</option>))}
                     </select>
                 </div>
                     
                 <input className="btn btn-primary" type="submit" value="Guardar" />
             </form>
-            <a href="javascript:void(0);" onClick={(e) => {navigate(-1)}}>Cancelar</a>
-        </div>) : <></>
+        ) : <p>Cargando...</p>}
+        {(estadosCargados && serviciosCargados) ? <a href="javascript:void(0);" onClick={(e) => {navigate(-1)}}>Cancelar</a> : <></>}
+        </div>
     )
 }
 

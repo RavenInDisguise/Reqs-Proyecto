@@ -1527,6 +1527,7 @@ router.put('/api/cubiculo/crear', (req, res) => {
   const bod = req.body;
   const idEstado = bod.estadoActual;
   const nombre = bod.nombre;
+  const servicios = bod.servicios;
   let capacidad = bod.capacidad;
   let minutosMax = bod.tiempoMaximo;
   let idFinal = 2;
@@ -1562,13 +1563,35 @@ router.put('/api/cubiculo/crear', (req, res) => {
     '${idFinal}',
     '${nombre}',
     '${capacidad}',
-    '${minutosMax}')
+    '${minutosMax}');
+
+    DECLARE @idCubiculo INT = SCOPE_IDENTITY() ;
+    
+    DECLARE @serviciosNuevos TABLE (
+      [servicioNombre] VARCHAR(32)
+    )
+
+    INSERT INTO @serviciosNuevos ([servicioNombre])
+    VALUES ${servicios.map((s) => ("('" + s + "')")).join(',')};
+
+    INSERT INTO [ServiciosDeCubiculo]
+    (
+      [idCubiculo],
+      [idServiciosEspeciales],
+      [activo]
+    )
+    SELECT  @idCubiculo,
+            SE.[id],
+            1
+    FROM    [ServiciosEspeciales] SE
+    INNER JOIN @serviciosNuevos SN
+      ON    SE.[descripcion] = SN.[servicioNombre];
   `
   const insertar = new sqlcon.Request();
 
   insertar.query(queryI, (err, resultado)=>{
     if (err) {
-      console.log(resultado);
+      console.log(err);
       res.status(500).send({message:'Error al registrar cubiculo'});
     } else {
       res.status(200).send({message:'Registro exitoso'});
