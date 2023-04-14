@@ -8,8 +8,6 @@ const bcrypt = require('bcrypt')
 const saltRounds = 10
 const { PDFDocument, StandardFonts } = require('pdf-lib');
 
-
-
 const mail = 'bibliotec.itcr@gmail.com'
 
 //configuracion del correo 
@@ -49,7 +47,7 @@ router.get('/', cors(), function(req, res, next) {
 
 // Verificar si hay una sesión iniciada
 
-router.get('/login', (req, res) => {
+router.get('/api/login', (req, res) => {
   const saved = req.session.user;
 
   if (saved) {
@@ -68,7 +66,7 @@ router.get('/login', (req, res) => {
 });
   
 // Inicio de sesión
-router.post('/login', async (req, res) => {
+router.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   const check = new sqlcon.Request();
   check.query(`
@@ -114,7 +112,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Cierre de sesión
-router.get('/logout', (req, res) => {
+router.get('/api/logout', (req, res) => {
   const saved = req.session.user;
 
   if (saved) {
@@ -129,31 +127,11 @@ router.get('/logout', (req, res) => {
   }
 });
 
-//ruta de prueba 
-router.get('/prueba', (req, res) => {
-    // Crear una nueva consulta a la base de datos
-    const consulta = new sqlcon.Request();
-    
-    // Ejecutar la consulta
-    consulta.query('SELECT * FROM estudiantes', (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
-      } else {
-        res.send(resultado.recordset);
-      }
-      console.log('Consulta realizada');
-    });
-
-  });
-
-
-
 //Rutas GET
 
 //ruta de estudiantes 
 //retorna una lista de estudiantes con su nombre(completo), carnet, cedula y correo
-router.get('/estudiantes', (req, res) => {
+router.get('/api/estudiantes', (req, res) => {
     const soloNombre = req.query.soloNombre;
     // Crear una nueva consulta a la base de datos
     const consulta = new sqlcon.Request();
@@ -179,7 +157,7 @@ router.get('/estudiantes', (req, res) => {
 
 //ruta ver datos de 1 Estudiante
 //se envia en el querry el id del estudiante
-router.get('/estudiante', (req, res) => {
+router.get('/api/estudiante', (req, res) => {
   const estID = req.query.id;
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
@@ -212,7 +190,7 @@ router.get('/estudiante', (req, res) => {
 
 //ruta de cubiculos 
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
-router.get('/cubiculos', (req, res) => {
+router.get('/api/cubiculos', (req, res) => {
   const soloNombre = req.query.soloNombre;
   const consulta = new sqlcon.Request();
   const query = (soloNombre ? `SELECT C.id, C.nombre
@@ -278,7 +256,7 @@ router.get('/cubiculos', (req, res) => {
 });
 
 //Ruta para los estados de los cubículos
-router.get('/estados', (req, res) => {
+router.get('/api/estados', (req, res) => {
   const consulta = new sqlcon.Request();
   const query = `
   SELECT [descripcion]
@@ -295,7 +273,7 @@ router.get('/estados', (req, res) => {
 });
 
 //Ruta para los servicios de los cubículos
-router.get('/servicios', (req, res) => {
+router.get('/api/servicios', (req, res) => {
   const consulta = new sqlcon.Request();
   const query = `
   SELECT [descripcion]
@@ -312,7 +290,7 @@ router.get('/servicios', (req, res) => {
 
 //ruta de 1 cubiculo
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
-router.get('/cubiculo', (req, res) => {
+router.get('/api/cubiculo', (req, res) => {
   const cubID = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `SELECT
@@ -388,7 +366,7 @@ router.get('/cubiculo', (req, res) => {
 
 //ruta de cubiculos disponibles 
 //retorna una lista cubiculos disponibles, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
-router.get('/cubiculos/disponibles', (req, res) => {
+router.get('/api/cubiculos/disponibles', (req, res) => {
 
   const horaInicio =  req.query.horaInicio;
   const horaFin = req.query.horaFin;
@@ -478,7 +456,7 @@ router.get('/cubiculos/disponibles', (req, res) => {
 
 //ruta de reservas 
 //retorna una lista de reservas, esta contiene el id de reserva, el nombre, la capacidad y la fecha y hora de reserva
-router.get('/reservas', (req, res) => {
+router.get('/api/reservas', (req, res) => {
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
   var query = `SELECT R.id,
@@ -509,7 +487,7 @@ router.get('/reservas', (req, res) => {
 });
 
 // Datos de una reserva
-router.get('/reserva', (req, res) => {
+router.get('/api/reserva', (req, res) => {
   // Crear una nueva consulta a la base de datos
   const idReserva =  req.query.idReserva;
   const consulta = new sqlcon.Request();
@@ -543,7 +521,7 @@ router.get('/reserva', (req, res) => {
 
 //ruta de reservas 
 //Reservasd de 1 cubiculo (por nombre)
-router.get('/reservas/cubiculo', (req, res) => {
+router.get('/api/reservas/cubiculo', (req, res) => {
   const cubNombre = req.query.nombre;
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
@@ -574,7 +552,7 @@ router.get('/reservas/cubiculo', (req, res) => {
 //retorna una lista de reservas realizadas por un estudiante, 
 //esta contiene eel id de reserva, el nombre, 
 //la capacidad y la fecha y hora de reserva
-router.get('/estudiante/reservas', (req, res) => {
+router.get('/api/estudiante/reservas', (req, res) => {
   const id = req.query.id;
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
@@ -608,7 +586,7 @@ router.get('/estudiante/reservas', (req, res) => {
 
 //prueba para el correo
 
-router.get('/correo', async (req, res) => {
+router.get('/api/correo', async (req, res) => {
   const correo = req.query.correo;
   const nombre = `Pedro`
   const estudiante = `Pedro`
@@ -637,7 +615,7 @@ const imageBytes = await response.arrayBuffer();
 const qrImage = await pdfDoc.embedPng(imageBytes);
 
 const qrDims = qrImage.scale(3);
-const text = `Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}`;
+const text = `Se ha confirmado su reserva para el cubículo:\nNombre:${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}`;
 page.drawText(text, { x: 50, y: 700, font, size: 24 });
 page.drawImage(qrImage, { x: 50, y: 200, width: qrDims.width, height: qrDims.height });
 
@@ -646,8 +624,8 @@ const pdfBytes = await pdfDoc.save();
 const mailOptions = {
   from: mail,
   to: `efmz2000@outlook.es`,
-  subject: 'Confirmación de Reserva',
-  html: `<p>Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,
+  subject: 'Confirmación de reserva',
+  html: `<p>Se ha confirmado su reserva para el cubículo:\nNombre:${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,
   attachments: [{
     filename: 'Confirmación.pdf',
     content: pdfBytes,
@@ -673,7 +651,7 @@ const mailOptions = {
 // "Eliminar"
 
 //eliminar reserva
-router.put('/reserva/eliminar', (req, res) => {
+router.put('/api/reserva/eliminar', (req, res) => {
   const idReserva = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `UPDATE Reservas SET activo = 0, confirmado = 0 WHERE id =` + idReserva;
@@ -690,7 +668,7 @@ router.put('/reserva/eliminar', (req, res) => {
 });
 
 //confirmar reserva
-router.put('/reserva/confirmar', async (req, res) => {
+router.put('/api/reserva/confirmar', async (req, res) => {
   const saved = req.session.user;
   const idReserva = req.query.id;
   const nombre = req.query.nombre;
@@ -757,7 +735,7 @@ router.put('/reserva/confirmar', async (req, res) => {
 });
 
 //actualizar reserva
-router.put('/reserva', (req, res) => {
+router.put('/api/reserva', (req, res) => {
   const cuerpo = req.body;
   const consulta = new sqlcon.Request();
   
@@ -907,7 +885,7 @@ router.put('/reserva', (req, res) => {
               R.[activo] = @activo,
               R.[confirmado] = @confirmado
       FROM    [dbo].[Reservas] R
-      WHERE   R.[id] = 1;
+      WHERE   R.[id] = @idReserva;
   END;
   
   SELECT  S.[error]
@@ -930,7 +908,7 @@ router.put('/reserva', (req, res) => {
 });
 
 //eliminar estudiante
-router.put('/estudiante/eliminar', (req, res) => {
+router.put('/api/estudiante/eliminar', (req, res) => {
   const idEstudiante = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `UPDATE Estudiantes SET activo = 0 WHERE id = ${idEstudiante}`;
@@ -947,7 +925,7 @@ router.put('/estudiante/eliminar', (req, res) => {
 });
 
 //eliminar cubiculo 
-router.put("/cubiculo/eliminar",(req,res) =>{
+router.put("/api/cubiculo/eliminar",(req,res) =>{
   const idCubiculo = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `
@@ -1003,7 +981,7 @@ Puede hacer otra reserva a través del sitio web.`;
 });
 
 // update
-router.put("/cubiculo", (req, res) => {
+router.put("/api/cubiculo", (req, res) => {
   /* Si todo sale bien, no retorna nada (código 200).
      Si hay un error con los datos de entrada, devuelve JSON con esta estructura:
       {
@@ -1350,7 +1328,7 @@ Su reserva sigue activa. Puede hacer cambios a sus reservas ingresando al sitio 
 })
 
 //editar estudiantes
-router.put("/estudiante/actualizar",(req,res) =>{
+router.put("/api/estudiante/actualizar",(req,res) =>{
   const bod = req.body
   const id = bod.idEstudiante
   const nombre = bod.nombre
@@ -1409,7 +1387,7 @@ router.put("/estudiante/actualizar",(req,res) =>{
 //Crear 
 
 //crear usuario
-router.post("/estudiante/crear", (req, res) => {
+router.post("/api/estudiante/crear", (req, res) => {
   const bod = req.body;
   const nombre = bod.nombre;
   const apellido1 = bod.apellido1;
@@ -1483,7 +1461,7 @@ router.post("/estudiante/crear", (req, res) => {
         const mailOptions = {
           from: mail,
           to: `${correo}` ,
-          subject: 'Registro Exitoso',
+          subject: 'Registro exitoso',
           text: `Se ha registrado exitosamente al estudiante:
           Nombre: ${nombre}
           Apellidos: ${apellido1} ${apellido2}
@@ -1498,7 +1476,7 @@ router.post("/estudiante/crear", (req, res) => {
             console.log('Correo enviado: ' + info.response);
           }
         });
-        res.status(200).send({message:'Registro Exitoso'});
+        res.status(200).send({message:'Registro exitoso'});
       }
     });
     })
@@ -1507,7 +1485,7 @@ router.post("/estudiante/crear", (req, res) => {
 
 });
 
-router.post('/Reservar/Cubiculo',(req, res)=>{
+router.post('/api/Reservar/Cubiculo',(req, res)=>{
   const {idCubiculo, IdEstudiante,horaInicio, horaFin, email, nombre} = req.body;
 
   const query = `INSERT INTO Reservas(idCubiculo, idEstudiante, fecha, horaInicio, horaFin, activo, confirmado)
@@ -1519,12 +1497,12 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
       console.log(err)
       res.status(500).send({message:'Error al registrar la reserva'});
     }else{
-      res.send({message:'Se inserto correctamente'})
+      res.send({message:'Reserva registrada existosamente'})
       
       const mailOptions = {
         from: mail,
         to: `${email}` ,
-        subject: 'Reserva de Cubículo',
+        subject: 'Reserva de cubículo',
         html:`<p>Se ha reservado el cubículo: ${nombre}
         para la fecha:
         Desde ${horaInicio} hasta ${horaFin}</p>
@@ -1544,7 +1522,7 @@ router.post('/Reservar/Cubiculo',(req, res)=>{
 })
 
 //Crear Cubiculo
-router.put('/cubiculo/crear', (req, res) => {
+router.put('/api/cubiculo/crear', (req, res) => {
   //console.log("Esto esta llegando: ", req.body)
   const bod = req.body;
   const idEstado = bod.estadoActual;
@@ -1593,7 +1571,7 @@ router.put('/cubiculo/crear', (req, res) => {
       console.log(resultado);
       res.status(500).send({message:'Error al registrar cubiculo'});
     } else {
-      res.status(200).send({message:'Registro Exitoso'});
+      res.status(200).send({message:'Registro exitoso'});
     }
   });
 
@@ -1602,7 +1580,7 @@ router.put('/cubiculo/crear', (req, res) => {
 
 //Retorna servicios para Ingresar un Cubiculo
 //Ruta para los servicios de los cubículos
-router.get('/serviResi', (req, res) => {
+router.get('/api/serviResi', (req, res) => {
   const consulta = new sqlcon.Request();
   const query = `
   SELECT [descripcion]

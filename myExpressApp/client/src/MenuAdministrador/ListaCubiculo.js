@@ -12,13 +12,13 @@ const reactivarCubiculo = 'Puede volver a activar el cubículo desde el menú de
 export default () => {
     const navigate = useNavigate();
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
                 navigate('/')
             }
         })
         
-        axios.get('/cubiculos').then((response) => {
+        axios.get('/api/cubiculos').then((response) => {
             try {
                 listaCompleta = response.data;
             } catch (error) {
@@ -136,7 +136,7 @@ export default () => {
                                     {e.nombre}
                                 </div>
                                 <div className="otros-datos">
-                                    <p><b>Estado:</b> {e.estado} <b>· Capacidad:</b> {e.capacidad} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
+                                    <p><b>ID:</b> {e.id} <b>· Estado:</b> {e.estado} <b>· Capacidad:</b> {e.capacidad} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
                                 </div>
                             </div>
                             <div className="opciones">
@@ -145,7 +145,7 @@ export default () => {
                                 {(e.estado != 'Eliminado') ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Borrar cubículo" onClick={() => {
                                         if (window.confirm('¿Desea borrar el cubículo ' + e.nombre + '?\n\nEn caso de haber reservas activas, serán canceladas y se notificará a los respectivos usuarios.')) { //a diferencia de estudiantes nombre va con minuscula
-                                            axios.put('/cubiculo/eliminar?id=' + e.id).then((response) => {
+                                            axios.put('/api/cubiculo/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {
                                                     desactivarCubiculo(e.id);

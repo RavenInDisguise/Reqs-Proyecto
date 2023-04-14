@@ -23,7 +23,7 @@ function Registrar () {
     async function submit(e) {
         e.preventDefault();
     
-        await axios.post('/cubiculo/crear',
+        await axios.post('/api/cubiculo/crear',
         {
           estadoActual,
           nombre,
@@ -49,13 +49,13 @@ function Registrar () {
     }
  
     useEffect(() => {
-        axios.get("http://localhost:3001/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
                 navigate('/')
             }
         })
         
-        axios.get('/estados').then((response) => {
+        axios.get('/api/estados').then((response) => {
             try {
                 setEstados(response.data.estados)
             } catch (error) {
@@ -64,7 +64,7 @@ function Registrar () {
             }
         })
 
-        axios.get('/serviResi').then((response) => {
+        axios.get('/api/serviResi').then((response) => {
             try {
                 setServicios(response.data.servicios)
             } catch (error) {
@@ -116,7 +116,7 @@ function Registrar () {
     }
     
     const handleSubmit = (e) => {
-        axios.put('/cubiculo/crear', {
+        axios.put('/api/cubiculo/crear', {
             estadoActual,
             nombre,
             capacidad,

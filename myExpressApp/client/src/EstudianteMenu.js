@@ -13,11 +13,11 @@ export default function EstudianteMenu(){
     const [Nombre, setNombre] = useState('Cargando...');
 
     useEffect(() => {
-        axios.get("/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             setLoggedIn(response.data.loggedIn);
             setIdEstudiante((response.data.idEstudiante) ? response.data.idEstudiante : null)
             if(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante'){
-                axios.get(`/estudiante?id=${response.data.idEstudiante}`).then((response) => {
+                axios.get(`/api/estudiante?id=${response.data.idEstudiante}`).then((response) => {
                 setNombre(`${response.data[0].nombre} ${response.data[0].apellido1} ${response.data[0].apellido2} (${response.data[0].carnet})`)
             })
             }else{
@@ -37,7 +37,7 @@ export default function EstudianteMenu(){
                         <a href='/Disponibles'>Ver cubículos disponibles</a>
                     </li>
                     <li>
-                        <a href={`/Apartados?id=${IdEstudiante}`}>Ver lista de cubículos apartados</a>
+                        <a href={`/Apartados`}>Ver lista de cubículos apartados</a>
                     </li>
                 </ul>
             </div>

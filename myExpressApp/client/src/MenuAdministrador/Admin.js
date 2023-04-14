@@ -10,7 +10,7 @@ function Admin() {
     const [loggedIn, setLoggedIn] = useState('')
     
     useEffect(() => {
-        axios.get("/login").then((response) => {
+        axios.get("/api/login").then((response) => {
             setLoggedIn(response.data.loggedIn);
             if(!response.data.loggedIn){
                 navigate('/')

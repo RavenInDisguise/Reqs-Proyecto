@@ -13,20 +13,22 @@ const formatoHora = {hour12: true, hour: 'numeric', minute: 'numeric'};
 function Apartados() {
 
     const navigate = useNavigate();
-    const [listaReservas,setListaReservas]=useState([])
-    const [IdEstudiante, setIdEstudiante] = useState(null)
+    const [listaReservas,setListaReservas]=useState([]);
+    const [IdEstudiante, setIdEstudiante] = useState(null);
     const [email, setEmail] = useState('')
+    const [infoCargada, setInfoCargada] = useState(false);
 
     useEffect(() => {
 
-        axios.get("http://localhost:3001/login").then((res) => {
+        axios.get("/api/login").then((res) => {
 
             if(res.data.loggedIn && res.data.tipoUsuario == 'Estudiante'){
                 setIdEstudiante(res.data.idEstudiante);
                 setEmail(res.data.email);
-                axios.get(`/estudiante/reservas?id=${res.data.idEstudiante}`).then((response) => {
+                axios.get(`/api/estudiante/reservas?id=${res.data.idEstudiante}`).then((response) => {
                     try {
                         setListaReservas(response.data);
+                        setInfoCargada(true);
                     } catch (error) {
                         alert('Ocurrió un error al cargar la información');
                     }
@@ -57,7 +59,7 @@ function Apartados() {
 
     const eliminarReserva = (id) =>{
         if (window.confirm('¿Desea borrar la reserva actual?')) {
-            axios.put('/reserva/eliminar?id=' + id).then((response) => {
+            axios.put('/api/reserva/eliminar?id=' + id).then((response) => {
             try {
                 if (response.status == 200) {
                     alert('Reserva eliminada');
@@ -75,7 +77,7 @@ function Apartados() {
     }
 
     const confirmarReserva = (id, nombre, horaInicio, horaFin)=>{
-        axios.put(`/reserva/confirmar?id=${id}&nombre=${nombre}&horaInicio=${horaInicio}&horaFin=${horaFin}`).then((response) => {
+        axios.put(`/api/reserva/confirmar?id=${id}&nombre=${nombre}&horaInicio=${horaInicio}&horaFin=${horaFin}`).then((response) => {
             try {
                 if (response.status == 200) {
                     alert('Reserva confirmada');
@@ -92,7 +94,8 @@ function Apartados() {
     }
     return (
         <div className="tarjeta Lista-Reservas">
-            <h1>Lista de Reservas</h1>
+            <h1>Lista de reservas</h1>
+            {(infoCargada ?
             <div className="lista">
                 {listaReservas.map((e)=>(
                     <div className="reserva-lista">
@@ -105,7 +108,7 @@ function Apartados() {
                                 <b></b>
                             </p>
                             <div className="otros-datos">
-                                <p><b>Estado:{(e.confirmado?'Confirmado':(e.activo?'Sin Confirmar':'Eliminada'))}</b><b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
+                                <p><b>Estado:</b> {(e.confirmado?'Confirmado':(e.activo?'Sin confirmar':'Eliminada'))} <b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
                             </div>
                         </div>
                         <div className="opciones">
@@ -120,7 +123,7 @@ function Apartados() {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div> : <p>Cargando...</p>)}
         </div>
     )
 }

@@ -16,6 +16,7 @@ import Apartados from "./Apartados";
 import RegistrarCubiculo from "./MenuAdministrador/RegistrarCubiculo"
 import EditarReserva from "./MenuAdministrador/EditarReserva";
 import EditarEstudiante from "./MenuAdministrador/EditarEstudiante";
+import Error404 from "./Error404";
 
 export const LoginContext = createContext();
 
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="/RegistrarCubiculo" element={<RegistrarCubiculo />} />
             <Route path="/EditarReserva" element={<EditarReserva />}/>
             <Route path="/Estudiante" element={<EditarEstudiante/>}/>
+            <Route path="*" element={<Error404 />} />
         </Routes>
       </div>
     </>

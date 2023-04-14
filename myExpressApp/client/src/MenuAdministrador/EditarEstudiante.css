@@ -1,0 +1,44 @@
+.estudiante-editar {
+    min-width: 800px;
+}
+
+.estudiante-editar form .form-group {
+    display: flex;
+    column-gap: 10px;
+    flex-grow: 1;
+    margin-bottom: 15px;
+}
+
+.estudiante-editar form .form-group label {
+    margin: auto;
+    white-space: nowrap;
+}
+
+.estudiante-editar form .form-group input:disabled {
+    cursor: not-allowed;
+}
+
+input:disabled+label {
+    cursor: not-allowed;
+    color: rgb(101, 101, 101);
+}
+
+@media (prefers-color-scheme: dark) {
+    input:disabled+label {
+        color: rgb(175, 175, 175);
+    }
+}
+
+
+.form-group .form-element {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    column-gap: 10px;
+}
+
+.estudiante-editar form .form-group .form-element label {
+    flex-grow: 1;
+    white-space: nowrap;
+}
