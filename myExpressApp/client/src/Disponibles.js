@@ -27,6 +27,7 @@ function Disponibles() {
     const [serviciosFiltro, setServiciosFiltro] = useState([]);
     const [totalElementos, setTotalElementos] = useState(null);
     const [capacidad, setCapacidad] = useState(1);
+    const [minutosSeleccionados, setMinutosSeleccionados] = useState(60);
 
     function getData(){
         const fechaInicio = (new Date(fecha + ' ' + horaInicio)).toISOString().replace("T", " ").split(".")[0];
@@ -74,6 +75,12 @@ function Disponibles() {
         filtrarLista();
     }, [serviciosFiltro, listaCubiculos, capacidad]);
 
+    useEffect(() => {
+        let inicio = new Date(fecha + " " + horaInicio);
+        let fin  = new Date(fecha + " " + horaFin);
+        setMinutosSeleccionados((fin - inicio) / (1000 /* milisegundos */ * 60 /* segundos por minuto */));
+    }, [horaInicio, horaFin]);
+
     const filtrarLista = () => {
         let newListaFiltrada = listaCubiculos;
         if (serviciosFiltro.length > 0) {
@@ -110,7 +117,7 @@ function Disponibles() {
             </div>
             <div className="filtro">
                 <label for="fin">Hora de salida</label>
-                <input className="form-control" type="time" id="fin" name="fin" value={horaFin} onChange={e=>{setHoraFin(e.target.value)}}/>
+                <input className="form-control" type="time" id="fin" name="fin" value={horaFin} min={horaInicio} onChange={e=>{setHoraFin(e.target.value)}}/>
             </div>  
         </div>) : <p>Cargando...</p>}
         {(listaCubiculos.join('')!='' && servicios.join('')!='') ? (
@@ -119,14 +126,22 @@ function Disponibles() {
                 <div className="cubiculo">
                     <div className="datos">
                         <div className="nombre">
-                            <a href={`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}`}> {e.nombre}</a>
+                            <a href={`javascript:void(0);`} onClick={() => {
+                                if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad. ¿Continuar?`)) {
+                                    navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}&salida=${fecha +' '+ horaFin}`)
+                                }
+                            }}> {e.nombre}</a>
                         </div>
                         <div className="otros-datos">
                             <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo máximo:</b> {(e.minutosMax >= 60 ? (Math.floor(e.minutosMax/60) + " h") : <></>)} {(e.minutosMax % 60 ? (e.minutosMax % 60 + " min") : <></>)} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
                         </div>
                     </div>
                     <div className="opciones">
-                        <FontAwesomeIcon className="iconoOpcion" icon={faCalendarPlus} onClick={() => {navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}`)}} title="Reservar cubículo" />
+                        <FontAwesomeIcon className="iconoOpcion" icon={faCalendarPlus} onClick={() => {
+                            if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad. ¿Continuar?`)) {
+                                navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}&salida=${fecha +' '+ horaFin}`)
+                            }
+                        }} title="Reservar cubículo" />
                     </div>
                 </div>))}
         </div>) : ((ultimoTimestamp) ? <p>Cargando...</p> : <></>)}

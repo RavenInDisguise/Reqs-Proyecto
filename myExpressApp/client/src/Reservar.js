@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import './Tarjeta.css';
-import './Reservar.css'
+import './Reservar.css';
+
+const idiomaLocal = ['es-CR', 'es'];
+const formatoFecha = { month: 'long', day: 'numeric'};
+const formatoHora = {hour12: true, hour: 'numeric', minute: 'numeric'};
 
 function Reservar() {
 
@@ -11,12 +15,39 @@ function Reservar() {
     const parametros = new URLSearchParams('?' + document.URL.split('/').at(-1).split('?').at(-1));
     const idCubiculo = parametros.get('id');
     const horaInicio = parametros.get('inicio');
+    const horaFin = parametros.get('salida');
+
+    const [dateInicio, setDateInicio] = useState(() => {
+        try {
+            return new Date(horaInicio);
+        } catch (error) {
+            console.dir(error);
+            navigate(-1);
+        }
+    });
+    const [dateFin, setDateFin] = useState(() => {
+        try {
+            return new Date(horaFin);
+        } catch (error) {
+            console.dir(error);
+            navigate(-1);
+        }
+    });
+    let minsIniciales;
+
+    if (dateFin <= dateInicio) {
+        navigate(-1);
+    } else {
+        minsIniciales = ((dateFin - dateInicio ) / (1000 /* milisegundos */ * 60 /* segundos por minuto */));
+    }
+
     const [nombre, setNombre] = useState();
     const [capacidad, setCapacidad] = useState(0);
     const [servicios, setServicios] = useState([]);
     const [tiempoMaximo, setTiempoMaximo] = useState(0);
     const [IdEstudiante, setIdEstudiante] = useState(null)
     const [email, setEmail] = useState('')
+    const [minutosSeleccionados, setMinutosSeleccionados] = useState(0);
 
     useEffect(() => {
         axios.get("/api/login").then((response) => {
@@ -28,7 +59,7 @@ function Reservar() {
             }
         })
 
-        if (!idCubiculo) {
+        if (!idCubiculo || !horaInicio || !horaFin) {
             navigate(-1);
         } else {
             axios.get('/api/cubiculo?id=' + idCubiculo).then((response) => {
@@ -42,6 +73,13 @@ function Reservar() {
                     setServicios(newServicios);
                     setCapacidad(info[0].capacidad);
                     setTiempoMaximo(info[0].minutosMaximo);
+                    if (minsIniciales > info[0].minutosMaximo) {
+                        setDateFin(new Date(dateInicio.valueOf() + info[0].minutosMaximo * 60000));
+                        setMinutosSeleccionados(info[0].minutosMaximo);
+                    } else {
+                        setMinutosSeleccionados(minsIniciales);
+                    }
+                    
                 } catch (error) {
                     console.log(error)
                     alert('Ocurrió un error al cargar la información');
@@ -52,13 +90,12 @@ function Reservar() {
 
         function reservar(e){
             e.preventDefault();
-            const nuevaHora = new Date(horaInicio.replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/, '$3-$2-$1T$4:$5'));
-            nuevaHora.setMinutes(nuevaHora.getMinutes() + tiempoMaximo);
-            const horaFin = nuevaHora.toISOString().replace("T", " ").replace("Z", "")
-            axios.post('/api/Reservar/Cubiculo',{idCubiculo, IdEstudiante,horaInicio,horaFin,email, nombre}).then((response)=>{
+            const horaInicioJSON = dateInicio.toISOString().replace("T", " ").replace("Z", "");
+            const horaFinJSON = dateFin.toISOString().replace("T", " ").replace("Z", "");
+            axios.post('/api/Reservar/Cubiculo',{idCubiculo, IdEstudiante,horaInicio: horaInicioJSON, horaFin: horaFinJSON,email, nombre}).then((response)=>{
                 try{
                     alert(response.data.message)
-                    navigate('/Menu')
+                    navigate('/Apartados')
                 }
                 catch{
                     alert('Hubo un error en la reserva')
@@ -66,6 +103,21 @@ function Reservar() {
             })
         }
 
+        const formatoLocal = (stringIso, fecha=true, hora=true) => {
+            let respuesta = [];
+            try {
+                const objetoDate = new Date(stringIso);
+                if (fecha) {
+                    respuesta.push(objetoDate.toLocaleDateString(idiomaLocal, formatoFecha));
+                }
+                if (hora) {
+                    respuesta.push(objetoDate.toLocaleTimeString(idiomaLocal, formatoHora));
+                }
+                return respuesta.join(', ');
+            } catch (error) {
+                return '';
+            }
+        }
 
 
   return (
@@ -83,13 +135,14 @@ function Reservar() {
                     <input id='capacidad-cubiculo' value={capacidad} disabled/>
                 </div>
                 <div className="form-group">
-                    <label for='TiempoMax-cubiculo'>Tiempo máximo</label>
-                    <input id='TiempoMax-cubiculo' value={tiempoMaximo + ' minutos'} disabled/>
+                    <label for='TiempoMax-cubiculo'>Horario seleccionado</label>
+                    <input id='TiempoMax-cubiculo' value={'El ' + formatoLocal(dateInicio).replace(", ", ", de las ") + ' hasta las ' + formatoLocal(dateFin, false, true) + ' (' + minutosSeleccionados + ' minutos)'} disabled/>
                 </div>
                 <div className="form-group">
-                    <p>Servicios especiales</p>
-                    <ul style={ {"text-align": "left" } }>
+                    <p>Servicios especiales:</p>
+                    <ul style={ { "text-align": "left" } }>
                         {servicios.filter((servicio) => (servicio.activo)).map(servicio =>(<li>{servicio.nombre}</li>))}
+                        {(servicios.filter((servicio) => (servicio.activo)).length == 0) ? <li>Ninguno</li> : <></>}
                     </ul>
                 </div>
             </div>
