@@ -127,7 +127,7 @@ function Disponibles() {
                     <div className="datos">
                         <div className="nombre">
                             <a href={`javascript:void(0);`} onClick={() => {
-                                if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad. ¿Continuar?`)) {
+                                if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad de minutos. ¿Continuar?`)) {
                                     navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}&salida=${fecha +' '+ horaFin}`)
                                 }
                             }}> {e.nombre}</a>
@@ -138,7 +138,7 @@ function Disponibles() {
                     </div>
                     <div className="opciones">
                         <FontAwesomeIcon className="iconoOpcion" icon={faCalendarPlus} onClick={() => {
-                            if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad. ¿Continuar?`)) {
+                            if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad de minutos. ¿Continuar?`)) {
                                 navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}&salida=${fecha +' '+ horaFin}`)
                             }
                         }} title="Reservar cubículo" />
