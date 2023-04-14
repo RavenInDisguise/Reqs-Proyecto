@@ -39,6 +39,22 @@ sqlcon.connect(config, err => {
     }
 });
 
+// Autenticación
+
+const estaAutenticado = (req, admin = false, idEstudiante = -1) => {
+  const saved = req.session.user;
+
+  if (saved && saved.userId && saved.tipoUsuario) {
+    if (!admin || saved.tipoUsuario == 'Administrador' || saved.idEstudiante == idEstudiante) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
 //ruta base
 /* GET home page. */
 router.get('/', cors(), function(req, res, next) {
@@ -132,6 +148,9 @@ router.get('/api/logout', (req, res) => {
 //ruta de estudiantes 
 //retorna una lista de estudiantes con su nombre(completo), carnet, cedula y correo
 router.get('/api/estudiantes', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
     const soloNombre = req.query.soloNombre;
     // Crear una nueva consulta a la base de datos
     const consulta = new sqlcon.Request();
@@ -159,6 +178,9 @@ router.get('/api/estudiantes', (req, res) => {
 //se envia en el querry el id del estudiante
 router.get('/api/estudiante', (req, res) => {
   const estID = req.query.id;
+  if (!estaAutenticado(req, true, estID)) {
+    return res.status(403).send('Acceso denegado');
+  }
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
   var query = `SELECT 
@@ -191,6 +213,9 @@ router.get('/api/estudiante', (req, res) => {
 //ruta de cubiculos 
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
 router.get('/api/cubiculos', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const soloNombre = req.query.soloNombre;
   const consulta = new sqlcon.Request();
   const query = (soloNombre ? `SELECT C.id, C.nombre
@@ -257,6 +282,9 @@ router.get('/api/cubiculos', (req, res) => {
 
 //Ruta para los estados de los cubículos
 router.get('/api/estados', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const consulta = new sqlcon.Request();
   const query = `
   SELECT [descripcion]
@@ -274,6 +302,9 @@ router.get('/api/estados', (req, res) => {
 
 //Ruta para los servicios de los cubículos
 router.get('/api/servicios', (req, res) => {
+  if (!estaAutenticado(req, false)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const consulta = new sqlcon.Request();
   const query = `
   SELECT [descripcion]
@@ -291,6 +322,9 @@ router.get('/api/servicios', (req, res) => {
 //ruta de 1 cubiculo
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
 router.get('/api/cubiculo', (req, res) => {
+  if (!estaAutenticado(req, false)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const cubID = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `SELECT
@@ -367,7 +401,9 @@ router.get('/api/cubiculo', (req, res) => {
 //ruta de cubiculos disponibles 
 //retorna una lista cubiculos disponibles, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
 router.get('/api/cubiculos/disponibles', (req, res) => {
-
+  if (!estaAutenticado(req, false)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const horaInicio =  req.query.horaInicio;
   const horaFin = req.query.horaFin;
   console.log(req.query)
@@ -457,6 +493,9 @@ router.get('/api/cubiculos/disponibles', (req, res) => {
 //ruta de reservas 
 //retorna una lista de reservas, esta contiene el id de reserva, el nombre, la capacidad y la fecha y hora de reserva
 router.get('/api/reservas', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
   var query = `SELECT R.id,
@@ -471,7 +510,8 @@ router.get('/api/reservas', (req, res) => {
                 E.[id] AS idEstudiante
               FROM Reservas AS R 
               LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
-              INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]`
+              INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]
+              ORDER BY R.[fecha] DESC;`
 
   // Ejecutar la consulta
   consulta.query(query, (err, resultado) => {
@@ -488,6 +528,9 @@ router.get('/api/reservas', (req, res) => {
 
 // Datos de una reserva
 router.get('/api/reserva', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   // Crear una nueva consulta a la base de datos
   const idReserva =  req.query.idReserva;
   const consulta = new sqlcon.Request();
@@ -519,41 +562,15 @@ router.get('/api/reserva', (req, res) => {
   });
 });
 
-//ruta de reservas 
-//Reservasd de 1 cubiculo (por nombre)
-router.get('/api/reservas/cubiculo', (req, res) => {
-  const cubNombre = req.query.nombre;
-  // Crear una nueva consulta a la base de datos
-  const consulta = new sqlcon.Request();
-  var query = `SELECT R.id,
-                C.nombre, 
-                C.capacidad, 
-                FORMAT(R.fecha, 'dd/MM/yyyy') AS fecha,
-                FORMAT(R.horaInicio, 'HH:mm') AS horaInicio,
-                FORMAT(R.horaFin, 'HH:mm') AS horaFin
-              FROM Reservas AS R 
-              LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
-              WHERE R.activo = 1 AND C.nombre = '${cubNombre}'`
-
-  // Ejecutar la consulta
-  consulta.query(query, (err, resultado) => {
-    if (err) {
-      console.log(err);
-      res.status(500).send('Error al realizar la consulta');
-    } else {
-      res.send(resultado.recordset);
-      console.log('Consulta realizada');
-    }
-  });
-});
-
-
 //ruta de reseervas de estudiante
 //retorna una lista de reservas realizadas por un estudiante, 
 //esta contiene eel id de reserva, el nombre, 
 //la capacidad y la fecha y hora de reserva
 router.get('/api/estudiante/reservas', (req, res) => {
   const id = req.query.id;
+  if (!estaAutenticado(req, true, id)) {
+    return res.status(403).send('Acceso denegado');
+  }
   // Crear una nueva consulta a la base de datos
   const consulta = new sqlcon.Request();
     var query = `SELECT R.id,
@@ -582,10 +599,7 @@ router.get('/api/estudiante/reservas', (req, res) => {
   });
 });
 
-
-
 //prueba para el correo
-
 router.get('/api/correo', async (req, res) => {
   const correo = req.query.correo;
   const nombre = `Pedro`
@@ -652,9 +666,14 @@ const mailOptions = {
 
 //eliminar reserva
 router.put('/api/reserva/eliminar', (req, res) => {
+  if (!estaAutenticado(req, false)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const idReserva = req.query.id;
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Reservas SET activo = 0, confirmado = 0 WHERE id =` + idReserva;
+  const query = (req.session.user.tipoUsuario == 'Administrador' ? 
+    `UPDATE Reservas SET activo = 0, confirmado = 0 WHERE idEstudiante = ${req.session.user.idEstudiante} AND id =` + idReserva
+    : `UPDATE Reservas SET activo = 0, confirmado = 0 WHERE id =` + idReserva)
 
   consulta.query(query, (err, resultado) => {
     if (err) {
@@ -669,6 +688,9 @@ router.put('/api/reserva/eliminar', (req, res) => {
 
 //confirmar reserva
 router.put('/api/reserva/confirmar', async (req, res) => {
+  if (!estaAutenticado(req, false)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const saved = req.session.user;
   const idReserva = req.query.id;
   const nombre = req.query.nombre;
@@ -678,7 +700,9 @@ router.put('/api/reserva/confirmar', async (req, res) => {
   const fecha = new Date();
   const email = saved.email;
   const consulta = new sqlcon.Request();
-  const query = `UPDATE Reservas SET confirmado = 1 WHERE id = ${idReserva}`;
+  const query = (req.session.user.tipoUsuario == 'Administrador' ? 
+    `UPDATE Reservas SET confirmado = 1 WHERE idEstudiante = ${req.session.user.idEstudiante} AND id =` + idReserva
+    : `UPDATE Reservas SET confirmado = 1 WHERE id =` + idReserva)
 
   consulta.query(query,(err, resultado) => {
     if (err) {
@@ -736,6 +760,9 @@ router.put('/api/reserva/confirmar', async (req, res) => {
 
 //actualizar reserva
 router.put('/api/reserva', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const cuerpo = req.body;
   const consulta = new sqlcon.Request();
   
@@ -909,6 +936,9 @@ router.put('/api/reserva', (req, res) => {
 
 //eliminar estudiante
 router.put('/api/estudiante/eliminar', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const idEstudiante = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `UPDATE Estudiantes SET activo = 0 WHERE id = ${idEstudiante}`;
@@ -926,6 +956,9 @@ router.put('/api/estudiante/eliminar', (req, res) => {
 
 //eliminar cubiculo 
 router.put("/api/cubiculo/eliminar",(req,res) =>{
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const idCubiculo = req.query.id;
   const consulta = new sqlcon.Request();
   const query = `
@@ -982,6 +1015,9 @@ Puede hacer otra reserva a través del sitio web.`;
 
 // update
 router.put("/api/cubiculo", (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   /* Si todo sale bien, no retorna nada (código 200).
      Si hay un error con los datos de entrada, devuelve JSON con esta estructura:
       {
@@ -1329,6 +1365,9 @@ Su reserva sigue activa. Puede hacer cambios a sus reservas ingresando al sitio 
 
 //editar estudiantes
 router.put("/api/estudiante/actualizar",(req,res) =>{
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const bod = req.body
   const id = bod.idEstudiante
   const nombre = bod.nombre
@@ -1375,7 +1414,7 @@ router.put("/api/estudiante/actualizar",(req,res) =>{
         console.log(err);
         res.status(500).send({message:'Error al actualizar el estudiante'});
       }else{
-        res.send({message:'Cambio Exitoso'});
+        res.send({message:'Cambio exitoso'});
         console.log('Consulta realizada');
       }
     });
@@ -1486,6 +1525,9 @@ router.post("/api/estudiante/crear", (req, res) => {
 });
 
 router.post('/api/Reservar/Cubiculo',(req, res)=>{
+  if (!estaAutenticado(req, false)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const {idCubiculo, IdEstudiante,horaInicio, horaFin, email, nombre} = req.body;
 
   const query = `INSERT INTO Reservas(idCubiculo, idEstudiante, fecha, horaInicio, horaFin, activo, confirmado)
@@ -1523,7 +1565,9 @@ router.post('/api/Reservar/Cubiculo',(req, res)=>{
 
 //Crear Cubiculo
 router.put('/api/cubiculo/crear', (req, res) => {
-  //console.log("Esto esta llegando: ", req.body)
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const bod = req.body;
   const idEstado = bod.estadoActual;
   const nombre = bod.nombre;
@@ -1604,6 +1648,9 @@ router.put('/api/cubiculo/crear', (req, res) => {
 //Retorna servicios para Ingresar un Cubiculo
 //Ruta para los servicios de los cubículos
 router.get('/api/serviResi', (req, res) => {
+  if (!estaAutenticado(req, true)) {
+    return res.status(403).send('Acceso denegado');
+  }
   const consulta = new sqlcon.Request();
   const query = `
   SELECT [descripcion]
