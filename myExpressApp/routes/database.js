@@ -1600,4 +1600,25 @@ router.put('/cubiculo/crear', (req, res) => {
 
 });
 
+//Retorna servicios para Ingresar un Cubiculo
+//Ruta para los servicios de los cubículos
+router.get('/serviResi', (req, res) => {
+  const consulta = new sqlcon.Request();
+  const query = `
+  SELECT [descripcion]
+  FROM [dbo].[ServiciosEspeciales];`
+  consulta.query(query, (err, resultado) => {
+    if (err) {
+        console.log(err);
+        res.status(500).send('Error al realizar la consulta');
+    } else {
+        res.send({
+          servicios: resultado.recordset.map((r) => {
+            return { nombre: r.descripcion, activo: true, anterior: false };
+          })
+        });
+    }
+  });
+});
+
 module.exports = router;

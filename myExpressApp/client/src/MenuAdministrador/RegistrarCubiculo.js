@@ -15,10 +15,7 @@ function Registrar () {
     const [activados, setActivados] = useState(0);
     const [desactivados, setDesactivados] = useState(0);
     const [activos, setActivos] = useState(0);
-    const [reservas, setReservas] = useState(null);
     const [tiempoMaximo, setTiempoMaximo] = useState(0);
-    const [notificarUsuarios, setNotificar] = useState(false);//eliminar
-    const [cancelarReservas, setCancelar] = useState(false);  //eliminar
     const [infoCargada, setInfoCargada] = useState(true);
     const [estados, setEstados] = useState([]);
     const [estadoActual, setEstadoActual] = useState();
@@ -50,8 +47,7 @@ function Registrar () {
             }
           })
     }
-
-   
+ 
     useEffect(() => {
         axios.get("http://localhost:3001/login").then((response) => {
             if(!(response.data.loggedIn && response.data.tipoUsuario == 'Administrador')){
@@ -67,7 +63,8 @@ function Registrar () {
                 alert('Ocurrió un error al cargar la información');
             }
         })
-        axios.get('/servicios').then((response) => {
+
+        axios.get('/serviResi').then((response) => {
             try {
                 setServicios(response.data.servicios)
             } catch (error) {
@@ -75,10 +72,14 @@ function Registrar () {
                 alert('Ocurrió un error al cargar la información');
             }
         })
+
     }, [])
+
+    
 
     const actualizarServicios = (elemento) => {
         let newServicios = servicios;
+        console.log("REGISTRO: ", newServicios);
         let serviciosActivos = [];
         let hijo;
         
@@ -184,30 +185,7 @@ function Registrar () {
                         )))}
                     </select>
                 </div>
-                <div className="form-group acciones-adicionales">
-                    {((reservas>0) ? (
-                        <div className="accion">
-                            <input type="checkbox" id="notificarUsuarios" onChange={(e) => setNotificar(e.target.checked)} />
-                            <label for="notificarUsuarios">Notificar usuarios con reservas activas</label>
-                        </div>
-                    ) : (
-                        <div className="accion">
-                            <input type="checkbox" id="notificarUsuarios" disabled />
-                            <label for="notificarUsuarios" title="No hay reservas activas">Notificar usuarios con reservas activas</label>
-                        </div>
-                    ))}
-                    {((reservas>0) ? (
-                        <div className="accion">
-                            <input type="checkbox" id="cancelarReservas" onChange={(e) => setCancelar(e.target.checked)} />
-                            <label  for="cancelarReservas">Cancelar reservas activas (total: {reservas})</label>
-                        </div>
-                    ) : (
-                        <div className="accion">
-                            <input type="checkbox" id="cancelarReservas" disabled />
-                            <label for="cancelarReservas">Cancelar reservas activas (no hay)</label>
-                        </div>
-                    ))}
-                </div>
+                    
                 <input className="btn btn-primary" type="submit" value="Guardar" />
             </form>
             <a href="javascript:void(0);" onClick={(e) => {navigate(-1)}}>Cancelar</a>
