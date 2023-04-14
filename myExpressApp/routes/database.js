@@ -885,7 +885,7 @@ router.put('/api/reserva', (req, res) => {
               R.[activo] = @activo,
               R.[confirmado] = @confirmado
       FROM    [dbo].[Reservas] R
-      WHERE   R.[id] = 1;
+      WHERE   R.[id] = @idReserva;
   END;
   
   SELECT  S.[error]
