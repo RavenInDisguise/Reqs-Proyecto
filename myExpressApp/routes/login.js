@@ -52,48 +52,35 @@ router.get('/api/login', (req, res) => {
   
 // Inicio de sesión
 router.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
-  const check = new sqlcon.Request();
-  check.query(`
-  SELECT U.id UsuarioID,
-         U.clave,
-         U.correo,
-         E.id EstudianteID,
-	       U.idTipoUsuario,
-	       TU.descripcion TipoUsuario
-  FROM Usuarios U
-  INNER JOIN  TiposUsuario TU
-  ON U.idTipoUsuario = TU.id
-  LEFT JOIN Estudiantes E
-  ON U.id = E.idUsuario   
-  WHERE U.correo = '${email}'
-  `, (err, result) => {
-    if (err) {
-      res.status(500).send({ message: 'Error al realizar la consulta' });
-    } else {
-      if (result.recordset.length > 0) {
-        bcrypt.compare(password, result.recordset[0].clave, (error, response) => {
-          if (response) {
-            /* Coincide */
-            req.session.user = {
-              userId: result.recordset[0].UsuarioID,
-              email: result.recordset[0].correo,
-              idEstudiante: result.recordset[0].EstudianteID,
-              tipoUsuario : result.recordset[0].TipoUsuario
-            };
-            console.log(result.recordset[0].TipoUsuario)
-            res.send(req.session.user);
-          } else {
-            /* No coincide */
-            res.status(401).send({message:'No coincide el usuario o contraseña'});
-          }
-        })
-      } else {
-        res.status(401).send({ message: "El usuario no existe" });
-      }
-    }
-    console.log('Consulta realizada');
-  });
+    const { email, password } = req.body;
+    const check = new sqlcon.Request();
+    check.query(`EXEC [dbo].[BiblioTEC_SP_Login] '${email}';`, (err, result) => {
+        if (err) {
+            res.status(500).send({ message: 'Ocurrió un error inesperado' });
+        } else {
+            if (result.recordset.length > 0) {
+                bcrypt.compare(password, result.recordset[0].clave, (error, response) => {
+                    if (response) {
+                        /* Coincide */
+                        req.session.user = {
+                            userId: result.recordset[0].UsuarioID,
+                            email: result.recordset[0].correo,
+                            idEstudiante: result.recordset[0].EstudianteID,
+                            tipoUsuario: result.recordset[0].TipoUsuario
+                        };
+                        console.log(result.recordset[0].TipoUsuario)
+                        res.send(req.session.user);
+                    } else {
+                        /* No coincide */
+                        res.status(401).send({ message: 'No coincide el usuario o contraseña' });
+                    }
+                })
+            } else {
+                res.status(401).send({ message: "El usuario no existe" });
+            }
+        }
+        console.log('Consulta realizada');
+    });
 });
 
 
