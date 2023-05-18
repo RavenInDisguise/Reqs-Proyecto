@@ -7,7 +7,7 @@ const { PDFDocument, StandardFonts } = require('pdf-lib');
 import {transporter} from "./correo"
 
 // Datos de una reserva
-router.get('/api/reserva', (req, res) => {
+router.get('/', (req, res) => {
     if (!estaAutenticado(req, true)) {
       return res.status(403).send('Acceso denegado');
     }
@@ -44,7 +44,7 @@ router.get('/api/reserva', (req, res) => {
   
   //ruta de reservas 
 //retorna una lista de reservas, esta contiene el id de reserva, el nombre, la capacidad y la fecha y hora de reserva
-router.get('/api/reservas', (req, res) => {
+router.get('/reservas', (req, res) => {
     if (!estaAutenticado(req, true)) {
       return res.status(403).send('Acceso denegado');
     }
@@ -82,7 +82,7 @@ router.get('/api/reservas', (req, res) => {
   //retorna una lista de reservas realizadas por un estudiante, 
   //esta contiene eel id de reserva, el nombre, 
   //la capacidad y la fecha y hora de reserva
-  router.get('/api/estudiante/reservas', (req, res) => {
+  router.get('/estudiante', (req, res) => {
     const id = req.query.id;
     if (!estaAutenticado(req, true, id)) {
       return res.status(403).send('Acceso denegado');
@@ -116,7 +116,7 @@ router.get('/api/reservas', (req, res) => {
   });
 
 //eliminar reserva
-router.put('/api/reserva/eliminar', (req, res) => {
+router.put('/eliminar', (req, res) => {
     if (!estaAutenticado(req, false)) {
       return res.status(403).send('Acceso denegado');
     }
@@ -138,7 +138,7 @@ router.put('/api/reserva/eliminar', (req, res) => {
   });
   
   //confirmar reserva
-  router.put('/api/reserva/confirmar', async (req, res) => {
+  router.put('/confirmar', async (req, res) => {
     if (!estaAutenticado(req, false)) {
       return res.status(403).send('Acceso denegado');
     }
@@ -210,7 +210,7 @@ router.put('/api/reserva/eliminar', (req, res) => {
   });
   
   //actualizar reserva
-  router.put('/api/reserva', (req, res) => {
+  router.put('/', (req, res) => {
     if (!estaAutenticado(req, true)) {
       return res.status(403).send('Acceso denegado');
     }

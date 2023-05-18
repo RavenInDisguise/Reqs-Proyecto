@@ -114,7 +114,7 @@ router.get('/servicios', (req, res) => {
 
 //ruta de 1 cubiculo
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
-router.get('/cubiculo', (req, res) => {
+router.get('/', (req, res) => {
     if (!estaAutenticado(req, false)) {
       return res.status(403).send('Acceso denegado');
     }
@@ -281,7 +281,7 @@ router.get('/cubiculos/disponibles', (req, res) => {
   });
 
   //eliminar cubiculo 
-router.put("/cubiculo/eliminar",(req,res) =>{
+router.put("/eliminar",(req,res) =>{
     if (!estaAutenticado(req, true)) {
       return res.status(403).send('Acceso denegado');
     }
@@ -689,7 +689,7 @@ router.put("/cubiculo/eliminar",(req,res) =>{
     });
   })
 
-  router.post('/api/Reservar/Cubiculo',(req, res)=>{
+  router.post('/reservar',(req, res)=>{
     if (!estaAutenticado(req, false)) {
       return res.status(403).send('Acceso denegado');
     }
@@ -729,7 +729,7 @@ router.put("/cubiculo/eliminar",(req,res) =>{
   })
   
   //Crear Cubiculo
-  router.put('/cubiculo/crear', (req, res) => {
+  router.put('/crear', (req, res) => {
     if (!estaAutenticado(req, true)) {
       return res.status(403).send('Acceso denegado');
     }
