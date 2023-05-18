@@ -32,7 +32,7 @@ function Registrar () {
             }
         })
 
-        axios.get('/api/serviResi').then((response) => {
+        axios.get('/api/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios);
                 setServiciosCargados(true);

@@ -4,8 +4,7 @@ var router = express.Router();
 var cors = require("cors");
 var qr = require('qrcode')
 const nodemailer = require("nodemailer");
-const bcrypt = require('bcrypt')
-const saltRounds = 10
+const bcrypt = require('bcrypt');
 const { PDFDocument, StandardFonts } = require('pdf-lib');
 
 const mail = 'bibliotec.itcr@gmail.com'
