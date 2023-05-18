@@ -32,7 +32,7 @@ function Registrar () {
             }
         })
 
-        axios.get('/cubiculos/servicios').then((response) => {
+        axios.get('/cubiculo/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios);
                 setServiciosCargados(true);
@@ -103,11 +103,11 @@ function Registrar () {
             {(estadosCargados && serviciosCargados) ? (
             <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="form-group">
-                    <div class="form-element">
+                    <div className="form-element">
                         <label for="idNumber">ID</label>
                         <input className="form-control" id="idNumber" type='text' title='Se asignará automáticamente' disabled value={"Se asignará automáticamente"}/>
                     </div>
-                    <div class="form-element">
+                    <div className="form-element">
                         <label for="nameInput">Nombre</label>
                         <input className="form-control" id="nameInput" type='text' required value={nombre} placeholder="Nombre del cubículo" onChange={e => setNombre(e.target.value)}/>
                     </div>
@@ -116,15 +116,15 @@ function Registrar () {
                     <label for="estadoSelect">Estado</label>
                     <select id="estadoSelect" onChange={(e) => {setEstadoActual(e.target.value)}}>
                         {(estados.indexOf(estadoActual) == -1) ? (<option value={estadoActual} selected disabled>{estadoActual}</option>) : <></>}
-                        {estados.map((e) => ((e == estadoActual) ? <option value={e} selected>{e}</option> : <option value={e}>{e}</option>))}
+                        {estados.map((e) => ((e == estadoActual) ? <option key={e} value={e} selected>{e}</option> : <option key={e} value={e}>{e}</option>))}
                     </select>
                 </div>
                 <div className="form-group">
-                    <div class="form-element">
+                    <div className="form-element">
                         <label for="capacityInput">Capacidad</label>
                         <input className="form-control" id="capacityInput" type='number' min={1} step={1} required value={capacidad} placeholder="Capacidad del cubículo" onChange={e => setCapacidad(e.target.value)}/>
                     </div>
-                    <div class="form-element">
+                    <div className="form-element">
                         <label for="timeInput">Tiempo máximo (minutos)</label>
                         <input className="form-control" id="timeInput" type='number' min={1} step={1} required value={tiempoMaximo} placeholder="Tiempo máximo de uso" onChange={e => setTiempoMaximo(e.target.value)}/>
                     </div>
@@ -132,7 +132,7 @@ function Registrar () {
                 <div className="form-group servicios">
                     <label for="serviciosSelect" id="serviciosLabel" title="Utilice la tecla Ctrl para marcar o desmarcar elementos">Servicios especiales</label>
                     <select id="serviciosSelect" multiple size="4" onChange={(e) => actualizarServicios(e.target)} title="Utilice la tecla Ctrl para marcar o desmarcar elementos">
-                        {servicios.map((s) => (<option>{s.nombre}</option>))}
+                        {servicios.map((s) => (<option key={s} >{s.nombre}</option>))}
                     </select>
                 </div>
                     

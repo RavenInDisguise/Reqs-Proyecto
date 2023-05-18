@@ -1,10 +1,10 @@
-var express = require('express');
-import sqlcon from './database';
-var router = express.Router();
-import {estaAutenticado} from "./autenticado"
+let express = require('express');
+const sqlcon = require('./database')
+let router = express.Router();
+let estaAutenticado = require('./autenticado')
 const { PDFDocument, StandardFonts } = require('pdf-lib');
-
-import {transporter} from "./correo"
+let transporter = require('./correo')
+let qr = require('qrcode')
 
 // Datos de una reserva
 router.get('/', (req, res) => {

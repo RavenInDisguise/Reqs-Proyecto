@@ -1,7 +1,7 @@
 var express = require('express');
-import sqlcon from './database';
+const sqlcon = require('./database')
 var router = express.Router();
-import {estaAutenticado} from "./autenticado"
+let estaAutenticado = require('./autenticado')
 
 //retorna una lista cubiculos, esta contiene el nombre, el estado, la capacidad y una lista de servicios especiales
 router.get('/cubiculos', (req, res) => {

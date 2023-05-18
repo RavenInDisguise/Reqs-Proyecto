@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-import sqlcon from './database';
+const sqlcon = require('./database')
 const cors = require('cors');
 const bcrypt = require('bcrypt')
 
@@ -35,7 +35,7 @@ router.get('/api/login', (req, res) => {
 });
 
   // Cierre de sesión
-  router.get('api/logout', (req, res) => {
+  router.get('/api/logout', (req, res) => {
     const saved = req.session.user;
   
     if (saved) {

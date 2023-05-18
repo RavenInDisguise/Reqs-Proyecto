@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-var qr = require('qrcode')
+
 
 const mail = 'bibliotec.itcr@gmail.com'
 
@@ -12,4 +12,4 @@ const transporter = nodemailer.createTransport({
     }
   });
 
-export default transporter
+module.exports = transporter

@@ -36,7 +36,6 @@ app.use(session({
 
 
 app.use('/', loginRouter);
-app.use('/users', usersRouter);
 app.use('/estudiante', estudiantesRouter)
 app.use('/cubiculo', cubiculosRouter)
 app.use('/reserva', reservasRouter)

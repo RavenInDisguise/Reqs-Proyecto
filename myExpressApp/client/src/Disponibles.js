@@ -48,7 +48,7 @@ function Disponibles() {
             }
         })
 
-        axios.get('/cubiculos/servicios').then((response) => {
+        axios.get('/cubiculo/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios.map((e) => ({label : e, value: e})))
             } catch (error) {

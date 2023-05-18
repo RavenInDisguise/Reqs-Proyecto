@@ -1,9 +1,9 @@
 var express = require('express');
-import sqlcon from './database';
+const sqlcon = require('./database')
 var router = express.Router();
-
-import {transporter} from "./correo"
-import {estaAutenticado} from "./autenticado"
+let transporter = require('./correo')
+let qr = require('qrcode')
+let estaAutenticado = require('./autenticado')
 
 //eliminar estudiante
 router.put('/eliminar', (req, res) => {
@@ -223,7 +223,7 @@ router.put('/eliminar', (req, res) => {
   
   //ruta ver datos de 1 Estudiante
   //se envia en el querry el id del estudiante
-  router.get('/estudiante', (req, res) => {
+  router.get('/', (req, res) => {
     const estID = req.query.id;
     if (!estaAutenticado(req, true, estID)) {
       return res.status(403).send('Acceso denegado');

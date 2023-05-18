@@ -20,4 +20,4 @@ sqlcon.connect(config, err => {
     }
 });
 
-export default sqlcon;
+module.exports = sqlcon

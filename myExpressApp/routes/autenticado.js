@@ -11,3 +11,4 @@ const estaAutenticado = (req, admin = false, idEstudiante = -1) => {
       return false;
     }
   }
+module.exports = estaAutenticado
