@@ -34,7 +34,7 @@ function Registrar () {
 
         axios.get('/cubiculo/servicios').then((response) => {
             try {
-                setServicios(response.data.servicios);
+                setServicios(response.data.servicios.map((o) => ({nombre: o, activo: false})));
                 setServiciosCargados(true);
             } catch (error) {
                 console.log(error)
@@ -43,8 +43,6 @@ function Registrar () {
         })
 
     }, [])
-
-    
 
     const actualizarServicios = (elemento) => {
         let newServicios = servicios;
