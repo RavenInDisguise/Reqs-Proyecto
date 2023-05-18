@@ -1,7 +1,6 @@
 const nodemailer = require("nodemailer");
 
-
-const mail = 'bibliotec.itcr@gmail.com'
+const mail = 'bibliotec.itcr@gmail.com';
 
 //configuracion del correo 
 const transporter = nodemailer.createTransport({
@@ -12,4 +11,4 @@ const transporter = nodemailer.createTransport({
     }
   });
 
-module.exports = transporter
+module.exports = transporter;
