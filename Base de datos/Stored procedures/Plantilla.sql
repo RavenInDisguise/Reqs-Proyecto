@@ -52,6 +52,22 @@ BEGIN
             ROLLBACK;
         END;
 
+        IF @ErrorNumber != 50000
+        BEGIN
+            -- Si no es un error personalizado, se registra el error
+            INSERT INTO [dbo].[Errors]
+            VALUES (
+                SUSER_NAME(),
+                ERROR_NUMBER(),
+                ERROR_STATE(),
+                ERROR_SEVERITY(),
+                ERROR_LINE(),
+                ERROR_PROCEDURE(),
+                ERROR_MESSAGE(),
+                GETUTCDATE()
+            );
+        END;
+
         RAISERROR('%s - Error Number: %i', 
             @ErrorSeverity, @ErrorState, @Message, @ErrorNumber);
 
