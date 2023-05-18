@@ -4,7 +4,7 @@
 -- Descripción: Procedimiento que busca si existe un usuario con un
 --------------------------------------------------------------------------
 
-CREATE PROCEDURE [dbo].[BiblioTEC_SP_Login]
+CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_Login]
     @IN_email           VARCHAR(128)
 AS
 BEGIN

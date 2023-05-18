@@ -6,7 +6,7 @@
 --  - [ninguno]
 --------------------------------------------------------------------------
 
-CREATE PROCEDURE [dbo].[BiblioTEC_SP_Nombre]
+CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_Nombre]
     -- Parámetros
 AS
 BEGIN
