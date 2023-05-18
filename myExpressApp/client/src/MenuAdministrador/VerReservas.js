@@ -35,7 +35,7 @@ export default () => {
             }
         })
         
-        axios.get('/api/reservas').then((response) => {
+        axios.get('reserva/reservas').then((response) => {
             try {
                 listaCompleta = response.data;
             } catch (error) {
@@ -200,7 +200,7 @@ export default () => {
                                 {(e.activo) ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Desactivar reserva" onClick={() => {
                                         if (window.confirm('¿Desea desactivar la reserva actual?')) {
-                                            axios.put('/api/reserva/eliminar?id=' + e.id).then((response) => {
+                                            axios.put('/reserva/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {
                                                     desactivarReserva(e.id);

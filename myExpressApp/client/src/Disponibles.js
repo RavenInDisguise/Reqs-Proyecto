@@ -32,7 +32,7 @@ function Disponibles() {
     function getData(){
         const fechaInicio = (new Date(fecha + ' ' + horaInicio)).toISOString().replace("T", " ").split(".")[0];
         const fechaFinal = (new Date(fecha + ' ' + horaFin)).toISOString().replace("T", " ").split(".")[0]
-        axios.get(`/api/cubiculos/disponibles?horaInicio=${fechaInicio}&horaFin=${fechaFinal}`,).then((response) => {
+        axios.get(`cubiculo/cubiculos/disponibles?horaInicio=${fechaInicio}&horaFin=${fechaFinal}`,).then((response) => {
             try {
                 setListaCubiculos(response.data);
             } catch (error) {
@@ -48,7 +48,7 @@ function Disponibles() {
             }
         })
 
-        axios.get('/api/servicios').then((response) => {
+        axios.get('/cubiculos/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios.map((e) => ({label : e, value: e})))
             } catch (error) {

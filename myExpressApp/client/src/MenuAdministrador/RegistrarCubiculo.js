@@ -22,7 +22,7 @@ function Registrar () {
             }
         })
         
-        axios.get('/api/estados').then((response) => {
+        axios.get('/cubiculo/estados').then((response) => {
             try {
                 setEstados(response.data.estados);
                 setEstadosCargados(true);
@@ -32,7 +32,7 @@ function Registrar () {
             }
         })
 
-        axios.get('/api/servicios').then((response) => {
+        axios.get('/cubiculos/servicios').then((response) => {
             try {
                 setServicios(response.data.servicios);
                 setServiciosCargados(true);
@@ -69,7 +69,7 @@ function Registrar () {
     }
     
     const handleSubmit = (e) => {
-        axios.put('/api/cubiculo/crear', {
+        axios.put('/cubiculo/crear', {
             estadoActual,
             nombre,
             capacidad,

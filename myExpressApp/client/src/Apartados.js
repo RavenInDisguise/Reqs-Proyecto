@@ -25,7 +25,7 @@ function Apartados() {
             if(res.data.loggedIn && res.data.tipoUsuario == 'Estudiante'){
                 setIdEstudiante(res.data.idEstudiante);
                 setEmail(res.data.email);
-                axios.get(`/api/estudiante/reservas?id=${res.data.idEstudiante}`).then((response) => {
+                axios.get(`estudiante/reservas?id=${res.data.idEstudiante}`).then((response) => {
                     try {
                         setListaReservas(response.data);
                         setInfoCargada(true);
@@ -59,7 +59,7 @@ function Apartados() {
 
     const eliminarReserva = (id) =>{
         if (window.confirm('¿Desea borrar la reserva actual?')) {
-            axios.put('/api/reserva/eliminar?id=' + id).then((response) => {
+            axios.put('/eliminar?id=' + id).then((response) => {
             try {
                 if (response.status == 200) {
                     alert('Reserva eliminada');
@@ -77,7 +77,7 @@ function Apartados() {
     }
 
     const confirmarReserva = (id, nombre, horaInicio, horaFin)=>{
-        axios.put(`/api/reserva/confirmar?id=${id}&nombre=${nombre}&horaInicio=${horaInicio}&horaFin=${horaFin}`).then((response) => {
+        axios.put(`/confirmar?id=${id}&nombre=${nombre}&horaInicio=${horaInicio}&horaFin=${horaFin}`).then((response) => {
             try {
                 if (response.status == 200) {
                     alert('Reserva confirmada');
