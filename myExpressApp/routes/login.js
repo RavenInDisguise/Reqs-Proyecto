@@ -1,21 +1,17 @@
 var express = require('express');
 var router = express.Router();
-const sqlcon = require('./database')
-const cors = require('cors');
+const sqlcon = require('./database');
 const bcrypt = require('bcrypt')
 
 // Autenticación
 
 //ruta base
 /* GET home page. */
-router.get('/', cors(), function(req, res, next) {
+router.get('/', function(req, res, next) {
     res.render('index');
 });
 
 // Verificar si hay una sesión iniciada
-
-
-
 router.get('/api/login', (req, res) => {
   const saved = req.session.user;
 
