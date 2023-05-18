@@ -26,7 +26,7 @@ function EditarEstudiante() {
             }
         })
         
-        axios.get(`/api/estudiante?id=${idEstudiante}`)
+        axios.get(`estudiante?id=${idEstudiante}`)
         .then((response) => {
             try {
                 console.log(response.data)
@@ -46,7 +46,7 @@ function EditarEstudiante() {
     function handleSubmit(e){
         e.preventDefault();
 
-        axios.put('/api/estudiante/actualizar',{
+        axios.put('estudiante/actualizar',{
             idEstudiante,
             nombre,
             apellido1,

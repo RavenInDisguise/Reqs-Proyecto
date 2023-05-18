@@ -17,7 +17,7 @@ export default function EstudianteMenu(){
             setLoggedIn(response.data.loggedIn);
             setIdEstudiante((response.data.idEstudiante) ? response.data.idEstudiante : null)
             if(response.data.loggedIn && response.data.tipoUsuario == 'Estudiante'){
-                axios.get(`/api/estudiante?id=${response.data.idEstudiante}`).then((response) => {
+                axios.get(`estudiante?id=${response.data.idEstudiante}`).then((response) => {
                 setNombre(`${response.data[0].nombre} ${response.data[0].apellido1} ${response.data[0].apellido2} (${response.data[0].carnet})`)
             })
             }else{
