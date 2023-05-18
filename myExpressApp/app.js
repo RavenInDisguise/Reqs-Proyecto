@@ -5,7 +5,10 @@ const logger = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const dbRouter = require('./routes/database');
+const loginRouter = require('./routes/login');
+const estudiantesRouter = require("./routes/estudiantes");
+const cubiculosRouter = require("./routes/cubiculos")
+const reservasRouter = require("./routes/reservas")
 
 const app = express();
 
@@ -31,7 +34,13 @@ app.use(session({
   }
 }))
 
-app.use('/', dbRouter);
+
+app.use('/', loginRouter);
+app.use('/users', usersRouter);
+app.use('/estudiante', estudiantesRouter)
+app.use('/cubiculo', cubiculosRouter)
+app.use('/reserva', reservasRouter)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
