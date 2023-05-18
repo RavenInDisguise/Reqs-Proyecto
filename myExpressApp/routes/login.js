@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
-const sqlcon = require('./database');
+const sqlcon = require('./database.js');
 const bcrypt = require('bcrypt')
+const manejarError = require('./errores.js');
 
 // Autenticación
 
@@ -49,10 +50,14 @@ router.get('/api/login', (req, res) => {
 // Inicio de sesión
 router.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
-    const check = new sqlcon.Request();
-    check.query(`EXEC [dbo].[BiblioTEC_SP_Login] '${email}';`, (err, result) => {
-        if (err) {
-            res.status(500).send({ message: 'Ocurrió un error inesperado' });
+    const request = new sqlcon.Request();
+
+    // Parámetros de entrada
+    request.input('IN_email', sqlcon.VarChar, email);
+
+    request.execute(`BiblioTEC_SP_Login`, (error, result) => {
+        if (error) {
+            manejarError(res, error);
         } else {
             if (result.recordset.length > 0) {
                 bcrypt.compare(password, result.recordset[0].clave, (error, response) => {
@@ -75,7 +80,6 @@ router.post('/api/login', async (req, res) => {
                 res.status(401).send({ message: "El usuario no existe" });
             }
         }
-        console.log('Consulta realizada');
     });
 });
 
