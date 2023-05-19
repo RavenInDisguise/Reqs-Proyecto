@@ -32,7 +32,7 @@ BEGIN
         ELSE
         BEGIN
             SELECT E.id, 
-            CONCAT(E.nombre,' \',E.apellido1,' \',E.apellido2) Nombre,
+            CONCAT(E.nombre,' ',E.apellido1,' ',E.apellido2) Nombre,
             E.carnet, 
             E.cedula, 
             U.correo, E.activo

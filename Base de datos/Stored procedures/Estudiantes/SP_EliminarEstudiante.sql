@@ -37,7 +37,7 @@ BEGIN
             BEGIN TRANSACTION;
         END;
 
-        UPDATE Estudiantes SET activo = 0 WHERE id = @In_idEstudiante
+        UPDATE Estudiantes SET eliminado = 1 WHERE id = @In_idEstudiante
 
         -- COMMIT DE LA TRANSACCIÓN
         IF @transaccion_iniciada = 1

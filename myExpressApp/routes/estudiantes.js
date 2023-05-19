@@ -149,7 +149,7 @@ router.put('/eliminar', (req, res) => {
       const request = new sqlcon.Request();
 
       request.input('IN_soloNombre', sqlcon.Bit, soloNombre)
-      request.execute(query, (error, resultado) => {
+      request.execute('BiblioTEC_SP_ObtenerEstudiantes', (error, resultado) => {
         if (error) {
           manejarError(res,error)
         } else {
@@ -170,7 +170,7 @@ router.put('/eliminar', (req, res) => {
     // Crear una nueva consulta a la base de datos
     const request = new sqlcon.Request();
     
-    request.input('IN_idEstudiante', sqlcon.Int, )
+    request.input('IN_idEstudiante', sqlcon.Int, estID)
   
     // Ejecutar la consulta
     request.execute('BiblioTEC_SP_ObtenerEstudiante', (error, resultado) => {
