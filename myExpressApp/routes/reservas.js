@@ -1,10 +1,10 @@
 let express = require('express');
-const sqlcon = require('./database')
+const sqlcon = require('./database.js')
 let router = express.Router();
-let estaAutenticado = require('./autenticado')
+let estaAutenticado = require('./autenticado.js')
 const { PDFDocument, StandardFonts } = require('pdf-lib');
-let transporter = require('./correo')
-let qr = require('qrcode')
+let transporter = require('./correo.js');
+let qr = require('qrcode');
 
 // Datos de una reserva
 router.get('/', (req, res) => {
@@ -186,7 +186,7 @@ router.put('/eliminar', (req, res) => {
           const pdfBytes = await pdfDoc.save();
   
           const mailOptions = {
-            from: mail,
+            from: transporter.options.auth.user,
             to: `${email}`,
             subject: 'Confirmación de Reserva',
             html: `<p>Se ha confirmado su reserva para el cubículo: ${nombre}\nPara la fecha: ${fecha}\nDesde ${horaInicio} hasta ${horaFin}</p><img src='${url}'/>`,

@@ -1,9 +1,9 @@
 var express = require('express');
-const sqlcon = require('./database')
+const sqlcon = require('./database.js');
 var router = express.Router();
-let transporter = require('./correo')
-let qr = require('qrcode')
-let estaAutenticado = require('./autenticado')
+let transporter = require('./correo.js');
+let estaAutenticado = require('./autenticado.js');
+const bcrypt = require('bcrypt');
 
 //eliminar estudiante
 router.put('/eliminar', (req, res) => {
@@ -162,7 +162,7 @@ router.put('/eliminar', (req, res) => {
           res.status(500).send({message:'Error al registrar el estudiante'});
         } else {
           const mailOptions = {
-            from: mail,
+            from: transporter.options.auth.user,
             to: `${correo}` ,
             subject: 'Registro exitoso',
             text: `Se ha registrado exitosamente al estudiante:

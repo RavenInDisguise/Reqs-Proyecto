@@ -3,6 +3,7 @@ const sqlcon = require('./database.js');
 var router = express.Router();
 let estaAutenticado = require('./autenticado.js');
 const manejarError = require('./errores.js');
+let transporter = require('./correo.js');
 
 // Retorna la lista de todos los cubículos, con estos datos:
 // ID, nombre, estado, capacidad, servicios y tiempo máximo
@@ -237,7 +238,7 @@ Se han hecho cambios en un cubículo, lo cual ocasionó que se cancelara su rese
 Puede hacer otra reserva a través del sitio web.`;
 
                 const mailOptions = {
-                    from: mail,
+                    from: transporter.options.auth.user,
                     bcc: salidaCorreos,
                     subject: 'Actualización de cubículo',
                     text: textoCorreo
@@ -332,7 +333,7 @@ Su reserva sigue activa. Puede hacer cambios a sus reservas ingresando al sitio 
                 }
 
                 const mailOptions = {
-                    from: mail,
+                    from: transporter.options.auth.user,
                     bcc: salidaCorreos,
                     subject: 'Actualización de cubículo',
                     text: textoCorreo
@@ -373,7 +374,7 @@ router.post('/reservar', (req, res) => {
             res.send({ message: 'Reserva registrada existosamente' })
 
             const mailOptions = {
-                from: mail,
+                from: transporter.options.auth.user,
                 to: `${email}`,
                 subject: 'Reserva de cubículo',
                 html: `<p>Se ha reservado el cubículo: ${nombre}
