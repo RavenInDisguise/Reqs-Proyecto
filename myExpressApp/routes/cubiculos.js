@@ -172,14 +172,16 @@ router.get('/disponibles', (req, res) => {
     const request = new sqlcon.Request();
 
     // Parámetros de entrada
-    request.input('IN_horaInicio', sqlcon.DateTime, horaInicio);
-    request.input('IN_horaFin', sqlcon.DateTime, horaFin);
+    request.input('IN_horaInicio', sqlcon.VarChar, horaInicio);
+    request.input('IN_horaFin', sqlcon.VarChar, horaFin);
 
     request.execute('BiblioTEC_SP_ObtenerCubiculosDisponibles', (error, resultado) => {
         if (error) {
             manejarError(res, error);
         } else {
             const cubiculos = {};
+
+            console.log(resultado.recordset);
 
             // Agrupar servicios por cubículo
             for (let i = 0; i < resultado.recordset.length; i++) {
@@ -364,8 +366,8 @@ router.post('/reservar', (req, res) => {
     // Parámetros de entrada
     request.input('IN_idCubiculo', sqlcon.Int, idCubiculo);
     request.input('IN_idEstudiante', sqlcon.Int, idEstudiante);
-    request.input('IN_horaInicio', sqlcon.DateTime, horaInicio);
-    request.input('IN_horaFin', sqlcon.DateTime, horaFin);
+    request.input('IN_horaInicio', sqlcon.VarChar, horaInicio);
+    request.input('IN_horaFin', sqlcon.VarChar, horaFin);
 
     requests.execute('BiblioTEC_SP_HacerReserva', (error, resultado) => {
         if (error) {
