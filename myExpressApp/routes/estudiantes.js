@@ -2,8 +2,10 @@ var express = require('express');
 const sqlcon = require('./database.js');
 var router = express.Router();
 let transporter = require('./correo.js');
+const manejarError = require('./errores.js');
 let estaAutenticado = require('./autenticado.js');
 const bcrypt = require('bcrypt');
+const { error } = require('pdf-lib');
 
 //eliminar estudiante
 router.put('/eliminar', (req, res) => {
@@ -11,18 +13,16 @@ router.put('/eliminar', (req, res) => {
       return res.status(403).send('Acceso denegado');
     }
     const idEstudiante = req.query.id;
-    const consulta = new sqlcon.Request();
-    const query = `UPDATE Estudiantes SET activo = 0 WHERE id = ${idEstudiante}`;
+    const request = new sqlcon.Request();
+    request.input('IN_idEstudiante', sqlcon.Int, idEstudiante)
   
-    consulta.query(query, (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
-      } else {
-        res.send(resultado.recordset);
-        console.log('Consulta realizada');
+    request.execute('BiblioTEC_SP_EliminarEstudiante',(error, resultado) =>{
+      if(error){
+        manejarError(res, error)
+      }{
+        res.status(200).send()
       }
-    });
+    })
   });
   
   
@@ -42,48 +42,36 @@ router.put('/eliminar', (req, res) => {
     const correo = bod.correo
     const clave = bod.clave
     const fechaDeNacimiento = bod.fechaNacimiento.split("T")[0]
-  
+    
+   
+    
     bcrypt.hash(clave, 10, (err, hash) => {
   
       if (err) {
         console.log(err)
         return res.send({ message: err });
       }
-      const consulta = new sqlcon.Request();
-  
-      const query1 = `UPDATE Estudiantes
-                      SET 
-                        nombre = '${nombre}', 
-                        apellido1 = '${apellido1}', 
-                        apellido2 = '${apellido2}', 
-                        cedula = '${cedula}', 
-                        carnet = '${carnet}', 
-                        fechaDeNacimiento = '${fechaDeNacimiento}'
-                      WHERE id = '${id}';`;
-    
-      const query2 = (clave == ''? `UPDATE Usuarios
-                                    SET 
-                                     correo = '${correo}'
-                                    WHERE id = (SELECT idUsuario FROM Estudiantes WHERE id = '${id}');`:
-                                   `UPDATE Usuarios
-                                    SET 
-                                      correo = '${correo}',
-                                      clave = '${hash}'
-                                    WHERE id = (SELECT idUsuario FROM Estudiantes WHERE id = '${id}');`) 
-      
-    
-    
-      consulta.query(query1 + ";" + query2, (err, resultado) => {
-        if (err) {
-          console.log(err);
-          res.status(500).send({message:'Error al actualizar el estudiante'});
+      const request = new sqlcon.Request();
+
+      request.input('IN_idEstudiante', sqlcon.Int, id)
+      request.input('IN_Nombre', sqlcon.VarChar, nombre)
+      request.input('IN_Apellido1', sqlcon.VarChar, apellido1)
+      request.input('IN_Apellido2', sqlcon.VarChar, apellido2)
+      request.input('IN_Cedula', sqlcon.Int, cedula)
+      request.input('IN_Carnet', sqlcon.Int, carnet)
+      request.input('IN_Correo', sqlcon.VarChar, correo)
+      request.input('IN_FechaNacimiento', sqlcon.Date, fechaDeNacimiento)
+      request.input('IN_Clave', sqlcon.VarChar, clave == "" ? clave : hash)
+
+      request.execute("BiblioTEC_SP_ActualizarEstudiante",(error, resultado)=>{
+        if(error){
+          manejarError(res, error)
         }else{
-          res.send({message:'Cambio exitoso'});
-          console.log('Consulta realizada');
-        }
-      });
-      
+          res.status(200).send({message:'Estudiante actualizado exitosamente'})
+        } 
       })
+    });
+
   });
   
   
@@ -106,84 +94,42 @@ router.put('/eliminar', (req, res) => {
       if (err) {
         return res.send({ err: err });
       }
-  
-      const queryS =`
-        SELECT id FROM Estudiantes E
-        WHERE E.carnet = ${carnet} OR E.cedula = ${cedula}
-        UNION 
-        SELECT id FROM Usuarios U
-        WHERE U.correo = '${correo}'
-        `
-      const consulta = new sqlcon.Request();
-  
-      consulta.query(queryS, (err, result)=>{
-        if (err) {
-          return res.status(500).send({message:'Error al registrar el estudiante'});
-        } else {
-          if(result.recordset.length >= 1){
-            return res.status('422').send({message:'Ya existe el estudiante'})
+      
+      const request = new sqlcon.Request();
+      request.input('IN_Nombre', sqlcon.VarChar, nombre)
+      request.input('IN_Apellido1', sqlcon.VarChar, apellido1)
+      request.input('IN_Apellido2', sqlcon.VarChar, apellido2)
+      request.input('IN_Cedula', sqlcon.Int, cedula)
+      request.input('IN_Carnet', sqlcon.Int, carnet)
+      request.input('IN_Correo', sqlcon.VarChar, correo)
+      request.input('IN_FechaNacimiento', sqlcon.Date, fechaDeNacimiento)
+      request.input('IN_Clave', sqlcon.VarChar, hash)
+
+      request.execute('BiblioTEC_SP_CrearEstudiante',(error, resultado) =>{
+        if(error){
+          manejarError(res,error)
+        }
+        const mailOptions = {
+          from: transporter.options.auth.user,
+          to: `${correo}` ,
+          subject: 'Registro exitoso',
+          text: `Se ha registrado exitosamente al estudiante:
+
+          - Nombre: ${nombre}
+          - Apellidos: ${apellido1} ${apellido2}
+          - Carné: ${carnet}
+          - Cédula: ${cedula}`
+        };
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Correo enviado: ' + info.response);
           }
-        }
-        const queryI = `
-      INSERT INTO Usuarios (
-        correo, 
-        clave, 
-        idTipoUsuario) 
-      VALUES (
-        '${correo}', 
-        '${hash}', 
-        3)
-      
-      DECLARE @idUsuario INT
-      SET @idUsuario = SCOPE_IDENTITY()  
-  
-      INSERT INTO Estudiantes (
-        nombre, 
-        apellido1, 
-        apellido2, 
-        cedula, 
-        carnet, 
-        fechaDeNacimiento, 
-        idUsuario,
-        activo) 
-      VALUES (
-        '${nombre}',
-        '${apellido1}', 
-        '${apellido2}', 
-        '${cedula}', 
-        '${carnet}', 
-        '${fechaDeNacimiento}', 
-        @idUsuario, 
-        1)
-        `;
-        const insertar = new sqlcon.Request();
-      insertar.query(queryI, (err, resultado) => {
-        if (err) {
-          res.status(500).send({message:'Error al registrar el estudiante'});
-        } else {
-          const mailOptions = {
-            from: transporter.options.auth.user,
-            to: `${correo}` ,
-            subject: 'Registro exitoso',
-            text: `Se ha registrado exitosamente al estudiante:
-            Nombre: ${nombre}
-            Apellidos: ${apellido1} ${apellido2}
-            Carné: ${carnet}
-            Cédula: ${cedula}`
-          };
-          
-          transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-              console.log(error);
-            } else {
-              console.log('Correo enviado: ' + info.response);
-            }
-          });
-          res.status(200).send({message:'Registro exitoso'});
-        }
-      });
+        });
+        res.status(200).send({message:"Registro exitoso"})
       })
-      
     })
   
   });
@@ -200,28 +146,21 @@ router.put('/eliminar', (req, res) => {
     }
       const soloNombre = req.query.soloNombre;
       // Crear una nueva consulta a la base de datos
-      const consulta = new sqlcon.Request();
-      var query = (soloNombre ? `SELECT E.id, CONCAT(E.nombre, ' ', E.apellido1, ' ' ,E.apellido2) Nombre
-        FROM Estudiantes E
-        WHERE E.activo = 1;` : 'SELECT E.id, CONCAT(E.nombre,\' \',E.apellido1, \' \',E.apellido2) Nombre,'
-        + ' E.carnet, E.cedula, U.correo, E.activo '
-        + 'FROM Estudiantes AS E ' 
-        + 'LEFT JOIN Usuarios AS U ON U.id = E.idUsuario;');
-  
-      // Ejecutar la consulta
-      consulta.query(query, (err, resultado) => {
-        if (err) {
-          console.log(err);
-          res.status(500).send('Error al realizar la consulta');
+      const request = new sqlcon.Request();
+
+      request.input('IN_soloNombre', sqlcon.Bit, soloNombre)
+      request.execute(query, (error, resultado) => {
+        if (error) {
+          manejarError(res,error)
         } else {
+
           res.send(resultado.recordset);
-          console.log('Consulta realizada');
         }
         
       });
     });
   
-  //ruta ver datos de 1 Estudiante
+  //ruta ver datos de un Estudiante
   //se envia en el querry el id del estudiante
   router.get('/', (req, res) => {
     const estID = req.query.id;
@@ -229,29 +168,16 @@ router.put('/eliminar', (req, res) => {
       return res.status(403).send('Acceso denegado');
     }
     // Crear una nueva consulta a la base de datos
-    const consulta = new sqlcon.Request();
-    var query = `SELECT 
-                  E.id,
-                  E.nombre,
-                  E.apellido1,
-                  E.apellido2,
-                  E.cedula,
-                  E.carnet,
-                  E.fechaDeNacimiento fechaDeNacimiento,
-                  U.correo
-                FROM Estudiantes AS E 
-                LEFT JOIN Usuarios AS U 
-                ON U.id = E.idUsuario
-                WHERE E.id =` + estID
+    const request = new sqlcon.Request();
+    
+    request.input('IN_idEstudiante', sqlcon.Int, )
   
     // Ejecutar la consulta
-    consulta.query(query, (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
+    request.execute('BiblioTEC_SP_ObtenerEstudiante', (error, resultado) => {
+      if (error) {
+        manejarError(res,error)
       } else {
         res.send(resultado.recordset);
-        console.log('Consulta realizada');
       }
       
     });
