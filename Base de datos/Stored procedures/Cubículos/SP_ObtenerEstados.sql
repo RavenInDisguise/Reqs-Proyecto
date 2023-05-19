@@ -1,11 +1,10 @@
 --------------------------------------------------------------------------
--- Autor:       [nombre]
--- Fecha:       [año]-[mes]-[día]
--- Descripción: [descripción]
+-- Autor:       Paúl Rodríguez García
+-- Fecha:       2023-05-18
+-- Descripción: Retorna todos los estados que puede tener un cubículo
 --------------------------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_Nombre]
-    -- Parámetros
+CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_ObtenerEstados]
 AS
 BEGIN
     SET NOCOUNT ON;         -- No retorna metadatos
@@ -14,28 +13,14 @@ BEGIN
     DECLARE @ErrorNumber INT, @ErrorSeverity INT, @ErrorState INT, @Message VARCHAR(200);
     DECLARE @transaccion_iniciada BIT = 0;
 
-    -- DECLARACIÓN DE VARIABLES
-    -- 
-
     BEGIN TRY
 
-        -- VALIDACIONES
-        --
+        -- DECLARACIÓN DE VARIABLES
+        DECLARE @DESCRIPCION_ELIMINADO VARCHAR(32) = 'Eliminado';
 
-        -- INICIO DE LA TRANSACCIÓN
-        IF @@TRANCOUNT = 0
-        BEGIN
-            SET @transaccion_iniciada = 1;
-            BEGIN TRANSACTION;
-        END;
-
-        --
-
-        -- COMMIT DE LA TRANSACCIÓN
-        IF @transaccion_iniciada = 1
-        BEGIN
-            COMMIT TRANSACTION;
-        END;
+        SELECT  EC.[descripcion]
+        FROM    [dbo].[EstadosCubiculo] EC
+        WHERE   EC.[descripcion] != @DESCRIPCION_ELIMINADO;
 
     END TRY
     BEGIN CATCH
@@ -44,11 +29,6 @@ BEGIN
         SET @ErrorSeverity = ERROR_SEVERITY();
         SET @ErrorState = ERROR_STATE();
         SET @Message = ERROR_MESSAGE();
-
-        IF @transaccion_iniciada = 1
-        BEGIN
-            ROLLBACK;
-        END;
 
         IF @ErrorNumber != 50000
         BEGIN

@@ -85,10 +85,10 @@ function Registrar () {
             }
           }).catch(function (error) {
             try {
-              alert('Ocurrió un error:\n\n- ' + error.response.data.errores.join('\n- '));
+              alert('Ocurrió un error:\n\n- ' + error.response.data.message);
             }
             catch {
-              alert('Ocurrió un error al Registrar.');
+              alert('Ocurrió un error.');
             }
           })
         

@@ -25,7 +25,7 @@ function Apartados() {
             if(res.data.loggedIn && res.data.tipoUsuario == 'Estudiante'){
                 setIdEstudiante(res.data.idEstudiante);
                 setEmail(res.data.email);
-                axios.get(`estudiante/reservas?id=${res.data.idEstudiante}`).then((response) => {
+                axios.get(`reserva/estudiante?id=${res.data.idEstudiante}`).then((response) => {
                     try {
                         setListaReservas(response.data);
                         setInfoCargada(true);

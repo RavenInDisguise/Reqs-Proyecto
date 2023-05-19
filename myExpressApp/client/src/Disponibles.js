@@ -32,10 +32,16 @@ function Disponibles() {
     function getData(){
         const fechaInicio = (new Date(fecha + ' ' + horaInicio)).toISOString().replace("T", " ").split(".")[0];
         const fechaFinal = (new Date(fecha + ' ' + horaFin)).toISOString().replace("T", " ").split(".")[0]
-        axios.get(`cubiculo/cubiculos/disponibles?horaInicio=${fechaInicio}&horaFin=${fechaFinal}`,).then((response) => {
+        axios.get(`cubiculo/disponibles?horaInicio=${fechaInicio}&horaFin=${fechaFinal}`,).then((response) => {
             try {
                 setListaCubiculos(response.data);
             } catch (error) {
+                alert('Ocurrió un error al cargar la información');
+            }
+        }).catch((error) => {
+            if (error.response.data.message) {
+                alert(error.response.data.message);
+            } else {
                 alert('Ocurrió un error al cargar la información');
             }
         });
@@ -127,18 +133,18 @@ function Disponibles() {
                     <div className="datos">
                         <div className="nombre">
                             <a href={`javascript:void(0);`} onClick={() => {
-                                if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad de minutos. ¿Continuar?`)) {
+                                if (minutosSeleccionados <= e.minutosMaximo || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMaximo} minutos, así que la reserva se hará por esta última cantidad de minutos. ¿Continuar?`)) {
                                     navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}&salida=${fecha +' '+ horaFin}`)
                                 }
                             }}> {e.nombre}</a>
                         </div>
                         <div className="otros-datos">
-                            <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo máximo:</b> {(e.minutosMax >= 60 ? (Math.floor(e.minutosMax/60) + " h") : <></>)} {(e.minutosMax % 60 ? (e.minutosMax % 60 + " min") : <></>)} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
+                            <p><b>Capacidad:</b> {e.capacidad} <b>· Tiempo máximo:</b> {(e.minutosMaximo >= 60 ? (Math.floor(e.minutosMaximo/60) + " h") : <></>)} {(e.minutosMaximo % 60 ? (e.minutosMaximo % 60 + " min") : <></>)} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
                         </div>
                     </div>
                     <div className="opciones">
                         <FontAwesomeIcon className="iconoOpcion" icon={faCalendarPlus} onClick={() => {
-                            if (minutosSeleccionados <= e.minutosMax || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMax} minutos, así que la reserva se hará por esta última cantidad de minutos. ¿Continuar?`)) {
+                            if (minutosSeleccionados <= e.minutosMaximo || window.confirm(`Seleccionó un rango de ${minutosSeleccionados} minutos, pero este cubículo solo se puede reservar por hasta ${e.minutosMaximo} minutos, así que la reserva se hará por esta última cantidad de minutos. ¿Continuar?`)) {
                                 navigate(`/Reservar?id=${e.id}&inicio=${fecha +' '+ horaInicio}&salida=${fecha +' '+ horaFin}`)
                             }
                         }} title="Reservar cubículo" />

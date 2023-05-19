@@ -45,7 +45,7 @@ function Reservar() {
     const [capacidad, setCapacidad] = useState(0);
     const [servicios, setServicios] = useState([]);
     const [tiempoMaximo, setTiempoMaximo] = useState(0);
-    const [IdEstudiante, setIdEstudiante] = useState(null)
+    const [idEstudiante, setIdEstudiante] = useState(null)
     const [email, setEmail] = useState('')
     const [minutosSeleccionados, setMinutosSeleccionados] = useState(0);
 
@@ -92,7 +92,7 @@ function Reservar() {
             e.preventDefault();
             const horaInicioJSON = dateInicio.toISOString().replace("T", " ").replace("Z", "");
             const horaFinJSON = dateFin.toISOString().replace("T", " ").replace("Z", "");
-            axios.post('/cubiculo/reservar',{idCubiculo, IdEstudiante,horaInicio: horaInicioJSON, horaFin: horaFinJSON,email, nombre}).then((response)=>{
+            axios.post('/cubiculo/reservar',{idCubiculo, idEstudiante,horaInicio: horaInicioJSON, horaFin: horaFinJSON,email, nombre}).then((response)=>{
                 try{
                     alert(response.data.message)
                     navigate('/Apartados')

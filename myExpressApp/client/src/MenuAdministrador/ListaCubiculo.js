@@ -136,7 +136,13 @@ export default () => {
                                     {e.nombre}
                                 </div>
                                 <div className="otros-datos">
-                                    <p><b>ID:</b> {e.id} <b>· Estado:</b> {e.estado} <b>· Capacidad:</b> {e.capacidad} <b>· Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}</p>
+                                    <p>
+                                        <b>ID:</b> {e.id}
+                                        <b> · Estado:</b> {e.estado}
+                                        <b> · Capacidad:</b> {e.capacidad}
+                                        <b> · Servicios especiales:</b> {((e.servicios && e.servicios.join('') != '') ? (<span class="hoverInfo" title={e.servicios.join('\n')}>Ver lista</span>) : <>Ninguno</>)}
+                                        <b> · Tiempo máximo:</b> {(e.minutosMaximo >= 60 ? (Math.floor(e.minutosMaximo/60) + " h") : <></>)} {(e.minutosMaximo % 60 ? (e.minutosMaximo % 60 + " min") : <></>)} 
+                                    </p>
                                 </div>
                             </div>
                             <div className="opciones">
