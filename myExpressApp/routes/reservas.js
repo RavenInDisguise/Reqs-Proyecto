@@ -5,115 +5,72 @@ let estaAutenticado = require('./autenticado.js')
 const { PDFDocument, StandardFonts } = require('pdf-lib');
 let transporter = require('./correo.js');
 let qr = require('qrcode');
+const manejarError = require('./errores.js');
 
 // Datos de una reserva
 router.get('/', (req, res) => {
     if (!estaAutenticado(req, true)) {
-      return res.status(403).send('Acceso denegado');
+        return res.status(403).send('Acceso denegado');
     }
-    // Crear una nueva consulta a la base de datos
-    const idReserva =  req.query.idReserva;
-    const consulta = new sqlcon.Request();
-    var query = `SELECT R.id,
-                  C.[nombre] nombreCubiculo, 
-                  C.[id] idCubiculo, 
-                  R.fecha AS fecha,
-                  R.horaInicio AS horaInicio,
-                  R.horaFin AS horaFin,
-                  R.activo AS activo,
-                  R.confirmado AS confirmado,
-                  CONCAT(E.[nombre], ' ', E.[apellido1], ' ', E.[apellido2]) AS nombreEstudiante,
-                  E.[id] AS idEstudiante
-                FROM Reservas AS R 
-                LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
-                INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]
-                WHERE R.[id] = '${idReserva}';`
-  
+
+    const request = new sqlcon.Request();
+
+    request.input('IN_idReserva', sqlcon.Int, req.query.idReserva);
+
     // Ejecutar la consulta
-    consulta.query(query, (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
-      } else {
-        res.send(resultado.recordset);
-        console.log('Consulta realizada');
-      }
-      
+    request.execute('BiblioTEC_SP_ObtenerReserva', (error, resultado) => {
+        if (error) {
+            manejarError(res, error);
+        } else {
+            res.send(resultado.recordset);
+        }
     });
-  });
+});
   
-  //ruta de reservas 
-//retorna una lista de reservas, esta contiene el id de reserva, el nombre, la capacidad y la fecha y hora de reserva
+// Ruta de reservas 
+// Retorna la lista de reservas, esta contiene el id de reserva, el nombre, la capacidad y la fecha y hora de reserva
 router.get('/reservas', (req, res) => {
     if (!estaAutenticado(req, true)) {
-      return res.status(403).send('Acceso denegado');
+        return res.status(403).send('Acceso denegado');
     }
-    // Crear una nueva consulta a la base de datos
-    const consulta = new sqlcon.Request();
-    var query = `SELECT R.id,
-                  C.[nombre] nombreCubiculo, 
-                  C.[id] idCubiculo, 
-                  R.fecha AS fecha,
-                  R.horaInicio AS horaInicio,
-                  R.horaFin AS horaFin,
-                  R.activo AS activo,
-                  R.confirmado AS confirmado,
-                  CONCAT(E.[nombre], ' ', E.[apellido1], ' ', E.[apellido2]) AS nombreEstudiante,
-                  E.[id] AS idEstudiante
-                FROM Reservas AS R 
-                LEFT JOIN Cubiculos AS C ON R.idCubiculo = C.id
-                INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]
-                ORDER BY R.[fecha] DESC;`
-  
-    // Ejecutar la consulta
-    consulta.query(query, (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
-      } else {
-        res.send(resultado.recordset);
-        console.log('Consulta realizada');
-      }
-      
-    });
-  });
 
-  //ruta de reseervas de estudiante
-  //retorna una lista de reservas realizadas por un estudiante, 
-  //esta contiene eel id de reserva, el nombre, 
-  //la capacidad y la fecha y hora de reserva
-  router.get('/estudiante', (req, res) => {
+    const request = new sqlcon.Request();
+
+    // Ejecutar la consulta
+    request.execute('BiblioTEC_SP_ObtenerReservas', (error, resultado) => {
+        if (error) {
+            manejarError(res, error);
+        } else {
+            res.send(resultado.recordset);
+            console.log('Consulta realizada');
+        }
+
+    });
+});
+
+// Ruta de reseervas de estudiante
+// Retorna una lista de reservas realizadas por un estudiante, 
+// Esta contiene eel id de reserva, el nombre, 
+// la capacidad y la fecha y hora de reserva
+router.get('/estudiante', (req, res) => {
     const id = req.query.id;
     if (!estaAutenticado(req, true, id)) {
-      return res.status(403).send('Acceso denegado');
+        return res.status(403).send('Acceso denegado');
     }
     // Crear una nueva consulta a la base de datos
-    const consulta = new sqlcon.Request();
-      var query = `SELECT R.id,
-                          C.nombre, 
-                          C.capacidad,
-                          R.activo,
-                          R.confirmado,
-                          R.fecha AS fecha,
-                            R.horaInicio AS horaInicio,
-                            R.horaFin AS horaFin
-                      FROM Reservas AS R 
-                      INNER JOIN Cubiculos AS C ON R.idCubiculo = C.id
-                      WHERE R.idEstudiante = '${id}'
-                      ORDER BY Activo DESC, Confirmado ASC`
-  
+    const request = new sqlcon.Request();
+
+    request.input('IN_idEstudiante', sqlcon.Int, id);
+
     // Ejecutar la consulta
-    consulta.query(query, (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
-      } else {
-        res.send(resultado.recordset);
-        console.log('Consulta realizada');
-      }
-      
+    request.execute('BiblioTEC_SP_ObtenerReservasDeEstudiante', (error, resultado) => {
+        if (error) {
+            manejarError(res, error);
+        } else {
+            res.send(resultado.recordset);
+        }
     });
-  });
+});
 
 //eliminar reserva
 router.put('/eliminar', (req, res) => {
