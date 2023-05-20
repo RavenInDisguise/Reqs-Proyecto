@@ -405,7 +405,7 @@ router.post('/reservar', (req, res) => {
                 to: `${email}`,
                 subject: 'Reserva de cubículo',
                 html: `
-<p>Se ha confirmado su reserva.</p>
+<p>Se ha efectuado su reserva.</p>
 <p>Los datos son los siguientes:<p>
 <ul>
     <li><b>Cubículo:</b> ${nombre}</li>
