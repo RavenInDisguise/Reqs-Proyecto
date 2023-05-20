@@ -13,7 +13,7 @@ const manejarError = (res, error) => {
     } else {
         // Si no se cumplió alguna de las condiciones, es un error inesperado
         //  y no se muestra al usuario
-        res.status(500).send({ message: 'Ocurrió un error inesperado' });
+        res.status(500).send({ message: 'Error inesperado' });
         console.log(error);
     }
 }

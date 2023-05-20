@@ -122,7 +122,7 @@ export default () => {
                 }
             }).catch(function (error) {
                 try {
-                alert('Ocurrieron uno o más errores al intentar aplicar los cambios:\n\n- ' + error.response.data.errores.join('\n- '));
+                alert('Ocurrió un error al aplicar los cambios:\n\n- ' + error.response.data.message);
                 }
                 catch {
                 alert('Ocurrió un error.');

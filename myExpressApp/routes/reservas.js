@@ -169,180 +169,30 @@ router.put('/eliminar', (req, res) => {
     });
   });
   
-  //actualizar reserva
-  router.put('/', (req, res) => {
+// Actualizar reserva
+router.put('/', (req, res) => {
     if (!estaAutenticado(req, true)) {
-      return res.status(403).send('Acceso denegado');
+        return res.status(403).send('Acceso denegado');
     }
     const cuerpo = req.body;
-    const consulta = new sqlcon.Request();
-    
-    const query = `DECLARE @idReserva INT = '${cuerpo.id}';
-    DECLARE @idCubiculo INT = '${cuerpo.idCubiculo}';
-    DECLARE @idEstudiante INT = '${cuerpo.idEstudiante}';
-    DECLARE @horaInicio DATETIME = '${cuerpo.horaInicio}';
-    DECLARE @horaFin DATETIME = '${cuerpo.horaFin}';
-    DECLARE @activo BIT = '${(cuerpo.activo) ? '1' : '0'}';
-    DECLARE @confirmado BIT = '${(cuerpo.confirmado) ? '1' : '0'}';
-    
-    DECLARE @salida TABLE (
-        [error] VARCHAR(128)
-    );
-    
-    -- COMPROBACIONES
-    
-    -- Comprobación de la fecha
-    
-    IF @horaFin <= @horaInicio
-    BEGIN
-        INSERT INTO @salida ([error])
-        VALUES ('La hora final no puede ser menor o igual que la inicial');
-    END;
-    
-    IF (@horaInicio < GETUTCDATE() OR @horaFin < GETUTCDATE())
-    BEGIN
-        INSERT INTO @salida ([error])
-        VALUES ('Al menos una de las horas indicadas ya pasó');
-    END;
-    
-    -- Comprobación del cubículo
-    
-    IF (SELECT  R.[idCubiculo]
-        FROM    [dbo].[Reservas] R
-        WHERE   R.[id] = @idReserva) != @idCubiculo
-    BEGIN
-        -- Cambió el ID del cubículo
-        IF NOT EXISTS(  SELECT  1
-                    FROM    [dbo].[Cubiculos] C
-                    WHERE   C.[id] = @idCubiculo    )
-        BEGIN
-            -- No existe el cubículo
-            INSERT INTO @salida ([error])
-            VALUES ('No existe el cubículo proporcionado');
-        END;
-    END;
-    
-    -- Comprobación del estudiante
-    
-    IF (SELECT  R.[idEstudiante]
-        FROM    [dbo].[Reservas] R
-        WHERE   R.[id] = @idReserva) != @idEstudiante
-    BEGIN
-        -- Cambió el ID del estudiante
-        IF NOT EXISTS(  SELECT  1
-                    FROM    [dbo].[Estudiantes] E
-                    WHERE   E.[id] = @idEstudiante
-                        AND E.[activo] = 1)
-        BEGIN
-            -- No existe el estudiante
-            INSERT INTO @salida ([error])
-            VALUES ('El estudiante proporcionado no coincide con un estudiante activo en el sistema');
-        END;
-    END;
-    
-    -- Se revisa si hay un choque
-    
-    -- Choque con otra reserva del mismo cubículo
-    
-    IF (   SELECT COUNT(*)
-    FROM    [dbo].[Reservas] R
-    WHERE   R.[idCubiculo] = @idCubiculo
-        AND R.[activo] = 1
-        AND R.[id] != @idReserva
-        AND
-        (
-            (
-                @horaInicio >= R.[horaInicio]
-            AND @horaInicio < R.[horaFin]
-            )
-            OR
-            (
-            @horaFin > R.[horaInicio]
-            AND @horaFin <= R.[horaFin]
-            )
-            OR
-            (
-                R.[horaInicio] > @horaInicio
-            AND R.[horaInicio] < @horaFin
-            )
-            OR
-            (
-                R.[horaFin] > @horaInicio
-            AND R.[horaFin] < @horaFin
-            )
-        )
-    ) != 0
-    BEGIN
-        INSERT INTO @salida ([error])
-        VALUES ('Hay un choque con otra reserva activa del cubículo indicado');
-    END;
-    
-    -- Choque con otra reserva del mismo estudiante
-    
-    IF (   SELECT COUNT(*)
-    FROM    [dbo].[Reservas] R
-    WHERE   R.[idEstudiante] = @idEstudiante
-        AND R.[activo] = 1
-        AND R.[id] != @idReserva
-        AND
-        (
-            (
-                @horaInicio >= R.[horaInicio]
-            AND @horaInicio < R.[horaFin]
-            )
-            OR
-            (
-            @horaFin > R.[horaInicio]
-            AND @horaFin <= R.[horaFin]
-            )
-            OR
-            (
-                R.[horaInicio] > @horaInicio
-            AND R.[horaInicio] < @horaFin
-            )
-            OR
-            (
-                R.[horaFin] > @horaInicio
-            AND R.[horaFin] < @horaFin
-            )
-        )
-    ) != 0
-    BEGIN
-        INSERT INTO @salida ([error])
-        VALUES ('Hay un choque con otra reserva activa del estudiante indicado');
-    END;
-    
-    IF (SELECT  COUNT(*)
-        FROM    @salida) = 0
-    BEGIN
-        UPDATE  R
-        SET     R.[idCubiculo] = @idCubiculo,
-                R.[idEstudiante] = @idEstudiante,
-                R.[horaInicio] = @horaInicio,
-                R.[horaFin] = @horaFin,
-                R.[activo] = @activo,
-                R.[confirmado] = @confirmado
-        FROM    [dbo].[Reservas] R
-        WHERE   R.[id] = @idReserva;
-    END;
-    
-    SELECT  S.[error]
-    FROM    @salida S;`;
-  
-    consulta.query(query, (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send({errores:['Error desconocido']});
-      } else {
-        const salida = resultado.recordset;
-        if (salida.length > 0) {
-          res.status(401).send({errores: salida.map(s => s.error)})
-        } else {
-          res.status(200).send({});
-        }
-        console.log('Consulta realizada');
-      }
-    });
-  });
+    const request = new sqlcon.Request();
 
-  module.exports = router;
+    // Parámetros de entrada
+    request.input('IN_idReserva', sqlcon.Int, cuerpo.id);
+    request.input('IN_idCubiculo', sqlcon.Int, cuerpo.idCubiculo)
+    request.input('IN_idEstudiante', sqlcon.Int, cuerpo.idEstudiante)
+    request.input('IN_horaInicio', sqlcon.VarChar, cuerpo.horaInicio)
+    request.input('IN_horaFin', sqlcon.VarChar, cuerpo.horaFin)
+    request.input('IN_activo', sqlcon.Bit, cuerpo.activo)
+    request.input('IN_confirmado', sqlcon.Bit, cuerpo.confirmado)
+
+    request.execute('BiblioTEC_SP_ActualizarReserva', (error, resultado) => {
+        if (error) {
+            manejarError(res, error);
+        } else {
+            res.status(200).send();
+        }
+    });
+});
+
+module.exports = router;
