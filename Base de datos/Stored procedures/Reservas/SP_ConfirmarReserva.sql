@@ -1,10 +1,10 @@
 --------------------------------------------------------------------------
--- Autor:       [nombre]
--- Fecha:       [año]-[mes]-[día]
--- Descripción: [descripción]
+-- Autor:       Fabián Vargas
+-- Fecha:       2023-05-18
+-- Descripción: Procedimiento para confirmar las reservas
 --------------------------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_EliminarReserva]
+CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_ConfirmarReserva]
     @IN_idReserva           INT,
     @IN_idEstudiante        INT = NULL,
     @IN_tipoUsuario         VARCHAR(16)

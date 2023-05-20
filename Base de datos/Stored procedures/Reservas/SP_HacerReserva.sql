@@ -94,7 +94,8 @@ BEGIN
                 [horaInicio],
                 [horaFin],
                 [activo],
-                [confirmado]
+                [confirmado],
+                [eliminada]
             )
             VALUES  (
                 @IN_idCubiculo,
@@ -103,6 +104,7 @@ BEGIN
                 @IN_horaInicio,
                 @IN_horaFin,
                 1,
+                0,
                 0
             )
 

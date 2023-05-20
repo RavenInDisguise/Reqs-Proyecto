@@ -153,7 +153,6 @@ router.get('/', (req, res) => {
             const resultadoFinal = Object.values(cubiculos);
   
             res.send(resultadoFinal);
-            console.log('Consulta realizada');
         }
     });
   });
@@ -180,8 +179,6 @@ router.get('/disponibles', (req, res) => {
             manejarError(res, error);
         } else {
             const cubiculos = {};
-
-            console.log(resultado.recordset);
 
             // Agrupar servicios por cubículo
             for (let i = 0; i < resultado.recordset.length; i++) {
@@ -255,7 +252,6 @@ Puede hacer otra reserva a través del sitio web.`;
                 });
             }
             res.status(200).send({});
-            console.log('Consulta realizada');
         }
     });
 });
@@ -369,7 +365,7 @@ router.post('/reservar', (req, res) => {
     request.input('IN_horaInicio', sqlcon.VarChar, horaInicio);
     request.input('IN_horaFin', sqlcon.VarChar, horaFin);
 
-    requests.execute('BiblioTEC_SP_HacerReserva', (error, resultado) => {
+    request.execute('BiblioTEC_SP_HacerReserva', (error, resultado) => {
         if (error) {
             manejarError(res, error);
         } else {

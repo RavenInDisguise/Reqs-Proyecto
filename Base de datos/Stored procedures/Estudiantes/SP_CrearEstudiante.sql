@@ -87,7 +87,8 @@ BEGIN
             carnet, 
             fechaDeNacimiento, 
             idUsuario,
-            activo
+            activo,
+            eliminado
         ) 
         VALUES
         (
@@ -98,7 +99,8 @@ BEGIN
             @IN_Carnet,
             @IN_FechaNacimiento,
             @idUsuario, 
-            1
+            1,
+            0
         )
 
         -- COMMIT DE LA TRANSACCIÓN
