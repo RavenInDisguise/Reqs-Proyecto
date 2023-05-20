@@ -80,12 +80,12 @@ BEGIN
         END;
 
         -- Verifica que no haya choques
-        IF [dbo].[BiblioTEC_FUNC_Choques](@IN_horaInicio, @IN_horaFin, NULL, @IN_idCubiculo) = 1
+        IF [dbo].[BiblioTEC_FUNC_Choques](@IN_horaInicio, @IN_horaFin, NULL, @IN_idCubiculo, @IN_idReserva) = 1
         BEGIN
             RAISERROR('Hay un choque con otra reserva en el cubículo seleccionado', 16, 1);
         END;
 
-        IF [dbo].[BiblioTEC_FUNC_Choques](@IN_horaInicio, @IN_horaFin, @IN_idEstudiante, NULL) = 1
+        IF [dbo].[BiblioTEC_FUNC_Choques](@IN_horaInicio, @IN_horaFin, @IN_idEstudiante, NULL, @IN_idReserva) = 1
         BEGIN
             RAISERROR('Hay un choque con otra reserva del estudiante', 16, 1);
         END;

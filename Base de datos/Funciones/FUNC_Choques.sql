@@ -10,10 +10,11 @@
 
 CREATE OR ALTER FUNCTION [dbo].[BiblioTEC_FUNC_Choques]
 (
-    @IN_horaInicio      DATETIME,
-    @IN_horaFin         DATETIME,
-    @IN_idEstudiante    INT = NULL,
-    @IN_idCubiculo      INT = NULL
+    @IN_horaInicio          DATETIME,
+    @IN_horaFin             DATETIME,
+    @IN_idEstudiante        INT = NULL,
+    @IN_idCubiculo          INT = NULL,
+    @IN_idReservaExcluir    INT = NULL
 )
 RETURNS BIT
 AS
@@ -25,6 +26,7 @@ BEGIN
         FROM    [dbo].[Reservas] R
         WHERE   R.[idCubiculo] = @IN_idCubiculo
             AND R.[activo] = 1
+            AND R.[id] != @IN_idReservaExcluir
         AND
         (
             (
@@ -58,6 +60,7 @@ BEGIN
         FROM    [dbo].[Reservas] R
         WHERE   R.[idEstudiante] = @IN_idEstudiante
             AND R.[activo] = 1
+            AND R.[id] != @IN_idReservaExcluir
         AND
         (
             (
