@@ -244,15 +244,15 @@ DELETE [dbo].[ServiciosEspeciales];
 DELETE [dbo].[TiposUsuario];
 DELETE [dbo].[EstadosCubiculo];
 
-DBCC CHECKIDENT ('Errors', RESEED, 1);
-DBCC CHECKIDENT ('Reservas', RESEED, 1);
-DBCC CHECKIDENT ('ServiciosDeCubiculo', RESEED, 1);
-DBCC CHECKIDENT ('Estudiantes', RESEED, 1);
-DBCC CHECKIDENT ('Usuarios', RESEED, 1);
-DBCC CHECKIDENT ('Cubiculos', RESEED, 1);
-DBCC CHECKIDENT ('ServiciosEspeciales', RESEED, 1);
-DBCC CHECKIDENT ('TiposUsuario', RESEED, 1);
-DBCC CHECKIDENT ('EstadosCubiculo', RESEED, 1);
+DBCC CHECKIDENT ('Errors', RESEED, 0);
+DBCC CHECKIDENT ('Reservas', RESEED, 0);
+DBCC CHECKIDENT ('ServiciosDeCubiculo', RESEED, 0);
+DBCC CHECKIDENT ('Estudiantes', RESEED, 0);
+DBCC CHECKIDENT ('Usuarios', RESEED, 0);
+DBCC CHECKIDENT ('Cubiculos', RESEED, 0);
+DBCC CHECKIDENT ('ServiciosEspeciales', RESEED, 0);
+DBCC CHECKIDENT ('TiposUsuario', RESEED, 0);
+DBCC CHECKIDENT ('EstadosCubiculo', RESEED, 0);
 \n''')
 
 output.write('-- ------------------------ CATÁLOGOS ------------------------\n\n')
@@ -291,7 +291,7 @@ DECLARE @tmp_Usuarios TABLE
     (
         tipoUsuario VARCHAR(16),
         correo      VARCHAR(128),
-        clave       VARCHAR(16),
+        clave       VARCHAR(64),
         cedula      INT NULL,
         carnet      INT NULL,
         nombre      VARCHAR(32) NULL,
@@ -338,7 +338,7 @@ INNER JOIN  [dbo].[TiposUsuario] TU
 output.write('\n\n-- 6.2. Estudiantes\n')
 
 output.write('''
-INSERT INTO [Estudiantes] ([idUsuario], [cedula], [carnet], [nombre], [apellido1], [apellido2], [fechaDeNacimiento], [activo])
+INSERT INTO [Estudiantes] ([idUsuario], [cedula], [carnet], [nombre], [apellido1], [apellido2], [fechaDeNacimiento], [activo], [eliminado])
 SELECT  U.[id],
         tmp_U.[cedula], 
         tmp_U.[carnet], 
@@ -346,7 +346,8 @@ SELECT  U.[id],
         tmp_U.[apellido1], 
         tmp_U.[apellido2], 
         tmp_U.[fechaNac],
-        1
+        1,
+        0
 FROM    @tmp_Usuarios tmp_U
 INNER JOIN  [dbo].[Usuarios] U
     ON  tmp_U.[correo] = U.[correo]
@@ -436,14 +437,15 @@ VALUES '''
 output.write(',\n       '.join(f"('{r['room']}', '{r['student_u_id']}', '{r['date']}', '{r['start']}', '{r['end']}', '{r['active']}', '{r['confirmed']}')" for r in GEN_RESERVS) + ';\n')
 
 output.write(f'''
-INSERT INTO [dbo].[Reservas] ([idCubiculo], [idEstudiante], [fecha], [horaInicio], [horaFin], [activo], [confirmado])
+INSERT INTO [dbo].[Reservas] ([idCubiculo], [idEstudiante], [fecha], [horaInicio], [horaFin], [activo], [confirmado], [eliminada])
 SELECT  C.[id],
         E.[id],
         DATEADD(HOUR, {-UTC_OFFSET}, tmp_R.[fecha]),
         DATEADD(HOUR, {-UTC_OFFSET}, tmp_R.[horaInicio]),
         DATEADD(HOUR, {-UTC_OFFSET}, tmp_R.[horaFin]),
         tmp_R.[activo],
-        tmp_R.[confirmado]
+        tmp_R.[confirmado],
+        0
 FROM    @tmp_Reservas tmp_R
 INNER JOIN  [dbo].[Cubiculos] C
     ON  C.[nombre] = tmp_R.[nombreC]
