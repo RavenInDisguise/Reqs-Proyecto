@@ -110,18 +110,16 @@ router.put('/eliminar', (req, res) => {
     const estudiante = saved.idEstudiante;
     const fecha = new Date();
     const email = saved.email;
-    const consulta = new sqlcon.Request();
-    const query = (req.session.user.tipoUsuario == 'Administrador' ? 
-      `UPDATE Reservas SET confirmado = 1 WHERE idEstudiante = ${req.session.user.idEstudiante} AND id =` + idReserva
-      : `UPDATE Reservas SET confirmado = 1 WHERE id =` + idReserva)
+    const request = new sqlcon.Request();
+    request.input('IN_idReserva', sqlcon.Int, idReserva)
+    request.input('IN_idEstudiante', sqlcon.Int, req.session.user.idEstudiante)
+    request.input('IN_tipoUsuario', sqlcon.VarChar, req.session.user.tipoUsuario)
   
-    consulta.query(query,(err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
+    request.execute('Bibliotec_SP_ConfirmarReserva',(error, resultado) => {
+      if (error) {
+        manejarError(res,error)
       } else {
-        res.send(resultado.recordset);
-        console.log('Consulta realizada');
+        
         const stJson = JSON.stringify({idReserva,nombre,fecha,estudiante})
   
         //creacion del qr
@@ -165,6 +163,8 @@ router.put('/eliminar', (req, res) => {
             }
           });
         })
+
+        res.status(200).send()
       }
     });
   });
