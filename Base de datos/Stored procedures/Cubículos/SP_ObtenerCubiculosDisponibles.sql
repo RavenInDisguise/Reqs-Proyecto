@@ -23,6 +23,18 @@ BEGIN
 
     BEGIN TRY
 
+        INSERT INTO [dbo].[Errors]
+            VALUES (
+                SUSER_NAME(),
+                ERROR_NUMBER(),
+                ERROR_STATE(),
+                ERROR_SEVERITY(),
+                ERROR_LINE(),
+                ERROR_PROCEDURE(),
+                CONCAT(CONVERT(VARCHAR,@IN_horaInicio,0),CONVERT(VARCHAR,@IN_horaFin,0)),
+                GETUTCDATE()
+            );
+
         -- Busca el ID del estado que corresponde a los disponibles
         SELECT  @ID_DISPONIBLE = COALESCE(EC.[id], NULL)
         FROM    [dbo].[EstadosCubiculo] EC
@@ -50,34 +62,7 @@ BEGIN
         LEFT JOIN [dbo].[ServiciosEspeciales] SE
             ON SC.[idServiciosEspeciales] = SE.[id]
         WHERE   EC.[id] = @ID_DISPONIBLE
-        AND
-        (   SELECT COUNT(*)
-        FROM    [dbo].[Reservas] R
-        WHERE   R.[idCubiculo] = C.[id]
-            AND R.[activo] = 1
-            AND
-            (
-                (
-                    @IN_horaInicio >= R.[horaInicio]
-                AND @IN_horaInicio < R.[horaFin]
-                )
-                OR
-                (
-                    @IN_horaFin > R.[horaInicio]
-                AND @IN_horaFin <= R.[horaFin]
-                )
-                OR
-                (
-                    R.[horaInicio] > @IN_horaInicio
-                AND R.[horaInicio] < @IN_horaFin
-                )
-                OR
-                (
-                    R.[horaFin] > @IN_horaInicio
-                AND R.[horaFin] < @IN_horaFin
-                )
-            )
-          ) < 1;
+            AND [dbo].[BiblioTEC_FUNC_Choques](@IN_horaInicio, @IN_horaFin, NULL, C.[id]) = 0;
 
     END TRY
     BEGIN CATCH
