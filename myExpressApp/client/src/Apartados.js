@@ -102,7 +102,7 @@ function Apartados() {
                         <div className="datos">
                             <p>
                                 <span className="nombre">Cubículo: {e.nombre}</span>
-                                <b> · Capacidad: {e.capacidad}</b>
+                                <b> · Capacidad:</b> {e.capacidad}
                                 <b> · Fecha:</b> {formatoLocal(e.fecha)}
                                 <b></b>
                                 <b></b>

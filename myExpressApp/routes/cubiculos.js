@@ -5,6 +5,22 @@ let estaAutenticado = require('./autenticado.js');
 const manejarError = require('./errores.js');
 let transporter = require('./correo.js');
 
+// Para el formato de las fechas en el envío de correos
+const idiomaLocal = ['es-CR', 'es'];
+const formatoFecha = {
+    timeZone: 'America/Costa_Rica',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long'
+};
+const formatoHora = {
+    timeZone: 'America/Costa_Rica',
+    hour12: true,
+    hour: '2-digit',
+    minute: 'numeric'
+};
+
 // Retorna la lista de todos los cubículos, con estos datos:
 // ID, nombre, estado, capacidad, servicios y tiempo máximo
 // (Puede limitarse solo al ID y al nombre)
@@ -357,6 +373,19 @@ router.post('/reservar', (req, res) => {
 
     const { idCubiculo, idEstudiante, horaInicio, horaFin, email, nombre } = req.body;
 
+    let horaInicio_obj, horaFin_obj;
+
+    try {
+        horaInicio_obj = new Date(horaInicio.replace(" ", "T") + "Z");
+        horaFin_obj = new Date(horaFin.replace(" ", "T") + "Z");
+    } catch (error) {
+        return res.status(401).send({ message : 'Datos erróneos' });
+    }
+    
+    const fechaDeReserva_texto = new Intl.DateTimeFormat(idiomaLocal, formatoFecha).format(horaInicio_obj);
+    const horaInicio_texto = new Intl.DateTimeFormat(idiomaLocal, formatoHora).format(horaInicio_obj).replace(/(00)(:\d{2})/, '12$2');
+    const horaFin_texto = new Intl.DateTimeFormat(idiomaLocal, formatoHora).format(horaFin_obj).replace(/(00)(:\d{2})/, '12$2');
+
     const request = new sqlcon.Request();
 
     // Parámetros de entrada
@@ -375,10 +404,16 @@ router.post('/reservar', (req, res) => {
                 from: transporter.options.auth.user,
                 to: `${email}`,
                 subject: 'Reserva de cubículo',
-                html: `<p>Se ha reservado el cubículo: ${nombre}
-          para la fecha:
-          Desde ${horaInicio} hasta ${horaFin}</p>
-          Para solicitar el QR de la reserva, debe confirmarla desde la página.`
+                html: `
+<p>Se ha confirmado su reserva.</p>
+<p>Los datos son los siguientes:<p>
+<ul>
+    <li><b>Cubículo:</b> ${nombre}</li>
+    <li><b>Fecha:</b> ${fechaDeReserva_texto}</li>
+    <li><b>Hora de entrada:</b> ${horaInicio_texto}</li>
+    <li><b>Hora de salida:</b> ${horaFin_texto}</li>
+</ul>
+<p>Para solicitar el QR de la reserva, debe confirmarla desde la plataforma.</p>`
             };
 
             transporter.sendMail(mailOptions, function (error, info) {

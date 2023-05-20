@@ -9,6 +9,7 @@
     "build-prod": "cd client && npm install && npm run build && cd .. && npm install --if-present && npm run build --if-present"
   },
   "dependencies": {
+    "@pdf-lib/fontkit": "^1.1.1",
     "axios": "^1.3.5",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
