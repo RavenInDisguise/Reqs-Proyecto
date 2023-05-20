@@ -1,11 +1,11 @@
 var sqlcon = require('mssql');
 
-// configuracion de la db
+// Configuración de la base de datos
 const config = {
-    user: 'bibliotec-server-admin',
-    password: 'Sprint01',
-    server: 'bibliotec-server.database.windows.net',
-    database: 'bibliotec-database',
+    user: 'BiblioAPI',
+    password: 'BAiPbIli!0',
+    server: 'appbibliotec.database.windows.net',
+    database: 'appbibliotec-database',
     options: {
         encrypt: true
     }
