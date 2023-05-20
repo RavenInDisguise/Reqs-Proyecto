@@ -114,10 +114,6 @@ router.put('/eliminar', (req, res) => {
     request.input('IN_idReserva', sqlcon.Int, idReserva)
     request.input('IN_idEstudiante', sqlcon.Int, req.session.user.idEstudiante)
     request.input('IN_tipoUsuario', sqlcon.VarChar, req.session.user.tipoUsuario)
-
-    const query = (req.session.user.tipoUsuario == 'Administrador' ? 
-      `UPDATE Reservas SET confirmado = 1 WHERE idEstudiante = ${req.session.user.idEstudiante} AND id =` + idReserva
-      : `UPDATE Reservas SET confirmado = 1 WHERE id =` + idReserva)
   
     request.execute('Bibliotec_SP_ConfirmarReserva',(error, resultado) => {
       if (error) {
