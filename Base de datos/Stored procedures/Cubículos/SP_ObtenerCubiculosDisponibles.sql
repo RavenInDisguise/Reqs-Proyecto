@@ -62,7 +62,7 @@ BEGIN
         LEFT JOIN [dbo].[ServiciosEspeciales] SE
             ON SC.[idServiciosEspeciales] = SE.[id]
         WHERE   EC.[id] = @ID_DISPONIBLE
-            AND [dbo].[BiblioTEC_FUNC_Choques](@IN_horaInicio, @IN_horaFin, NULL, C.[id]) = 0;
+            AND [dbo].[BiblioTEC_FUNC_Choques](@IN_horaInicio, @IN_horaFin, NULL, C.[id], NULL) = 0;
 
     END TRY
     BEGIN CATCH
