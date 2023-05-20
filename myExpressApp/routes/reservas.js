@@ -72,27 +72,30 @@ router.get('/estudiante', (req, res) => {
     });
 });
 
-//eliminar reserva
+// Eliminar reserva
 router.put('/eliminar', (req, res) => {
     if (!estaAutenticado(req, false)) {
-      return res.status(403).send('Acceso denegado');
+        return res.status(403).send('Acceso denegado');
     }
     const idReserva = req.query.id;
-    const consulta = new sqlcon.Request();
-    const query = (req.session.user.tipoUsuario == 'Administrador' ? 
-      `UPDATE Reservas SET activo = 0, confirmado = 0 WHERE idEstudiante = ${req.session.user.idEstudiante} AND id =` + idReserva
-      : `UPDATE Reservas SET activo = 0, confirmado = 0 WHERE id =` + idReserva)
-  
-    consulta.query(query, (err, resultado) => {
-      if (err) {
-        console.log(err);
-        res.status(500).send('Error al realizar la consulta');
-      } else {
-        res.send(resultado.recordset);
-        console.log('Consulta realizada');
-      }
+    const idEstudiante = req.session.user.idEstudiante;
+    const tipoUsuario = req.session.user.tipoUsuario;
+    
+    const request = new sqlcon.Request();
+
+    // Parámetros de entrada
+    request.input('IN_idReserva', sqlcon.Int, idReserva);
+    request.input('IN_idEstudiante', sqlcon.Int, idEstudiante);
+    request.input('IN_tipoUsuario', sqlcon.VarChar, tipoUsuario);
+
+    request.execute('BiblioTEC_SP_EliminarReserva', (error, resultado) => {
+        if (error) {
+            manejarError(res, error);
+        } else {
+            res.status(200).send();
+        }
     });
-  });
+});
   
   //confirmar reserva
   router.put('/confirmar', async (req, res) => {

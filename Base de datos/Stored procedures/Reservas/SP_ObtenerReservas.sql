@@ -30,6 +30,7 @@ BEGIN
             ON  R.[idCubiculo] = C.[id]
         INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]
         WHERE   R.[eliminada] = 0
+            AND R.[eliminada] = 0
         ORDER BY R.[fecha] DESC;
 
     END TRY

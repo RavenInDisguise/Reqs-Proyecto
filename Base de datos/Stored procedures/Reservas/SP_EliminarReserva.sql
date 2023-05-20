@@ -1,11 +1,13 @@
 --------------------------------------------------------------------------
 -- Autor:       Paúl Rodríguez García
 -- Fecha:       2023-05-19
--- Descripción: Procedimiento que retorna los datos de una reserva
+-- Descripción: Procedimiento para borrar una reserva
 --------------------------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_ObtenerReserva]
-    @IN_idReserva           INT
+CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_EliminarReserva]
+    @IN_idReserva           INT,
+    @IN_idEstudiante        INT = NULL,
+    @IN_tipoUsuario         VARCHAR(16)
 AS
 BEGIN
     SET NOCOUNT ON;         -- No retorna metadatos
@@ -14,37 +16,53 @@ BEGIN
     DECLARE @ErrorNumber INT, @ErrorSeverity INT, @ErrorState INT, @Message VARCHAR(200);
     DECLARE @transaccion_iniciada BIT = 0;
 
+    -- DECLARACIÓN DE VARIABLES
+    DECLARE @DESCRIPCION_ADMIN VARCHAR(32) = 'Administrador';
+
     BEGIN TRY
 
         -- VALIDACIONES
         -- ¿Existe la reserva?
-        IF EXISTS (
+        IF NOT EXISTS(
             SELECT  1
             FROM    [dbo].[Reservas] R
             WHERE   R.[id] = @IN_idReserva
                 AND R.[eliminada] = 0
         )
         BEGIN
-            SELECT  R.[id],
-                    C.[nombre] AS 'nombreCubiculo', 
-                    C.[id] AS 'idCubiculo', 
-                    R.[fecha] AS 'fecha',
-                    R.[horaInicio] AS 'horaInicio',
-                    R.[horaFin] AS 'horaFin',
-                    R.[activo] AS 'activo',
-                    R.[confirmado] AS 'confirmado',
-                    CONCAT(E.[nombre], ' ', E.[apellido1], ' ', E.[apellido2]) AS 'nombreEstudiante',
-                    E.[id] AS 'idEstudiante'
-            FROM    [dbo].[Reservas] R 
-            LEFT JOIN [dbo].[Cubiculos] C 
-                ON  R.[idCubiculo] = C.[id]
-            INNER JOIN [dbo].[Estudiantes] E
-                ON E.[id] = R.[idEstudiante]
-            WHERE R.[id] = @IN_idReserva;
-        END
-        ELSE
-        BEGIN
             RAISERROR('No existe ninguna reserva con el ID %d', 16, 1, @IN_idReserva);
+        END;
+
+        -- ¿Tiene permisos para eliminar su reserva?
+        -- (es administrador o es un estudiante borrando una de sus reservas)
+        IF      @IN_tipoUsuario != @DESCRIPCION_ADMIN
+            AND (
+                SELECT  R.[idEstudiante]
+                FROM    [dbo].[Reservas] R
+                WHERE   R.[id] = @IN_idReserva
+            ) != @IN_idEstudiante
+        BEGIN
+            RAISERROR('No tiene autorización para eliminar esta reserva', 16, 1);
+        END;
+
+        -- INICIO DE LA TRANSACCIÓN
+        IF @@TRANCOUNT = 0
+        BEGIN
+            SET @transaccion_iniciada = 1;
+            BEGIN TRANSACTION;
+        END;
+
+            UPDATE  R
+            SET     R.[eliminada] = 1,
+                    R.[activO] = 0,
+                    R.[confirmado] = 0
+            FROM    [dbo].[Reservas] R
+            WHERE   R.[id] = @IN_idReserva;
+
+        -- COMMIT DE LA TRANSACCIÓN
+        IF @transaccion_iniciada = 1
+        BEGIN
+            COMMIT TRANSACTION;
         END;
 
     END TRY
