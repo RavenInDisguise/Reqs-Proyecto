@@ -100,6 +100,13 @@ function Reservar() {
                 catch{
                     alert('Hubo un error en la reserva')
                 }
+            }).catch((error) => {
+                try{
+                    alert('Ocurrió un error al hacer la reserva:\n- ' + error.response.data.message);
+                }
+                catch{
+                    alert('Ocurrió un error al hacer la reserva');
+                }
             })
         }
 

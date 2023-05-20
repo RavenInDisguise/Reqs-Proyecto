@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import './Registro.css'
 import './Tarjeta.css'
 import axios from 'axios';
@@ -12,6 +13,7 @@ function Registro() {
   const [fechaDeNacimiento, setFechaDeNacimiento] = useState(null)
   const [correo,setCorreo] = useState('')
   const [clave,setClave] = useState('')
+  const navigate = useNavigate();
 
   async function submit(e) {
     e.preventDefault();
@@ -31,6 +33,7 @@ function Registro() {
         switch (res.status){
           case 200:
             alert(res.data.message);
+            navigate('/');
             break;
           case 422:
             alert(res.data.message);

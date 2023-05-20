@@ -108,27 +108,28 @@ router.put('/eliminar', (req, res) => {
       request.execute('BiblioTEC_SP_CrearEstudiante',(error, resultado) =>{
         if(error){
           manejarError(res,error)
+        } else {
+          const mailOptions = {
+            from: transporter.options.auth.user,
+            to: `${correo}` ,
+            subject: 'Registro exitoso',
+            text: `Se ha registrado exitosamente al estudiante:
+  
+            - Nombre: ${nombre}
+            - Apellidos: ${apellido1} ${apellido2}
+            - Carné: ${carnet}
+            - Cédula: ${cedula}`
+          };
+          
+          transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+              console.log(error);
+            } else {
+              console.log('Correo enviado: ' + info.response);
+            }
+          });
+          res.status(200).send({message:"Registro exitoso"})
         }
-        const mailOptions = {
-          from: transporter.options.auth.user,
-          to: `${correo}` ,
-          subject: 'Registro exitoso',
-          text: `Se ha registrado exitosamente al estudiante:
-
-          - Nombre: ${nombre}
-          - Apellidos: ${apellido1} ${apellido2}
-          - Carné: ${carnet}
-          - Cédula: ${cedula}`
-        };
-        
-        transporter.sendMail(mailOptions, function(error, info){
-          if (error) {
-            console.log(error);
-          } else {
-            console.log('Correo enviado: ' + info.response);
-          }
-        });
-        res.status(200).send({message:"Registro exitoso"})
       })
     })
   
