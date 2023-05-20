@@ -26,7 +26,12 @@ BEGIN
         FROM    [dbo].[Reservas] R
         WHERE   R.[idCubiculo] = @IN_idCubiculo
             AND R.[activo] = 1
-            AND R.[id] != @IN_idReservaExcluir
+            AND R.[id] != (
+                CASE
+                    WHEN @IN_idReservaExcluir IS NULL THEN -1
+                    ELSE @IN_idReservaExcluir
+                END
+            )
         AND
         (
             (
@@ -60,7 +65,12 @@ BEGIN
         FROM    [dbo].[Reservas] R
         WHERE   R.[idEstudiante] = @IN_idEstudiante
             AND R.[activo] = 1
-            AND R.[id] != @IN_idReservaExcluir
+            AND R.[id] != (
+                CASE
+                    WHEN @IN_idReservaExcluir IS NULL THEN -1
+                    ELSE @IN_idReservaExcluir
+                END
+            )
         AND
         (
             (

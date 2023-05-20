@@ -23,18 +23,6 @@ BEGIN
 
     BEGIN TRY
 
-        INSERT INTO [dbo].[Errors]
-            VALUES (
-                SUSER_NAME(),
-                ERROR_NUMBER(),
-                ERROR_STATE(),
-                ERROR_SEVERITY(),
-                ERROR_LINE(),
-                ERROR_PROCEDURE(),
-                CONCAT(CONVERT(VARCHAR,@IN_horaInicio,0),CONVERT(VARCHAR,@IN_horaFin,0)),
-                GETUTCDATE()
-            );
-
         -- Busca el ID del estado que corresponde a los disponibles
         SELECT  @ID_DISPONIBLE = COALESCE(EC.[id], NULL)
         FROM    [dbo].[EstadosCubiculo] EC
