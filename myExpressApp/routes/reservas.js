@@ -66,9 +66,9 @@ router.get('/reservas', (req, res) => {
     });
 });
 
-// Ruta de reseervas de estudiante
+// Ruta de reservas de estudiante
 // Retorna una lista de reservas realizadas por un estudiante, 
-// Esta contiene eel id de reserva, el nombre, 
+// Esta contiene el id de reserva, el nombre, 
 // la capacidad y la fecha y hora de reserva
 router.get('/estudiante', (req, res) => {
     const id = req.query.id;
@@ -82,6 +82,30 @@ router.get('/estudiante', (req, res) => {
 
     // Ejecutar la consulta
     request.execute('BiblioTEC_SP_ObtenerReservasDeEstudiante', (error, resultado) => {
+        if (error) {
+            manejarError(res, error);
+        } else {
+            res.send(resultado.recordset);
+        }
+    });
+});
+
+// Ruta de reservas del cubículo
+// Retorna una lista de reservas realizadas en un cubículo, 
+// Esta contiene el id de reserva, el nombre, 
+// la capacidad y la fecha y hora de reserva
+router.get('/cubiculo', (req, res) => {
+    const id = req.query.id;
+    if (!estaAutenticado(req, true)) {
+        return res.status(403).send('Acceso denegado');
+    }
+    // Crear una nueva consulta a la base de datos
+    const request = new sqlcon.Request();
+
+    request.input('IN_idCubiculo', sqlcon.Int, id);
+
+    // Ejecutar la consulta
+    request.execute('BiblioTEC_SP_ObtenerReservasDeCubiculo', (error, resultado) => {
         if (error) {
             manejarError(res, error);
         } else {
