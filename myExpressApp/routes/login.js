@@ -4,13 +4,8 @@ const sqlcon = require('./database.js');
 const bcrypt = require('bcrypt');
 const manejarError = require('./errores.js');
 
-/* GET home page. */
-router.get('/', function (req, res, next) {
-    res.render('index');
-});
-
 // Verificar si hay una sesión iniciada
-router.get('/api/login', (req, res) => {
+router.get('/login', (req, res) => {
     const saved = req.session.user;
 
     if (saved) {
@@ -29,7 +24,7 @@ router.get('/api/login', (req, res) => {
 });
 
 // Cierre de sesión
-router.get('/api/logout', (req, res) => {
+router.get('/logout', (req, res) => {
     const saved = req.session.user;
 
     if (saved) {
@@ -45,7 +40,7 @@ router.get('/api/logout', (req, res) => {
 });
   
 // Inicio de sesión
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     const request = new sqlcon.Request();
 

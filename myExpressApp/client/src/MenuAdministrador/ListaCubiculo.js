@@ -18,7 +18,7 @@ export default () => {
             }
         })
         
-        axios.get('cubiculo/cubiculos').then((response) => {
+        axios.get('/api/cubiculo/cubiculos').then((response) => {
             try {
                 listaCompleta = response.data;
             } catch (error) {
@@ -151,7 +151,7 @@ export default () => {
                                 {(e.estado != 'Eliminado') ? (
                                     <FontAwesomeIcon className="iconoOpcion" icon={faTrashCan} title="Borrar cubículo" onClick={() => {
                                         if (window.confirm('¿Desea borrar el cubículo ' + e.nombre + '?\n\nEn caso de haber reservas activas, serán canceladas y se notificará a los respectivos usuarios.')) { //a diferencia de estudiantes nombre va con minuscula
-                                            axios.put('/cubiculo/eliminar?id=' + e.id).then((response) => {
+                                            axios.put('/api/cubiculo/eliminar?id=' + e.id).then((response) => {
                                             try {
                                                 if (response.status == 200) {
                                                     desactivarCubiculo(e.id);

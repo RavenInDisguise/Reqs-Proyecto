@@ -5,10 +5,11 @@ const logger = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const loginRouter = require('./routes/login');
-const estudiantesRouter = require("./routes/estudiantes");
-const cubiculosRouter = require("./routes/cubiculos")
-const reservasRouter = require("./routes/reservas")
+const indexRouter = require('./routes/index.js');
+const loginRouter = require('./routes/login.js');
+const estudiantesRouter = require("./routes/estudiantes.js");
+const cubiculosRouter = require("./routes/cubiculos.js")
+const reservasRouter = require("./routes/reservas.js")
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(cors({
-  origin: ["http://localhost:3000", /http:\/\/localhost:3000\/.+/],
+  origin: ["http://appbibliotec.azurewebsites.net", /http:\/\/appbibliotec.azurewebsites.net\/.+/],
   methods: ["GET", "POST", "PUT"],
   credentials: true
 }));
@@ -34,11 +35,11 @@ app.use(session({
   }
 }))
 
-
-app.use('/', loginRouter);
-app.use('/estudiante', estudiantesRouter)
-app.use('/cubiculo', cubiculosRouter)
-app.use('/reserva', reservasRouter)
+app.use('/', indexRouter);
+app.use('/api/', loginRouter);
+app.use('/api/estudiante', estudiantesRouter)
+app.use('/api/cubiculo', cubiculosRouter)
+app.use('/api/reserva', reservasRouter)
 
 
 // catch 404 and forward to error handler

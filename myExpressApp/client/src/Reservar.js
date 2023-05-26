@@ -62,7 +62,7 @@ function Reservar() {
         if (!idCubiculo || !horaInicio || !horaFin) {
             navigate(-1);
         } else {
-            axios.get('/cubiculo?id=' + idCubiculo).then((response) => {
+            axios.get('/api/cubiculo?id=' + idCubiculo).then((response) => {
                 try {
                     let info = response.data;
                     let newServicios = info[0].servicios;
@@ -92,7 +92,7 @@ function Reservar() {
             e.preventDefault();
             const horaInicioJSON = dateInicio.toISOString().replace("T", " ").replace("Z", "");
             const horaFinJSON = dateFin.toISOString().replace("T", " ").replace("Z", "");
-            axios.post('/cubiculo/reservar',{idCubiculo, idEstudiante,horaInicio: horaInicioJSON, horaFin: horaFinJSON,email, nombre}).then((response)=>{
+            axios.post('/api/cubiculo/reservar',{idCubiculo, idEstudiante,horaInicio: horaInicioJSON, horaFin: horaFinJSON,email, nombre}).then((response)=>{
                 try{
                     alert(response.data.message)
                     navigate('/Apartados')
