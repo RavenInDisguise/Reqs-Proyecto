@@ -32,4 +32,18 @@ class ApiRequest {
             response.body?.string() ?: ""
         }
     }
+
+    fun postRequest(url: String, requestBody: RequestBody): String {
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        val response = client.newCall(request).execute()
+
+        return response.use { response : Response ->
+            if (response.code == 200) throw IOException("Unexpected code $response")
+            response.body?.string() ?: ""
+        }
+    }
 }
