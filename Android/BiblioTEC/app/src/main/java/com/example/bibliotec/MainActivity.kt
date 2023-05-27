@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
         if (currentFragment is SecondFragment) {
-            // Estás en el segundo fragmento, no hagas nada
+            this.finish()
         } else {
             super.onBackPressed() // Llama al super método para el comportamiento predeterminado
         }
