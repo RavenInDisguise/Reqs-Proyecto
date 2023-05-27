@@ -1,5 +1,6 @@
 package com.example.bibliotec
 
+import android.app.AlertDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import java.io.IOException
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -46,21 +48,32 @@ class FirstFragment : Fragment() {
             // Obtener el texto ingresado
             val username = editTextUsername.text.toString()
             val password = editTextPassword.text.toString()
-
             // Solicitud PUT login
             GlobalScope.launch(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/login"
                 val requestBody = RequestBody.create(
                     "application/json".toMediaTypeOrNull(),
                     "{\"email\": \"${username}\", \"password\":\"${password}\"}")
-                val response = apiRequest.postRequest(url, requestBody)
-
+                try {
+                    val response = apiRequest.postRequest(url, requestBody)
+                    requireActivity().runOnUiThread() {
+                        findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+                    }
+                }
+                catch (error: IOException) {
+                    requireActivity().runOnUiThread() {
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Error")
+                            .setMessage("Usuario o contraseña incorrecta")
+                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .show()
+                    }
+                }
             }
 
 
         }
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
