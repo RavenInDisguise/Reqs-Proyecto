@@ -58,4 +58,14 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+    override fun onBackPressed() {
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
+        if (currentFragment is SecondFragment) {
+            this.finish()
+        } else {
+            super.onBackPressed() // Llama al super método para el comportamiento predeterminado
+        }
+    }
 }

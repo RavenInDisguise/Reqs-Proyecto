@@ -42,7 +42,7 @@ class ApiRequest {
         val response = client.newCall(request).execute()
 
         return response.use { response : Response ->
-            if (response.code == 200) throw IOException("Unexpected code $response")
+            if (!response.isSuccessful) throw IOException("Unexpected code $response")
             response.body?.string() ?: ""
         }
     }
