@@ -1,4 +1,4 @@
-package com.example.bibliotec
+package com.example.bibliotec.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -8,21 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.navigation.fragment.findNavController
-import com.example.bibliotec.databinding.FragmentFirstBinding
+import com.example.bibliotec.api.ApiRequest
+import com.example.bibliotec.R
+import com.example.bibliotec.databinding.FragmentLoginBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.IOException
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class LoginFragment : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentLoginBinding? = null
     private val apiRequest = ApiRequest()
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -33,7 +34,7 @@ class FirstFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -54,17 +55,17 @@ class FirstFragment : Fragment() {
                 val requestBody = RequestBody.create(
                     "application/json".toMediaTypeOrNull(),
                     "{\"email\": \"${username}\", \"password\":\"${password}\"}")
-                try {
-                    val response = apiRequest.postRequest(url, requestBody)
+
+                val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
+                if (responseStatus) {
                     requireActivity().runOnUiThread() {
                         findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
                     }
-                }
-                catch (error: IOException) {
+                } else {
                     requireActivity().runOnUiThread() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
-                            .setMessage("Usuario o contraseña incorrecta")
+                            .setMessage(responseString)
                             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                             .show()
                     }

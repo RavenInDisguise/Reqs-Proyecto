@@ -1,4 +1,4 @@
-package com.example.bibliotec
+package com.example.bibliotec.ui
 
 import android.app.AlertDialog
 import android.os.Bundle
@@ -8,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
+import com.example.bibliotec.api.ApiRequest
+import com.example.bibliotec.R
 import com.example.bibliotec.databinding.FragmentSecondBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody
 import java.io.IOException
 
 /**

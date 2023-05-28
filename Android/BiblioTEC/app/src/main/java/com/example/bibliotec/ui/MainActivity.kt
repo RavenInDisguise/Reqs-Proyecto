@@ -1,4 +1,4 @@
-package com.example.bibliotec
+package com.example.bibliotec.ui
 
 import android.os.Bundle
 import android.view.Menu
@@ -8,6 +8,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.bibliotec.R
 import com.example.bibliotec.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
 
