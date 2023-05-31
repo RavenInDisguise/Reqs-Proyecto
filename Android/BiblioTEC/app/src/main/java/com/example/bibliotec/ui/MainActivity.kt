@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -26,9 +27,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var apiRequest : ApiRequest
     private lateinit var user : User
+    private val destinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
+        // Hide the menu button if the current destination is LoginFragment
+        if (destination.id == R.id.LoginFragment) {
+            invalidateOptionsMenu()
+        } else {
+            invalidateOptionsMenu()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        println("Aquí empieza")
 
         apiRequest = ApiRequest.getInstance(applicationContext)
         user = User.getInstance(applicationContext)
@@ -40,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         appBarConfiguration = AppBarConfiguration(navController.graph)
+        navController.addOnDestinationChangedListener(destinationChangedListener)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
@@ -133,7 +145,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        if (currentFragment is StudentFragment || currentFragment is AdminFragment) {
+        if (currentFragment is StudentFragment || currentFragment is AdminFragment || currentFragment is LoginFragment) {
             this.finish()
         } else {
             super.onBackPressed() // Llama al super método para el comportamiento predeterminado

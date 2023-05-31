@@ -60,6 +60,7 @@ class User private constructor(context: Context) {
             editor.putString("userType", userType!!)
         }
 
+        timedOut = false
         editor.putBoolean("timedOut", false)
 
         editor.apply()

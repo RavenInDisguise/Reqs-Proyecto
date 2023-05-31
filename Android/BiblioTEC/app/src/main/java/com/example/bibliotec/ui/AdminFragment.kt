@@ -32,6 +32,7 @@ class AdminFragment : Fragment() {
     ): View? {
         val activity = requireActivity() as AppCompatActivity
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
         _binding = FragmentStudentBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
         user = User.getInstance(requireContext())
