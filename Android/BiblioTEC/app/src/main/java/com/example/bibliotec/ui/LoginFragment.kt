@@ -11,20 +11,21 @@ import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.R
 import com.example.bibliotec.databinding.FragmentLoginBinding
+import com.example.bibliotec.user.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.RequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 
-/**
- * A simple [Fragment] subclass as the default destination in the navigation.
- */
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
-    private val apiRequest = ApiRequest()
+    private lateinit var apiRequest: ApiRequest
+    private lateinit var user: User
+
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
@@ -34,6 +35,8 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        apiRequest = ApiRequest.getInstance(requireContext())
+        user = User.getInstance(requireContext())
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -52,15 +55,24 @@ class LoginFragment : Fragment() {
             // Solicitud PUT login
             GlobalScope.launch(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/login"
-                val requestBody = RequestBody.create(
-                    "application/json".toMediaTypeOrNull(),
-                    "{\"email\": \"${username}\", \"password\":\"${password}\"}")
+                val requestBody =
+                    "{\"email\": \"${username}\", \"password\":\"${password}\"}".toRequestBody("application/json".toMediaTypeOrNull())
 
                 val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
                 if (responseStatus) {
-                    requireActivity().runOnUiThread() {
-                        findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+                    user.storeUserInfo(responseString)
+                    user.checkedInCurrentSession = true
+
+                    if (user.isAdmin()) {
+                        requireActivity().runOnUiThread() {
+                            findNavController().navigate(R.id.action_LoginFragment_to_AdminFragment)
+                        }
+                    } else {
+                        requireActivity().runOnUiThread() {
+                            findNavController().navigate(R.id.action_LoginFragment_to_StudentFragment)
+                        }
                     }
+
                 } else {
                     requireActivity().runOnUiThread() {
                         AlertDialog.Builder(requireContext())
@@ -72,9 +84,9 @@ class LoginFragment : Fragment() {
                 }
             }
 
-
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

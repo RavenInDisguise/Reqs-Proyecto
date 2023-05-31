@@ -1,25 +1,37 @@
 package com.example.bibliotec.ui
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.bibliotec.R
+import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.databinding.ActivityMainBinding
+import com.example.bibliotec.user.User
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.JsonObject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-
+    private lateinit var apiRequest : ApiRequest
+    private lateinit var user : User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        apiRequest = ApiRequest.getInstance(applicationContext)
+        user = User.getInstance(applicationContext)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -35,12 +47,67 @@ class MainActivity : AppCompatActivity() {
                 .setAction("Action", null).show()
         }
 
+        // Se revisa si ya parece haber iniciado sesión
+        if (user.isLoggedIn()) {
+            // Parece haber iniciado sesión
+            // Se revisa el tipo de usuario
 
+            if (user.isAdmin()) {
+                navController.navigate(R.id.AdminFragment)
+            } else {
+                navController.navigate(R.id.StudentFragment)
+            }
+        }
+    }
+
+    private fun logout() {
+        // Se cierra sesión
+
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val url = "https://appbibliotec.azurewebsites.net/api/logout"
+
+            val (responseStatus, responseString) = apiRequest.getRequest(url)
+            if (responseStatus) {
+                user.setTimedOut()
+                runOnUiThread {
+                    navController.navigate(R.id.LoginFragment)
+                }
+            } else {
+                runOnUiThread {
+                    AlertDialog.Builder(this@MainActivity)
+                        .setTitle("Error")
+                        .setMessage(responseString)
+                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                        .show()
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
+        return currentFragment !is LoginFragment
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val logoutItem = menu.findItem(R.id.action_logout)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
+        if (currentFragment is LoginFragment) {
+            logoutItem?.isVisible = false // Se oculta el botón para cerrar sesión
+        } else {
+            logoutItem?.isVisible = true // Se muestra el botón para cerrar sesión
+        }
+
         return true
     }
 
@@ -49,7 +116,10 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_logout -> {
+                logout()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -63,7 +133,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        if (currentFragment is SecondFragment) {
+        if (currentFragment is StudentFragment || currentFragment is AdminFragment) {
             this.finish()
         } else {
             super.onBackPressed() // Llama al super método para el comportamiento predeterminado
