@@ -18,7 +18,16 @@
         <action
             android:id="@+id/action_LoginFragment_to_AdminFragment"
             app:destination="@id/AdminFragment" />
+        <action
+            android:id="@+id/action_LoginFragment_to_RegistroFragment"
+            app:destination="@id/RegistroFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/RegistroFragment"
+        android:name="com.example.bibliotec.ui.RegistroFragment"
+        android:label="@string/registro_fragment_label"
+        tools:layout="@layout/fragment_registro">
     </fragment>
     <fragment
         android:id="@+id/StudentFragment"
