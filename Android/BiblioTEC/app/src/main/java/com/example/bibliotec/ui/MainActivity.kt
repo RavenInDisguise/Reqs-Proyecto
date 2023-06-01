@@ -114,11 +114,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        if (currentFragment is LoginFragment) {
-            logoutItem?.isVisible = false // Se oculta el botón para cerrar sesión
-        } else {
-            logoutItem?.isVisible = true // Se muestra el botón para cerrar sesión
-        }
+        logoutItem?.isVisible = currentFragment !is LoginFragment
 
         return true
     }

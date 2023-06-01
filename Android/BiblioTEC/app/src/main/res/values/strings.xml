@@ -3,11 +3,9 @@
     <string name="action_logout">Cerrar sesión</string>
     <!-- Strings used for fragments for navigation -->
     <string name="login_fragment_label">Inicio de sesión</string>
+    <string name="registro_fragment_label">Registro</string>
     <string name="student_fragment_label">Menú principal (estudiante)</string>
     <string name="admin_fragment_label">Menú principal (admin)</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
-
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>
