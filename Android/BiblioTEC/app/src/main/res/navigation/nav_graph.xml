@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/StudentFragment"
-        android:name="com.example.bibliotec.ui.StudentFragment"
+        android:name="com.example.bibliotec.ui.menu.StudentFragment"
         android:label="@string/student_fragment_label"
         tools:layout="@layout/fragment_student">
 
@@ -32,7 +32,7 @@
     </fragment>
     <fragment
         android:id="@+id/AdminFragment"
-        android:name="com.example.bibliotec.ui.AdminFragment"
+        android:name="com.example.bibliotec.ui.menu.AdminFragment"
         android:label="@string/admin_fragment_label"
         tools:layout="@layout/fragment_admin">
 

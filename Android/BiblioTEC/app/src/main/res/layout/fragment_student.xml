@@ -4,24 +4,85 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.StudentFragment">
+    tools:context=".ui.menu.StudentFragment">
 
     <TextView
-        android:id="@+id/textview_second"
-        android:layout_width="wrap_content"
+        android:id="@+id/admin_menu_title"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/button_second"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/menuTitle"
+        android:text="Menú"/>
 
-    <Button
-        android:id="@+id/button_second"
-        android:layout_width="wrap_content"
+    <ScrollView
+        android:id="@+id/admin_scrollview"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/previous"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textview_second" />
+        app:layout_constraintTop_toBottomOf="@id/admin_menu_title">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                style="@style/MenuCategory">
+
+                <TextView
+                    style="@style/MenuCategoryText"
+                    android:text="Cubículos"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    style="@style/MenuItem">
+
+                    <ImageView
+                        android:id="@+id/MenuBookImage"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/MenuItemImage"
+                        android:src="@drawable/manage_people" />
+
+                    <TextView
+                        android:id="@+id/MenuBookText"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/MenuItemText"
+                        app:layout_constraintStart_toEndOf="@+id/MenuBookImage"
+                        android:text="Reservar cubiculo" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    style="@style/MenuItem">
+
+                    <ImageView
+                        android:id="@+id/MenuBookedImage"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/MenuItemImage"
+                        android:src="@drawable/manage_people" />
+
+                    <TextView
+                        android:id="@+id/MenuBookedText"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/MenuItemText"
+                        app:layout_constraintStart_toEndOf="@+id/MenuBookedImage"
+                        android:text="Ver cubículos reservados" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

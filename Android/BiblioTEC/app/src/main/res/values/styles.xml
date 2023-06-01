@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="menuTitle">
+        <item name="android:fontFamily">@font/robotoslab_bold</item>
+        <item name="fontFamily">@font/robotoslab_bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textSize">30dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_marginTop">15dp</item>
+    </style>
+    <style name="MenuCategoryText">
+        <item name="android:fontFamily">@font/robotoslab_bold</item>
+        <item name="fontFamily">@font/robotoslab_bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textSize">25dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+    <style name="MenuCategory">
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:background">@drawable/rounded_border</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+    <style name="MenuItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:background">@drawable/rounded_card</item>
+    </style>
+    <style name="MenuItemImage">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+    <style name="MenuItemText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">18dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="layout_constraintHorizontal_bias">0.0</item>
+        <item name="layout_constraintWidth">0dp</item>
+    </style>
+</resources>
