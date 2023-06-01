@@ -28,18 +28,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var apiRequest : ApiRequest
     private lateinit var user : User
     private val destinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
-        // Hide the menu button if the current destination is LoginFragment
-        if (destination.id == R.id.LoginFragment) {
-            invalidateOptionsMenu()
-        } else {
-            invalidateOptionsMenu()
-        }
+        invalidateOptionsMenu()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        println("Aquí empieza")
 
         apiRequest = ApiRequest.getInstance(applicationContext)
         user = User.getInstance(applicationContext)
@@ -105,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        return currentFragment !is LoginFragment
+        return (currentFragment !is LoginFragment) && (currentFragment !is RegistroFragment)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
@@ -114,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        logoutItem?.isVisible = currentFragment !is LoginFragment
+        logoutItem?.isVisible = (currentFragment !is LoginFragment) && (currentFragment !is RegistroFragment)
 
         return true
     }
