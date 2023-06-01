@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
-import com.example.bibliotec.databinding.FragmentStudentBinding
+import com.example.bibliotec.databinding.FragmentAdminBinding
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 class AdminFragment : Fragment() {
 
-    private var _binding: FragmentStudentBinding? = null
+    private var _binding: FragmentAdminBinding? = null
     private lateinit var apiRequest : ApiRequest
     private val binding get() = _binding!!
     private val gson = Gson()
@@ -33,7 +33,7 @@ class AdminFragment : Fragment() {
         val activity = requireActivity() as AppCompatActivity
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        _binding = FragmentStudentBinding.inflate(inflater, container, false)
+        _binding = FragmentAdminBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
         user = User.getInstance(requireContext())
         return binding.root
@@ -43,7 +43,7 @@ class AdminFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonSecond.setOnClickListener {
-            findNavController().navigate(R.id.action_StudentFragment_to_LoginFragment)
+            findNavController().navigate(R.id.action_AdminFragment_to_LoginFragment)
         }
 
         // Si no se ha revisado el estado de la sesión desde que se abrió la aplicación,
