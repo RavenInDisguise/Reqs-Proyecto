@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 style="@style/menuTitle"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="10dp"
                 android:text="Búsqueda de cubículos"/>
 
             <TextView
@@ -117,7 +117,8 @@
                 android:id="@+id/service_filter_recycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="3dp" />
+                android:layout_marginHorizontal="3dp"
+                android:paddingLeft="30dp" />
 
             <Button
                 android:id="@+id/btnFiltrar"

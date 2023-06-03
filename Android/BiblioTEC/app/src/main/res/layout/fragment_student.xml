@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 style="@style/menuTitle"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="20dp"
                 android:text="Menú"/>
 
             <LinearLayout
