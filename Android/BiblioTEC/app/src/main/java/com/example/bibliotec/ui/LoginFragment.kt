@@ -1,6 +1,7 @@
 package com.example.bibliotec.ui
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -52,13 +53,24 @@ class LoginFragment : Fragment() {
             // Obtener el texto ingresado
             val username = editTextUsername.text.toString()
             val password = editTextPassword.text.toString()
-            // Solicitud PUT login
+
+            // Se abre un popup de "Cargando"
+            val progressDialog = ProgressDialog(requireContext())
+            progressDialog.setMessage("Iniciando sesión...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+
+            // Solicitud POST del inicio de sesión
             GlobalScope.launch(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/login"
                 val requestBody =
                     "{\"email\": \"${username}\", \"password\":\"${password}\"}".toRequestBody("application/json".toMediaTypeOrNull())
 
                 val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
+
+                // Se quita el popup de "Cargando"
+                progressDialog.dismiss()
+
                 if (responseStatus) {
                     user.storeUserInfo(responseString)
                     user.checkedInCurrentSession = true

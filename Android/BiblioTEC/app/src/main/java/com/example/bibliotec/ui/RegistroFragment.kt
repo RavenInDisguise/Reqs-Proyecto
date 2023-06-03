@@ -3,6 +3,7 @@ package com.example.bibliotec.ui
 import androidx.fragment.app.Fragment
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,15 +27,13 @@ class RegistroFragment : Fragment() {
     private var _binding: FragmentRegistroBinding? = null
     private lateinit var apiRequest : ApiRequest
     private val binding get() = _binding!!
-    private val gson = Gson()
     private lateinit var user : User
     val selectedCalendar = Calendar.getInstance()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val activity = requireActivity() as AppCompatActivity
-        activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         _binding = FragmentRegistroBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
         user = User.getInstance(requireContext())
@@ -67,6 +66,12 @@ class RegistroFragment : Fragment() {
             val correo = editTextCorreo.text.toString()
             val clave = editTextClaveRegistro.text.toString()
 
+            // Se abre un popup de "Cargando"
+            val progressDialog = ProgressDialog(requireContext())
+            progressDialog.setMessage("Registrando...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+
             GlobalScope.launch(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/estudiante/crear"
                 val requestBody =
@@ -80,6 +85,10 @@ class RegistroFragment : Fragment() {
                             "\"clave\":\"${clave}\"}").toRequestBody("application/json".toMediaTypeOrNull())
 
                 val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
+
+                // Se quita el popup de "Cargando"
+                progressDialog.dismiss()
+
                 if (responseStatus) {
                     requireActivity().runOnUiThread() {
                         AlertDialog.Builder(requireContext())

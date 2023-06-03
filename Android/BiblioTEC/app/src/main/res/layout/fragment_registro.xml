@@ -21,6 +21,15 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/RegistrarseTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Registrarse"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                style="@style/menuTitle"/>
+
             <EditText
                 android:id="@+id/editTextNombre"
                 android:layout_width="match_parent"
@@ -41,7 +50,7 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="Apellido1"
+                    android:hint="Primer apellido"
                     android:inputType="textPersonName" />
 
                 <EditText
@@ -50,7 +59,7 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="Apellido2"
+                    android:hint="Segundo apellido"
                     android:inputType="textPersonName" />
             </LinearLayout>
 
@@ -69,7 +78,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Número de carnet"
+                android:hint="Número de carné"
                 android:inputType="text|numberDecimal" />
 
             <EditText
@@ -91,7 +100,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Correo Institucional"
+                android:hint="Correo institucional"
                 android:inputType="textEmailAddress" />
 
             <EditText
@@ -100,7 +109,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="30dp"
                 android:ems="10"
-                android:hint="Contraseña Institucional"
+                android:hint="Contraseña institucional"
                 android:inputType="textPassword" />
 
             <Button
@@ -109,7 +118,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="Registrarse"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"/>
         </LinearLayout>
 
     </ScrollView>
