@@ -30,10 +30,7 @@
     <style name="MenuCategory">
         <item name="android:paddingBottom">5dp</item>
         <item name="android:background">@drawable/rounded_border</item>
-        <item name="android:layout_marginStart">10dp</item>
-        <item name="android:layout_marginEnd">10dp</item>
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
     </style>
     <style name="MenuItem">
         <item name="android:layout_width">match_parent</item>
