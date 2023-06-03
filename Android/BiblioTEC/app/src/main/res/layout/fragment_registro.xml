@@ -83,7 +83,7 @@
                 android:focusable="false"
                 android:clickable="true"
                 android:maxLines="1"
-                android:onClick="OnClickFechaDate"/>
+                android:onClick="onClickFechaDate"/>
 
             <EditText
                 android:id="@+id/editTextEmailRegistro"

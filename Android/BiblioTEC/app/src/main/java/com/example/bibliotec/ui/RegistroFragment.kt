@@ -48,9 +48,12 @@ class RegistroFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val editTextFechaNacimiento = view.findViewById<EditText>(R.id.editTextFechaNacimiento)
         editTextFechaNacimiento.setOnClickListener{
-            OnClickFechaDate(view)
+            onClickFechaDate(view)
         }
+
+        // Acción de click al botón de registrarse
         binding.btnRegistro.setOnClickListener{
+            // Obteniendo cada input
             val editTextNombre = view.findViewById<EditText>(R.id.editTextNombre)
             val editTextApellido1 = view.findViewById<EditText>(R.id.editTextApellido1)
             val editTextApellido2 = view.findViewById<EditText>(R.id.editTextApellido2)
@@ -60,6 +63,7 @@ class RegistroFragment : Fragment() {
             val editTextCorreo = view.findViewById<EditText>(R.id.editTextEmailRegistro)
             val editTextClaveRegistro = view.findViewById<EditText>(R.id.editTextClaveRegistro)
 
+            // Obteniendo el texto en cada input
             val nombre = editTextNombre.text.toString()
             val apellido1 = editTextApellido1.text.toString()
             val apellido2 = editTextApellido2.text.toString()
@@ -69,43 +73,71 @@ class RegistroFragment : Fragment() {
             val correo = editTextCorreo.text.toString()
             val clave = editTextClaveRegistro.text.toString()
 
-            GlobalScope.launch(Dispatchers.IO) {
-                val url = "https://appbibliotec.azurewebsites.net/api/estudiante/crear"
-                val requestBody =
-                    ("{\"nombre\": \"${nombre}\"," +
-                            "\"apellido1\":\"${apellido1}\"," +
-                            "\"apellido2\":\"${apellido2}\"," +
-                            "\"cedula\":\"${cedula}\"," +
-                            "\"carnet\":\"${carnet}\"," +
-                            "\"fechaDeNacimiento\":\"${fechaNacimiento}\"," +
-                            "\"correo\":\"${correo}\"," +
-                            "\"clave\":\"${clave}\"}").toRequestBody("application/json".toMediaTypeOrNull())
+            // Se valida que cada input no sea vacio
+            if(nombre.isNullOrEmpty() ||
+                    apellido1.isNullOrEmpty() ||
+                    apellido2.isNullOrEmpty() ||
+                    cedula.isNullOrEmpty() ||
+                    carnet.isNullOrEmpty() ||
+                    fechaNacimiento.isNullOrEmpty() ||
+                    correo.isNullOrEmpty() ||
+                    clave.isNullOrEmpty()
+            ){
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Datos invalidos")
+                    .setMessage("Debe llenar todos los datos correctamente.")
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+            // Se valida que el correo pertenezca a @estudiantec.cr
+            else if(!isValidEmail(correo)){
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Correo invalido")
+                    .setMessage("El correo debe pertenecer al dominio @estudiantec.cr")
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            }
+            // Se realiza la llamda al API
+            else {
+                GlobalScope.launch(Dispatchers.IO) {
+                    val url = "https://appbibliotec.azurewebsites.net/api/estudiante/crear"
+                    val requestBody =
+                        ("{\"nombre\": \"${nombre}\"," +
+                                "\"apellido1\":\"${apellido1}\"," +
+                                "\"apellido2\":\"${apellido2}\"," +
+                                "\"cedula\":\"${cedula}\"," +
+                                "\"carnet\":\"${carnet}\"," +
+                                "\"fechaDeNacimiento\":\"${fechaNacimiento}\"," +
+                                "\"correo\":\"${correo}\"," +
+                                "\"clave\":\"${clave}\"}").toRequestBody("application/json".toMediaTypeOrNull())
 
-                val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
-                if (responseStatus) {
-                    requireActivity().runOnUiThread() {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Éxito")
-                            .setMessage("Registro exitoso")
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                            .show()
-                        findNavController().navigateUp()
-                    }
+                    val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
+                    if (responseStatus) {
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Éxito")
+                                .setMessage("Registro exitoso")
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigateUp()
+                        }
 
-                } else {
-                    requireActivity().runOnUiThread() {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                            .show()
+                    } else {
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun OnClickFechaDate(view:View){
+    // Función para el datepicker de la fecha de nacimiento
+    private fun onClickFechaDate(view:View){
 
         val fechaNacimiento = view.findViewById<EditText>(R.id.editTextFechaNacimiento)
 
@@ -114,10 +146,17 @@ class RegistroFragment : Fragment() {
         val day = selectedCalendar.get(Calendar.DAY_OF_MONTH)
         val listener = DatePickerDialog.OnDateSetListener{datePicker, y, m, d ->
             selectedCalendar.set(y,m,d)
-            fechaNacimiento.setText("$y-$m-$d")
+            val mes = m + 1
+            fechaNacimiento.setText("$y-$mes-$d")
         }
         DatePickerDialog(requireContext(),listener,year,month,day).show()
     }
+
+    fun isValidEmail(email: String): Boolean {
+        val regex = Regex("^\\w+@estudiantec\\.cr$")
+        return regex.matches(email)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
