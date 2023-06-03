@@ -57,7 +57,7 @@ class StudentFragment : Fragment() {
 
         // Se agregan los listeners al tocar
         view.findViewById<ConstraintLayout>(R.id.NewReservationButton).setOnClickListener {
-            notImplementedWarning()
+            findNavController().navigate(R.id.action_StudentFragment_to_FiltersFragment)
         }
 
         view.findViewById<ConstraintLayout>(R.id.SeeReservationHistory).setOnClickListener {
@@ -66,35 +66,37 @@ class StudentFragment : Fragment() {
 
         // Si no se ha revisado el estado de la sesión desde que se abrió la aplicación,
         // se revisa aquí
-        GlobalScope.launch(Dispatchers.IO) {
-            val url = "https://appbibliotec.azurewebsites.net/api/login"
+        if (!user.checkedInCurrentSession()) {
+            GlobalScope.launch(Dispatchers.IO) {
+                val url = "https://appbibliotec.azurewebsites.net/api/login"
 
-            val (responseStatus, responseString) = apiRequest.getRequest(url)
-            if (responseStatus) {
-                val json = gson.fromJson(responseString, JsonObject::class.java)
+                val (responseStatus, responseString) = apiRequest.getRequest(url)
+                if (responseStatus) {
+                    val json = gson.fromJson(responseString, JsonObject::class.java)
 
-                if (json.has("loggedIn") && json.get("loggedIn").asBoolean) {
-                    // El usuario continúa con la sesión activa
+                    if (json.has("loggedIn") && json.get("loggedIn").asBoolean) {
+                        // El usuario continúa con la sesión activa
+                    } else {
+                        // Ya se cerró la sesión
+                        user.setTimedOut()
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.action_StudentFragment_to_LoginFragment)
+                        }
+                    }
+
                 } else {
-                    // Ya se cerró la sesión
-                    user.setTimedOut()
                     requireActivity().runOnUiThread() {
                         AlertDialog.Builder(requireContext())
-                            .setTitle("Sesión expirada")
-                            .setMessage("Su sesión ha expirado. Por favor, inicie sesión nuevamente.")
+                            .setTitle("Error")
+                            .setMessage(responseString)
                             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                             .show()
-                        findNavController().navigate(R.id.action_StudentFragment_to_LoginFragment)
                     }
-                }
-
-            } else {
-                requireActivity().runOnUiThread() {
-                    AlertDialog.Builder(requireContext())
-                        .setTitle("Error")
-                        .setMessage(responseString)
-                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                        .show()
                 }
             }
         }

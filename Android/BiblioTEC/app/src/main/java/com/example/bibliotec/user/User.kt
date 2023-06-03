@@ -11,12 +11,12 @@ class User private constructor(context: Context) {
         context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
     private val gson = Gson()
 
-    var userId : Int? = sharedPreferences.getIntOrNull("userId")
-    var studentId : Int? = sharedPreferences.getIntOrNull("studentId")
-    var email : String? = sharedPreferences.getString("email", null)
-    var userType : String? = sharedPreferences.getString("userType", null)
-    var timedOut : Boolean = sharedPreferences.getBoolean("timedOut", false)
-    var checkedInCurrentSession = false
+    private var userId : Int? = sharedPreferences.getIntOrNull("userId")
+    private var studentId : Int? = sharedPreferences.getIntOrNull("studentId")
+    private var email : String? = sharedPreferences.getString("email", null)
+    private var userType : String? = sharedPreferences.getString("userType", null)
+    private var timedOut : Boolean = sharedPreferences.getBoolean("timedOut", false)
+    private var checkedInCurrentSession = false
 
     companion object {
 
@@ -87,5 +87,13 @@ class User private constructor(context: Context) {
             return getInt(key, 0) // Retorna el valor almancenado
         }
         return null // Retorna un valor nulo
+    }
+
+    fun setCheckedInCurrentSession() {
+        checkedInCurrentSession = true
+    }
+
+    fun checkedInCurrentSession() : Boolean {
+        return checkedInCurrentSession
     }
 }

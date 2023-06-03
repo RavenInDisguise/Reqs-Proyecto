@@ -1,17 +1,20 @@
 package com.example.bibliotec.api
 
 import android.content.Context
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import java.io.IOException
 
-class ApiRequest private constructor(context : Context) {
+class ApiRequest private constructor(context : Context, user : User) {
     private val client = OkHttpClient()
     private val gson = Gson()
     private val context: Context = context
     private val cookieJar = CookieStorage(context)
+    private val user: User = user
 
     companion object {
 
@@ -20,7 +23,7 @@ class ApiRequest private constructor(context : Context) {
 
         fun getInstance(context : Context) =
             instance ?: synchronized(this) {
-                instance ?: ApiRequest(context).also {
+                instance ?: ApiRequest(context, User.getInstance(context)).also {
                     instance = it
                 }
             }
@@ -41,6 +44,12 @@ class ApiRequest private constructor(context : Context) {
             var status = true
             if (!response.isSuccessful) {
                 status = false
+
+                if (response.code == 403) {
+                    responseString = "Su sesión ha expirado"
+                    user.setTimedOut()
+                }
+
                 responseString = try {
                     val json = gson.fromJson(responseString, JsonObject::class.java)
                     if (json.has("message")) {
@@ -71,15 +80,21 @@ class ApiRequest private constructor(context : Context) {
             var status = true
             if (!response.isSuccessful) {
                 status = false
-                try {
+
+                if (response.code == 403) {
+                    responseString = "Su sesión ha expirado"
+                    user.setTimedOut()
+                }
+
+                responseString = try {
                     val json = gson.fromJson(responseString, JsonObject::class.java)
-                    responseString = if (json.has("message")) {
+                    if (json.has("message")) {
                         json.get("message").asString
                     } else {
                         "Error inesperado:\n${response.message}"
                     }
                 } catch (e: Exception) {
-                    responseString = "Error inesperado"
+                    "Error inesperado"
                 }
             } else {
                 // Se guardan las cookies
@@ -115,15 +130,21 @@ class ApiRequest private constructor(context : Context) {
             var status = true
             if (!response.isSuccessful) {
                 status = false
-                try {
+
+                if (response.code == 403) {
+                    responseString = "Su sesión ha expirado"
+                    user.setTimedOut()
+                }
+
+                responseString = try {
                     val json = gson.fromJson(responseString, JsonObject::class.java)
-                    responseString = if (json.has("message")) {
+                    if (json.has("message")) {
                         json.get("message").asString
                     } else {
                         "Error inesperado:\n${response.message}"
                     }
                 } catch (e: Exception) {
-                    responseString = "Error inesperado"
+                    "Error inesperado"
                 }
             } else {
                 // Se guardan las cookies

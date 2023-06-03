@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.FiltersFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/filters_menu_tile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/menuTitle"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:text="Búsqueda de cubículos"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fecha"
+                style="@style/FilterLabel"/>
+
+            <EditText
+                android:id="@+id/date_filter_edit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Seleccione una fecha"
+                android:inputType="date"
+                android:clickable="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hora de inicio"
+                        style="@style/FilterLabel"/>
+
+                    <EditText
+                        android:id="@+id/start_time_filter_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="Seleccionar hora"
+                        android:inputType="time"
+                        android:clickable="true" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hora de salida"
+                        style="@style/FilterLabel" />
+
+                    <EditText
+                        android:id="@+id/end_time_filter_edit"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:hint="Seleccionar hora"
+                        android:inputType="time"
+                        android:clickable="true" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Capacidad mínima"
+                style="@style/FilterLabel"/>
+
+            <EditText
+                android:id="@+id/capacity_filter_edit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Digite una capacidad"
+                android:inputType="number"
+                android:text="1" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Servicios mínimos"
+                style="@style/FilterLabel"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/service_filter_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="3dp" />
+
+            <Button
+                android:id="@+id/btnFiltrar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Buscar"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

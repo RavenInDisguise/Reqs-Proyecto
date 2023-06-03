@@ -35,8 +35,8 @@ class RegistroFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentRegistroBinding.inflate(inflater, container, false)
-        apiRequest = ApiRequest.getInstance(requireContext())
         user = User.getInstance(requireContext())
+        apiRequest = ApiRequest.getInstance(requireContext())
         return binding.root
 
     }
@@ -81,7 +81,7 @@ class RegistroFragment : Fragment() {
                     clave.isNullOrEmpty()
             ){
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Datos invalidos")
+                    .setTitle("Datos inválidos")
                     .setMessage("Debe llenar todos los datos correctamente.")
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
@@ -89,7 +89,7 @@ class RegistroFragment : Fragment() {
             // Se valida que el correo pertenezca a @estudiantec.cr
             else if(!isValidEmail(correo)){
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Correo invalido")
+                    .setTitle("Correo inválido")
                     .setMessage("El correo debe pertenecer al dominio @estudiantec.cr")
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
@@ -142,11 +142,11 @@ class RegistroFragment : Fragment() {
         val month = selectedCalendar.get(Calendar.MONTH)
         val day = selectedCalendar.get(Calendar.DAY_OF_MONTH)
         val listener = DatePickerDialog.OnDateSetListener{datePicker, y, m, d ->
-            selectedCalendar.set(y,m,d)
+            selectedCalendar.set(y, m, d)
             val mes = m + 1
-            fechaNacimiento.setText("$y-$mes-$d")
+            fechaNacimiento.setText("$y/$mes/$d")
         }
-        DatePickerDialog(requireContext(),listener,year,month,day).show()
+        DatePickerDialog(requireContext(), listener, year, month, day).show()
     }
 
     fun isValidEmail(email: String): Boolean {

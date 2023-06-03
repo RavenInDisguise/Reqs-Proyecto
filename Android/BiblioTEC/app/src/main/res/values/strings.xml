@@ -5,4 +5,6 @@
     <string name="bibliotec_label"></string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="session_timeout_title">Sesión expirada</string>
+    <string name="session_timeout">Su sesión ha expirado. Por favor, inicie sesión nuevamente.</string>
 </resources>

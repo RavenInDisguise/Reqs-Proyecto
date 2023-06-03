@@ -34,8 +34,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        apiRequest = ApiRequest.getInstance(applicationContext)
         user = User.getInstance(applicationContext)
+        apiRequest = ApiRequest.getInstance(applicationContext)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

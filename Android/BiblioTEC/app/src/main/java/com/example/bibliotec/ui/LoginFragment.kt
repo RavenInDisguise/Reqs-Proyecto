@@ -36,8 +36,8 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        apiRequest = ApiRequest.getInstance(requireContext())
         user = User.getInstance(requireContext())
+        apiRequest = ApiRequest.getInstance(requireContext())
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -73,7 +73,7 @@ class LoginFragment : Fragment() {
 
                 if (responseStatus) {
                     user.storeUserInfo(responseString)
-                    user.checkedInCurrentSession = true
+                    user.setCheckedInCurrentSession()
 
                     if (user.isAdmin()) {
                         requireActivity().runOnUiThread() {
