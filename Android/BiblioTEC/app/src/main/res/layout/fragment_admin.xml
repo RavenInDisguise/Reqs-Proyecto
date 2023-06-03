@@ -36,6 +36,7 @@
                     android:text="Estudiantes"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ManageStudentsButton"
                     style="@style/MenuItem">
 
                     <ImageView
@@ -70,6 +71,7 @@
                     android:text="Cubículos"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/AddRoomButton"
                     style="@style/MenuItem">
 
                     <ImageView
@@ -92,6 +94,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ManageRoomsButton"
                     style="@style/MenuItem">
 
                     <ImageView
@@ -126,6 +129,7 @@
                     android:text="Reservas"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/ManageReservationsButton"
                     style="@style/MenuItem">
 
                     <ImageView

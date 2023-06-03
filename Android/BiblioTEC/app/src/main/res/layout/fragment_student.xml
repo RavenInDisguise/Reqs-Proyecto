@@ -36,6 +36,7 @@
                     android:text="Cubículos"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/NewReservationButton"
                     style="@style/MenuItem">
 
                     <ImageView
@@ -60,6 +61,7 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/SeeReservationHistory"
                     style="@style/MenuItem">
 
                     <ImageView

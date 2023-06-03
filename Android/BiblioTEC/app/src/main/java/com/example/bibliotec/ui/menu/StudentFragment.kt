@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.R
@@ -41,6 +42,16 @@ class StudentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Se agregan los listeners al tocar
+        view.findViewById<ConstraintLayout>(R.id.NewReservationButton).setOnClickListener {
+            notImplementedWarning()
+        }
+
+        // Se agregan los listeners al tocar
+        view.findViewById<ConstraintLayout>(R.id.SeeReservationHistory).setOnClickListener {
+            notImplementedWarning()
+        }
 
         // Si no se ha revisado el estado de la sesión desde que se abrió la aplicación,
         // se revisa aquí
@@ -82,5 +93,13 @@ class StudentFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun notImplementedWarning() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Advertencia")
+            .setMessage("Esta función aún no ha sido implementada")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 }

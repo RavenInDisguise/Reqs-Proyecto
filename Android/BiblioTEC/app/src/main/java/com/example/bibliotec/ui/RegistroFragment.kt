@@ -13,10 +13,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.R
 import com.example.bibliotec.databinding.FragmentRegistroBinding
-import com.example.bibliotec.databinding.FragmentStudentBinding
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -48,7 +46,7 @@ class RegistroFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val editTextFechaNacimiento = view.findViewById<EditText>(R.id.editTextFechaNacimiento)
         editTextFechaNacimiento.setOnClickListener{
-            OnClickFechaDate(view)
+            onClickFechaDate(view)
         }
         binding.btnRegistro.setOnClickListener{
             val editTextNombre = view.findViewById<EditText>(R.id.editTextNombre)
@@ -105,7 +103,7 @@ class RegistroFragment : Fragment() {
         }
     }
 
-    private fun OnClickFechaDate(view:View){
+    private fun onClickFechaDate(view:View){
 
         val fechaNacimiento = view.findViewById<EditText>(R.id.editTextFechaNacimiento)
 

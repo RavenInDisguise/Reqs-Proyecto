@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
@@ -42,6 +44,23 @@ class AdminFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Se agregan los listeners al tocar
+            view.findViewById<ConstraintLayout>(R.id.ManageStudentsButton).setOnClickListener {
+            notImplementedWarning()
+        }
+
+        view.findViewById<ConstraintLayout>(R.id.AddRoomButton).setOnClickListener {
+            notImplementedWarning()
+        }
+
+        view.findViewById<ConstraintLayout>(R.id.ManageRoomsButton).setOnClickListener {
+            notImplementedWarning()
+        }
+
+        view.findViewById<ConstraintLayout>(R.id.ManageReservationsButton).setOnClickListener {
+            notImplementedWarning()
+        }
 
         // Si no se ha revisado el estado de la sesión desde que se abrió la aplicación,
         // se revisa aquí
@@ -83,5 +102,13 @@ class AdminFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun notImplementedWarning() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Advertencia")
+            .setMessage("Esta función aún no ha sido implementada")
+            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 }
