@@ -75,5 +75,14 @@
         <action
             android:id="@+id/action_AdminFragment_to_LoginFragment"
             app:destination="@id/LoginFragment" />
+        <action
+            android:id="@+id/action_AdminFragment_to_NewRoomFragment"
+            app:destination="@id/NewRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/NewRoomFragment"
+        android:name="com.example.bibliotec.ui.NewRoomFragment"
+        android:label=""
+        tools:layout="@layout/fragment_new_room">
     </fragment>
 </navigation>
