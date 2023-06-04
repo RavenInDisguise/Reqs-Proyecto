@@ -1,5 +1,6 @@
 package com.example.bibliotec.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,13 +30,14 @@ class BookingAdapter(private val elements : List<ServicePerRoom>) :
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val checkbox: CheckBox = itemView.findViewById(R.id.service_filter_checkbox)
 
+
         fun bind(element: ServicePerRoom) {
             checkbox.text = element.nombre
             checkbox.isChecked = element.activo
-            checkbox.isEnabled = false
-
-            checkbox.setOnCheckedChangeListener { _, isChecked ->
-                element.activo = isChecked
+            checkbox.isClickable = false
+            checkbox.isFocusable = false
+            if(!element.activo){
+                checkbox.isEnabled = false
             }
         }
     }
