@@ -16,7 +16,6 @@ import com.example.bibliotec.databinding.ActivityMainBinding
 import com.example.bibliotec.ui.menu.AdminFragment
 import com.example.bibliotec.ui.menu.StudentFragment
 import com.example.bibliotec.user.User
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -93,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        return (currentFragment !is LoginFragment) && (currentFragment !is RegistroFragment)
+        return (currentFragment !is LoginFragment) && (currentFragment !is SignUpFragment)
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
@@ -102,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        logoutItem?.isVisible = (currentFragment !is LoginFragment) && (currentFragment !is RegistroFragment)
+        logoutItem?.isVisible = (currentFragment !is LoginFragment) && (currentFragment !is SignUpFragment)
 
         return true
     }

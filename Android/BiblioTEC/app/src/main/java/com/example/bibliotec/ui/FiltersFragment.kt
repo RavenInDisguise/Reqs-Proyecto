@@ -134,8 +134,8 @@ class FiltersFragment : Fragment() {
                 dateformat.timeZone = TimeZone.getTimeZone("UTC")
                 val bundle = Bundle()
                 bundle.putString("horaInicio", dateformat.format(startCalendar.time))
-                bundle.putString("horaFin", dateformat.format(startCalendar.time))
-                bundle.putInt("capacidad", capacityFilter.text.toString().toInt())
+                bundle.putString("horaFin", dateformat.format(endCalendar.time))
+                bundle.putInt("capacidad", capacity)
                 bundle.putStringArray("servicios", checkBoxItemList.filter { it.isChecked }
                     .map { it.text }.toTypedArray())
                 findNavController().navigate(
@@ -178,9 +178,11 @@ class FiltersFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     // La sesión expiró

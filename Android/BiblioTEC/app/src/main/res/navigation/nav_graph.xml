@@ -26,9 +26,9 @@
     </fragment>
     <fragment
         android:id="@+id/RegistroFragment"
-        android:name="com.example.bibliotec.ui.RegistroFragment"
+        android:name="com.example.bibliotec.ui.SignUpFragment"
         android:label="@string/bibliotec_label"
-        tools:layout="@layout/fragment_registro">
+        tools:layout="@layout/fragment_signup">
     </fragment>
     <fragment
         android:id="@+id/StudentFragment"
@@ -67,8 +67,17 @@
         android:name="com.example.bibliotec.ui.AvailableRoomsFragment"
         android:label=""
         tools:layout="@layout/fragment_available_rooms">
+        <action
+            android:id="@+id/action_AvailableRoomsFragment_toRegistroFragment"
+            app:destination="@id/ReservaFragment"/>
     </fragment>
+    <fragment
+        android:id="@+id/ReservaFragment"
+        android:name="com.example.bibliotec.ui.BookingFragment"
+        android:label=""
+        tools:layout="@layout/fragment_booking">
 
+    </fragment>
     <fragment
         android:id="@+id/AdminFragment"
         android:name="com.example.bibliotec.ui.menu.AdminFragment"
@@ -78,10 +87,19 @@
         <action
             android:id="@+id/action_AdminFragment_to_LoginFragment"
             app:destination="@id/LoginFragment" />
+        <action
+            android:id="@+id/action_AdminFragment_to_NewRoomFragment"
+            app:destination="@id/NewRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/NewRoomFragment"
+        android:name="com.example.bibliotec.ui.NewRoomFragment"
+        android:label=""
+        tools:layout="@layout/fragment_new_room">
     </fragment>
     <fragment
         android:id="@+id/reservasFragment"
-        android:name="com.example.bibliotec.user.ReservasFragment"
+        android:name="com.example.bibliotec.ui.ReservasFragment"
         android:label="fragment_reservas"
         tools:layout="@layout/fragment_reservas" >
         <action

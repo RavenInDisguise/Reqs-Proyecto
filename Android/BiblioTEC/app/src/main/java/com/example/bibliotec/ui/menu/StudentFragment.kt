@@ -61,7 +61,7 @@ class StudentFragment : Fragment() {
 
         // Se agregan los listeners al tocar
         view.findViewById<ConstraintLayout>(R.id.NewReservationButton).setOnClickListener {
-            findNavController().navigate(R.id.action_StudentFragment_to_FiltersFragment)
+            navController.navigate(R.id.action_StudentFragment_to_FiltersFragment)
         }
 
         view.findViewById<ConstraintLayout>(R.id.SeeReservationHistory).setOnClickListener {

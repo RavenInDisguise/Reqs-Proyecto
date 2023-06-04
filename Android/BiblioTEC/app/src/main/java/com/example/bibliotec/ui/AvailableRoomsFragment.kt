@@ -93,13 +93,15 @@ class AvailableRoomsFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Sin resultados")
                             .setMessage(message)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     requireActivity().runOnUiThread() {
-                        val adapter = AvailableRoomAdapter(roomItemList)
+                        val adapter = AvailableRoomAdapter(roomItemList, horaInicio, horaFin)
                         recyclerView.adapter = adapter
                     }
                 }
@@ -110,9 +112,11 @@ class AvailableRoomsFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     // La sesión expiró

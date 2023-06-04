@@ -2,18 +2,22 @@ package com.example.bibliotec.ui
 
 import android.app.AlertDialog
 import android.graphics.Typeface
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.data.RoomItem
 
-class AvailableRoomAdapter(private val elements : List<RoomItem>) :
+class AvailableRoomAdapter(private val elements : List<RoomItem>, horaInicio: String, horaFin: String):
     RecyclerView.Adapter<AvailableRoomAdapter.ViewHolder>() {
-
+    private val horaInicio = horaInicio
+    private val horaFin = horaFin
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.available_room_card, parent, false)
@@ -78,11 +82,16 @@ class AvailableRoomAdapter(private val elements : List<RoomItem>) :
                     // Si es un índice válido, entra aquí
                     val clickedItem = elements[adapterPosition]
 
-                    AlertDialog.Builder(itemView.context)
-                        .setTitle("Ejemplo")
-                        .setMessage("Ha presionado el cubículo ${clickedItem.nombre} (ID: ${clickedItem.id})")
-                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                        .show()
+                    val bundle = Bundle()
+
+                    bundle.putString("horaInicio",horaInicio)
+                    bundle.putString("horaFin",horaFin)
+                    bundle.putInt("cubiculoId",clickedItem.id)
+
+                    itemView.findNavController().navigate(
+                        R.id.action_AvailableRoomsFragment_toRegistroFragment,
+                        bundle
+                    )
                 }
             }
         }

@@ -96,4 +96,12 @@ class User private constructor(context: Context) {
     fun checkedInCurrentSession() : Boolean {
         return checkedInCurrentSession
     }
+
+    fun getStudentId(): Int? {
+        return this.studentId
+    }
+
+    fun getEmail(): String? {
+        return this.email
+    }
 }
