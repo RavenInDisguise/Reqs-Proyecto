@@ -38,7 +38,7 @@ class FiltersFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var startCalendar = Calendar.getInstance()
     private var endCalendar = Calendar.getInstance()
-    private lateinit var checkBoxItemList : List<CheckboxListItem>
+    private lateinit var checkBoxItemList: List<CheckboxListItem>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,6 +93,8 @@ class FiltersFragment : Fragment() {
             var message = ""
             var capacity = 1
 
+            var currentCalendar = Calendar.getInstance()
+
             if (editTextDateFilter.text.toString().isEmpty()) {
                 filtersOk = false
                 message = "La fecha no debe estar vacía"
@@ -105,6 +107,9 @@ class FiltersFragment : Fragment() {
             } else if (startCalendar >= endCalendar) {
                 filtersOk = false
                 message = "La hora de salida debe ser mayor que la hora de inicio"
+            } else if (startCalendar < currentCalendar) {
+                filtersOk = false
+                message = "La hora de inicio no puede ser anterior a la hora actual"
             } else {
                 try {
                     capacity = capacityFilter.text.toString().toInt()
@@ -133,7 +138,10 @@ class FiltersFragment : Fragment() {
                 bundle.putInt("capacidad", capacityFilter.text.toString().toInt())
                 bundle.putStringArray("servicios", checkBoxItemList.filter { it.isChecked }
                     .map { it.text }.toTypedArray())
-                findNavController().navigate(R.id.action_FiltersFragment_toAvailableRoomsFragment, bundle)
+                findNavController().navigate(
+                    R.id.action_FiltersFragment_toAvailableRoomsFragment,
+                    bundle
+                )
             }
         }
 
