@@ -135,7 +135,7 @@ class FiltersFragment : Fragment() {
                 val bundle = Bundle()
                 bundle.putString("horaInicio", dateformat.format(startCalendar.time))
                 bundle.putString("horaFin", dateformat.format(startCalendar.time))
-                bundle.putInt("capacidad", capacityFilter.text.toString().toInt())
+                bundle.putInt("capacidad", capacity)
                 bundle.putStringArray("servicios", checkBoxItemList.filter { it.isChecked }
                     .map { it.text }.toTypedArray())
                 findNavController().navigate(
