@@ -91,7 +91,7 @@ class BookingFragment : Fragment() {
                 servicePerRoomList = valores.get("servicios")
                     .asJsonArray.map {
                         ServicePerRoom(
-                            it.asJsonObject.get("nombre").toString(),
+                            it.asJsonObject.get("nombre").asString,
                             it.asJsonObject.get("activo").asBoolean
                         )
                     }
