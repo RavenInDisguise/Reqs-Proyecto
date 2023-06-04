@@ -15,6 +15,14 @@
         <item name="android:textAlignment">center</item>
         <item name="android:layout_marginTop">15dp</item>
     </style>
+    <style name="SectionTitle">
+        <item name="android:fontFamily">@font/robotoslab_bold</item>
+        <item name="fontFamily">@font/robotoslab_bold</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/blue_500</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_marginTop">15dp</item>
+    </style>
     <style name="MenuCategoryText">
         <item name="android:fontFamily">@font/robotoslab_bold</item>
         <item name="fontFamily">@font/robotoslab_bold</item>

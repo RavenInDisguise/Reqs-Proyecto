@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
-import com.example.bibliotec.data.CheckboxListItem
+import com.example.bibliotec.data.ServicePerRoom
 
-class FilterAdapter(private val elements : List<CheckboxListItem>) :
-    RecyclerView.Adapter<FilterAdapter.ViewHolder>() {
+class BookingAdapter(private val elements : List<ServicePerRoom>) :
+    RecyclerView.Adapter<BookingAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -29,12 +29,13 @@ class FilterAdapter(private val elements : List<CheckboxListItem>) :
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val checkbox: CheckBox = itemView.findViewById(R.id.service_filter_checkbox)
 
-        fun bind(element: CheckboxListItem) {
-            checkbox.text = element.text
-            checkbox.isChecked = element.isChecked
+        fun bind(element: ServicePerRoom) {
+            checkbox.text = element.nombre
+            checkbox.isChecked = element.activo
+            checkbox.isEnabled = false
 
             checkbox.setOnCheckedChangeListener { _, isChecked ->
-                element.isChecked = isChecked
+                element.activo = isChecked
             }
         }
     }
