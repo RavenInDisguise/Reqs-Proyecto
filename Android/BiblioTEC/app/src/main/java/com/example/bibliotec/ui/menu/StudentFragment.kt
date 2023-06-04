@@ -45,11 +45,6 @@ class StudentFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val navController = findNavController()
-        val btnReservas : View = view.findViewById(R.id.reserva_btn)
-        btnReservas.setOnClickListener {
-            navController.navigate(R.id.action_StudentFragment_to_reservasFragment)
-        }
 
         super.onViewCreated(view, savedInstanceState)
 
@@ -70,7 +65,7 @@ class StudentFragment : Fragment() {
         }
 
         view.findViewById<ConstraintLayout>(R.id.SeeReservationHistory).setOnClickListener {
-            notImplementedWarning()
+            findNavController().navigate(R.id.action_StudentFragment_to_reservasFragment)
         }
 
         // Si no se ha revisado el estado de la sesión desde que se abrió la aplicación,
