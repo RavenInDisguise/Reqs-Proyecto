@@ -99,7 +99,7 @@
     </fragment>
     <fragment
         android:id="@+id/reservasFragment"
-        android:name="com.example.bibliotec.user.ReservasFragment"
+        android:name="com.example.bibliotec.ui.ReservasFragment"
         android:label="fragment_reservas"
         tools:layout="@layout/fragment_reservas" >
         <action

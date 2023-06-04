@@ -93,9 +93,11 @@ class AvailableRoomsFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Sin resultados")
                             .setMessage(message)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     requireActivity().runOnUiThread() {
@@ -110,9 +112,11 @@ class AvailableRoomsFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     // La sesión expiró

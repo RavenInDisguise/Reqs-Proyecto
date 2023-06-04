@@ -118,6 +118,12 @@ class NewRoomFragment : Fragment() {
                 val services = checkBoxItemList.filter { it.isChecked }
                     .map { it.text }.toTypedArray()
 
+                // Se abre un popup de "Cargando"
+                val progressDialog = ProgressDialog(requireContext())
+                progressDialog.setMessage("Cargando...")
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+
                 GlobalScope.launch(Dispatchers.IO) {
                     val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/crear"
 
@@ -129,6 +135,9 @@ class NewRoomFragment : Fragment() {
                                 "\"servicios\":${services.map { "\"" + it + "\"" }}}").toRequestBody("application/json".toMediaTypeOrNull())
 
                     val (responseStatus, responseString) = apiRequest.putRequest(url, requestBody)
+
+                    progressDialog.dismiss()
+
                     if (responseStatus) {
                         requireActivity().runOnUiThread() {
                             AlertDialog.Builder(requireContext())
@@ -146,9 +155,10 @@ class NewRoomFragment : Fragment() {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Error")
                                     .setMessage(responseString)
-                                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                    .setPositiveButton("OK") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
                                     .show()
-                                findNavController().navigateUp()
                             }
                         } else {
                             // La sesión expiró
@@ -202,9 +212,10 @@ class NewRoomFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     // La sesión expiró

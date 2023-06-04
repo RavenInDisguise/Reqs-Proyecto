@@ -1,4 +1,4 @@
-package com.example.bibliotec.user
+package com.example.bibliotec.ui
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -13,7 +13,6 @@ import android.widget.ListView
 import android.widget.TextView
 import com.example.bibliotec.R
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 
 
 class ReservasFragment : Fragment() {

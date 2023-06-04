@@ -150,18 +150,35 @@ class BookingFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Éxito")
                             .setMessage("Reserva exitosa")
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
 
                 } else {
-                    requireActivity().runOnUiThread() {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                            .show()
+                    if (user.isLoggedIn()) {
+                        // Ocurrió un error al hacer la consulta
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        }
+                    } else {
+                        // La sesión expiró
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
                     }
                 }
             }
