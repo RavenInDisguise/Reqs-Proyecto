@@ -3,19 +3,15 @@ package com.example.bibliotec.ui
 import androidx.fragment.app.Fragment
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.R
-import com.example.bibliotec.databinding.FragmentRegistroBinding
-import com.example.bibliotec.user.User
-import com.google.gson.Gson
+import com.example.bibliotec.databinding.FragmentSignupBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -23,19 +19,17 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
-class RegistroFragment : Fragment() {
-    private var _binding: FragmentRegistroBinding? = null
+class SignUpFragment : Fragment() {
+    private var _binding: FragmentSignupBinding? = null
     private lateinit var apiRequest : ApiRequest
     private val binding get() = _binding!!
-    private lateinit var user : User
     val selectedCalendar = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentRegistroBinding.inflate(inflater, container, false)
-        user = User.getInstance(requireContext())
+        _binding = FragmentSignupBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
         return binding.root
 

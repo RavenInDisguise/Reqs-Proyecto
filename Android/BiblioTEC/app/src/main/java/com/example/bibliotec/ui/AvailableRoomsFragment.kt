@@ -99,7 +99,7 @@ class AvailableRoomsFragment : Fragment() {
                     }
                 } else {
                     requireActivity().runOnUiThread() {
-                        val adapter = AvailableRoomAdapter(roomItemList)
+                        val adapter = AvailableRoomAdapter(roomItemList, horaInicio, horaFin)
                         recyclerView.adapter = adapter
                     }
                 }
