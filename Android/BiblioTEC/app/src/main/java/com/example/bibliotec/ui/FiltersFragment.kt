@@ -23,23 +23,21 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 import java.util.Calendar
-import kotlin.time.Duration.Companion.hours
+import java.util.TimeZone
 
 class FiltersFragment : Fragment() {
 
     private var _binding: FragmentFiltersBinding? = null
     private val binding get() = _binding!!
     private lateinit var apiRequest: ApiRequest
-    private lateinit var user : User
+    private lateinit var user: User
     private val gson = Gson()
     private lateinit var recyclerView: RecyclerView
-    private val selectedCalendar = Calendar.getInstance()
-
-    private var startTimeHour : Int? = null
-    private var startTimeMin : Int? = null
-    private var endTimeHour : Int? = null
-    private var endTimeMin : Int? = null
+    private var startCalendar = Calendar.getInstance()
+    private var endCalendar = Calendar.getInstance()
+    private lateinit var checkBoxItemList : List<CheckboxListItem>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,19 +54,21 @@ class FiltersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Se agrega el listener al botón "Buscar"
-        val buscarButton = view.findViewById<Button>(R.id.btnFiltrar)
-        buscarButton.setOnClickListener {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Advertencia")
-                .setMessage("Esta función aún no ha sido implementada")
-                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                .show()
-        }
+        // Se agregan minutos a las horas de inicio y salida
+        startCalendar.add(Calendar.MINUTE, 10)
+        endCalendar.add(Calendar.MINUTE, 70)
+
+        // Para evitar problemas si la instancia se creó para días diferentes
+        // (por ejemplo, si la aplicación se abrió casi a medianoche)
+        endCalendar.set(
+            startCalendar.get(Calendar.YEAR),
+            startCalendar.get(Calendar.MONTH),
+            startCalendar.get(Calendar.DAY_OF_MONTH)
+        )
 
         // Se agregan los listeners a la fecha y a las horas
         val editTextDateFilter = view.findViewById<EditText>(R.id.date_filter_edit)
-        editTextDateFilter.setOnClickListener{
+        editTextDateFilter.setOnClickListener {
             onClickDateFilter(view)
         }
 
@@ -80,6 +80,58 @@ class FiltersFragment : Fragment() {
         val endTimeFilter = view.findViewById<EditText>(R.id.end_time_filter_edit)
         endTimeFilter.setOnClickListener {
             onClickTimeFilter(view, false)
+        }
+
+        val capacityFilter = view.findViewById<EditText>(R.id.capacity_filter_edit)
+
+        // Se agrega el listener al botón "Buscar"
+        val buscarButton = view.findViewById<Button>(R.id.btnFiltrar)
+        buscarButton.setOnClickListener {
+            // Validaciones
+            var filtersOk = true
+            var message = ""
+            var capacity = 1
+
+            if (editTextDateFilter.text.toString().isEmpty()) {
+                filtersOk = false
+                message = "La fecha no debe estar vacía"
+            } else if (startTimeFilter.text.toString().isEmpty()) {
+                filtersOk = false
+                message = "La hora de inicio no debe estar vacía"
+            } else if (endTimeFilter.text.toString().isEmpty()) {
+                filtersOk = false
+                message = "La hora de salida no debe estar vacía"
+            } else if (startCalendar >= endCalendar) {
+                filtersOk = false
+                message = "La hora de salida debe ser mayor que la hora de inicio"
+            } else {
+                try {
+                    capacity = capacityFilter.text.toString().toInt()
+                    if (capacity < 1) {
+                        filtersOk = false
+                        message = "La capacidad no puede ser menor a 1"
+                    }
+                } catch (e: Exception) {
+                    filtersOk = false
+                    message = "La capacidad debe ser un valor numérico"
+                }
+            }
+
+            if (!filtersOk) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Datos inválidos")
+                    .setMessage(message)
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            } else {
+                val dateformat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                dateformat.timeZone = TimeZone.getTimeZone("UTC")
+                val bundle = Bundle()
+                bundle.putString("horaInicio", dateformat.format(startCalendar.time))
+                bundle.putString("horaFin", dateformat.format(startCalendar.time))
+                bundle.putStringArray("servicios", checkBoxItemList.filter { it.isChecked }
+                    .map { it.text }.toTypedArray())
+            }
         }
 
         // Se debe cargar la lista de servicios
@@ -103,7 +155,7 @@ class FiltersFragment : Fragment() {
             if (responseStatus) {
                 val json = gson.fromJson(responseString, JsonObject::class.java)
                 val serviciosList = json.get("servicios").asJsonArray
-                val checkBoxItemList = serviciosList.map { CheckboxListItem(it.asString, false) }
+                checkBoxItemList = serviciosList.map { CheckboxListItem(it.asString, false) }
                 requireActivity().runOnUiThread() {
                     val adapter = FilterAdapter(checkBoxItemList)
                     recyclerView.adapter = adapter
@@ -134,69 +186,71 @@ class FiltersFragment : Fragment() {
         }
     }
 
-    private fun onClickDateFilter(view : View) {
+    private fun onClickDateFilter(view: View) {
         val dateBox = view.findViewById<EditText>(R.id.date_filter_edit)
 
-        var year : Int
-        var month : Int
-        var day : Int
+        val year = startCalendar.get(Calendar.YEAR)
+        val month = startCalendar.get(Calendar.MONTH)
+        val day = startCalendar.get(Calendar.DAY_OF_MONTH)
 
-        if (dateBox.text.toString().trim().isEmpty()) {
-            year = selectedCalendar.get(Calendar.YEAR)
-            month = selectedCalendar.get(Calendar.MONTH)
-            day = selectedCalendar.get(Calendar.DAY_OF_MONTH)
-        } else {
-            var splittedString = dateBox.text.toString().trim().split('/')
-            year = splittedString[0].toInt()
-            month = splittedString[1].toInt() - 1
-            day = splittedString[2].toInt()
+        val listener = DatePickerDialog.OnDateSetListener { _, y, m, d ->
+            val currentCalendar = Calendar.getInstance()
+            val currYear = currentCalendar.get(Calendar.YEAR)
+            val currMonth = currentCalendar.get(Calendar.MONTH)
+            val currDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
+
+            if (y < currYear || (y == currYear && m < currMonth) || (y == currYear && m == currMonth && d < currDay)) {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Datos inválidos")
+                    .setMessage("No puede ingresar una fecha pasada")
+                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                    .show()
+            } else {
+                startCalendar.set(y, m, d)
+                endCalendar.set(y, m, d)
+
+                val mes = m + 1
+                dateBox.setText("$y/$mes/$d")
+            }
         }
 
-        val listener = DatePickerDialog.OnDateSetListener{ _, y, m, d ->
-            selectedCalendar.set(y, m, d)
-            val mes = m + 1
-            dateBox.setText("$y/$mes/$d")
-        }
         DatePickerDialog(requireContext(), listener, year, month, day).show()
     }
 
-    private fun onClickTimeFilter(view : View, isStart : Boolean) {
+    private fun onClickTimeFilter(view: View, isStart: Boolean) {
         val timeBox = if (isStart) {
             view.findViewById<EditText>(R.id.start_time_filter_edit)
         } else {
             view.findViewById<EditText>(R.id.end_time_filter_edit)
         }
 
-        var hour : Int
-        var minute : Int
-
-        if (isStart) {
-            if (startTimeHour == null) {
-                val currentTime = Calendar.getInstance().time
-                hour = currentTime.hours
-                minute = currentTime.minutes
-            } else {
-                hour = startTimeHour!!
-                minute = startTimeMin!!
-            }
+        var hour = if (isStart) {
+            startCalendar.get(Calendar.HOUR_OF_DAY)
         } else {
-            if (endTimeHour == null) {
-                val currentTime = Calendar.getInstance().time
-                hour = currentTime.hours
-                minute = currentTime.minutes
-            } else {
-                hour = endTimeHour!!
-                minute = endTimeMin!!
-            }
+            endCalendar.get(Calendar.HOUR_OF_DAY)
+        }
+
+        var minute = if (isStart) {
+            startCalendar.get(Calendar.MINUTE)
+        } else {
+            endCalendar.get(Calendar.MINUTE)
         }
 
         val listener = TimePickerDialog.OnTimeSetListener { _, h, m ->
             if (isStart) {
-                startTimeHour = h
-                startTimeMin = m
+                startCalendar.set(Calendar.HOUR_OF_DAY, h)
+                startCalendar.set(Calendar.MINUTE, m)
             } else {
-                endTimeHour = h
-                endTimeMin = m
+                endCalendar.set(Calendar.HOUR_OF_DAY, h)
+                endCalendar.set(Calendar.MINUTE, m)
+
+                // Para evitar problemas si la instancia se creó para días diferentes
+                // (por ejemplo, si la aplicación se abrió casi a medianoche)
+                endCalendar.set(
+                    startCalendar.get(Calendar.YEAR),
+                    startCalendar.get(Calendar.MONTH),
+                    startCalendar.get(Calendar.DAY_OF_MONTH)
+                )
             }
 
             timeBox.setText(String.format("%02d:%02d", h, m))
