@@ -72,7 +72,7 @@ class AdminFragment : Fragment() {
         }
 
         view.findViewById<ConstraintLayout>(R.id.AddRoomButton).setOnClickListener {
-            notImplementedWarning()
+            findNavController().navigate(R.id.action_AdminFragment_to_NewRoomFragment)
         }
 
         view.findViewById<ConstraintLayout>(R.id.ManageRoomsButton).setOnClickListener {

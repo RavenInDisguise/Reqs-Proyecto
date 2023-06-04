@@ -48,17 +48,29 @@ class ApiRequest private constructor(context : Context, user : User) {
                 if (response.code == 403) {
                     responseString = "Su sesión ha expirado"
                     user.setTimedOut()
-                }
-
-                responseString = try {
-                    val json = gson.fromJson(responseString, JsonObject::class.java)
-                    if (json.has("message")) {
-                        json.get("message").asString
-                    } else {
-                        "Error inesperado:\n${response.message}"
+                } else {
+                    responseString = try {
+                        val json = gson.fromJson(responseString, JsonObject::class.java)
+                        if (json.has("message")) {
+                            json.get("message").asString
+                        } else {
+                            "Error inesperado:\n${response.message}"
+                        }
+                    } catch (e: Exception) {
+                        "Error inesperado"
                     }
-                } catch (e: Exception) {
-                    "Error inesperado"
+                }
+            } else {
+                if (!response.headers("Set-Cookie").isNullOrEmpty()) {
+                    // Se guardan las cookies
+                    try {
+                        val httpUrl = url.toHttpUrlOrNull()!!
+                        val cookies =
+                            response.headers("Set-Cookie").mapNotNull { Cookie.parse(httpUrl, it) }
+                        cookieJar.saveFromResponse(httpUrl, cookies)
+                    } catch (e: Exception) {
+
+                    }
                 }
             }
             Pair(status, responseString)
@@ -84,27 +96,29 @@ class ApiRequest private constructor(context : Context, user : User) {
                 if (response.code == 403) {
                     responseString = "Su sesión ha expirado"
                     user.setTimedOut()
-                }
-
-                responseString = try {
-                    val json = gson.fromJson(responseString, JsonObject::class.java)
-                    if (json.has("message")) {
-                        json.get("message").asString
-                    } else {
-                        "Error inesperado:\n${response.message}"
+                } else {
+                    responseString = try {
+                        val json = gson.fromJson(responseString, JsonObject::class.java)
+                        if (json.has("message")) {
+                            json.get("message").asString
+                        } else {
+                            "Error inesperado:\n${response.message}"
+                        }
+                    } catch (e: Exception) {
+                        "Error inesperado"
                     }
-                } catch (e: Exception) {
-                    "Error inesperado"
                 }
             } else {
-                // Se guardan las cookies
-                try {
-                    val httpUrl = url.toHttpUrlOrNull()!!
-                    val cookies =
-                        response.headers("Set-Cookie").mapNotNull { Cookie.parse(httpUrl, it) }
-                    cookieJar.saveFromResponse(httpUrl, cookies)
-                } catch (e: Exception) {
+                if (!response.headers("Set-Cookie").isNullOrEmpty()) {
+                    // Se guardan las cookies
+                    try {
+                        val httpUrl = url.toHttpUrlOrNull()!!
+                        val cookies =
+                            response.headers("Set-Cookie").mapNotNull { Cookie.parse(httpUrl, it) }
+                        cookieJar.saveFromResponse(httpUrl, cookies)
+                    } catch (e: Exception) {
 
+                    }
                 }
             }
             Pair(status, responseString)
@@ -112,8 +126,10 @@ class ApiRequest private constructor(context : Context, user : User) {
     }
 
     fun postRequest(url: String, requestBody: RequestBody): Pair<Boolean, String> {
+        val httpUrl = url.toHttpUrlOrNull()!!
         val request = Request.Builder()
             .url(url)
+            .header("Cookie", cookieJar.loadForRequest(httpUrl).joinToString("; "))
             .post(requestBody)
             .build()
 
@@ -134,27 +150,29 @@ class ApiRequest private constructor(context : Context, user : User) {
                 if (response.code == 403) {
                     responseString = "Su sesión ha expirado"
                     user.setTimedOut()
-                }
-
-                responseString = try {
-                    val json = gson.fromJson(responseString, JsonObject::class.java)
-                    if (json.has("message")) {
-                        json.get("message").asString
-                    } else {
-                        "Error inesperado:\n${response.message}"
+                } else {
+                    responseString = try {
+                        val json = gson.fromJson(responseString, JsonObject::class.java)
+                        if (json.has("message")) {
+                            json.get("message").asString
+                        } else {
+                            "Error inesperado:\n${response.message}"
+                        }
+                    } catch (e: Exception) {
+                        "Error inesperado"
                     }
-                } catch (e: Exception) {
-                    "Error inesperado"
                 }
             } else {
-                // Se guardan las cookies
-                try {
-                    val httpUrl = url.toHttpUrlOrNull()!!
-                    val cookies =
-                        response.headers("Set-Cookie").mapNotNull { Cookie.parse(httpUrl, it) }
-                    cookieJar.saveFromResponse(httpUrl, cookies)
-                } catch (e: Exception) {
+                if (!response.headers("Set-Cookie").isNullOrEmpty()) {
+                    // Se guardan las cookies
+                    try {
+                        val httpUrl = url.toHttpUrlOrNull()!!
+                        val cookies =
+                            response.headers("Set-Cookie").mapNotNull { Cookie.parse(httpUrl, it) }
+                        cookieJar.saveFromResponse(httpUrl, cookies)
+                    } catch (e: Exception) {
 
+                    }
                 }
             }
             Pair(status, responseString)
