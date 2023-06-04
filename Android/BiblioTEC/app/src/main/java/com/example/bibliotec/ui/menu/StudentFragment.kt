@@ -28,10 +28,13 @@ class StudentFragment : Fragment() {
     private val gson = Gson()
     private lateinit var user : User
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+
         val activity = requireActivity() as AppCompatActivity
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         _binding = FragmentStudentBinding.inflate(inflater, container, false)
@@ -42,6 +45,12 @@ class StudentFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val navController = findNavController()
+        val btnReservas : View = view.findViewById(R.id.reserva_btn)
+        btnReservas.setOnClickListener {
+            navController.navigate(R.id.action_StudentFragment_to_reservasFragment)
+        }
+
         super.onViewCreated(view, savedInstanceState)
 
         // Listeners para quitar la sombra al tocar el botón
@@ -102,6 +111,7 @@ class StudentFragment : Fragment() {
             }
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
