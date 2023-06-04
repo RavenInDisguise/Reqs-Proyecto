@@ -47,11 +47,6 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener(destinationChangedListener)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
         // Se revisa si ya parece haber iniciado sesión
         if (user.isLoggedIn()) {
             // Parece haber iniciado sesión

@@ -48,7 +48,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/MenuItemImage"
-                        android:src="@drawable/manage_people" />
+                        android:src="@drawable/icon_manage_people" />
 
                     <TextView
                         android:id="@+id/MenuStudentText"
@@ -83,7 +83,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/MenuItemImage"
-                        android:src="@drawable/add_room" />
+                        android:src="@drawable/icon_add_room" />
 
                     <TextView
                         android:id="@+id/MenuAddRoomText"
@@ -106,7 +106,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/MenuItemImage"
-                        android:src="@drawable/manage_rooms" />
+                        android:src="@drawable/icon_manage_rooms" />
 
                     <TextView
                         android:id="@+id/MenuManageRoomText"
@@ -141,7 +141,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/MenuItemImage"
-                        android:src="@drawable/calendar" />
+                        android:src="@drawable/icon_edit_booking" />
 
                     <TextView
                         android:id="@+id/MenuReservationText"

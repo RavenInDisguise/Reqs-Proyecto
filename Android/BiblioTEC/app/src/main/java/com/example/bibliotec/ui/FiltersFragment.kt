@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
+import com.example.bibliotec.data.CheckboxListItem
 import com.example.bibliotec.databinding.FragmentFiltersBinding
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
@@ -129,8 +130,10 @@ class FiltersFragment : Fragment() {
                 val bundle = Bundle()
                 bundle.putString("horaInicio", dateformat.format(startCalendar.time))
                 bundle.putString("horaFin", dateformat.format(startCalendar.time))
+                bundle.putInt("capacidad", capacityFilter.text.toString().toInt())
                 bundle.putStringArray("servicios", checkBoxItemList.filter { it.isChecked }
                     .map { it.text }.toTypedArray())
+                findNavController().navigate(R.id.action_FiltersFragment_toAvailableRoomsFragment, bundle)
             }
         }
 
@@ -169,8 +172,8 @@ class FiltersFragment : Fragment() {
                             .setMessage(responseString)
                             .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                             .show()
+                        findNavController().navigateUp()
                     }
-                    findNavController().navigateUp()
                 } else {
                     // La sesión expiró
                     requireActivity().runOnUiThread() {

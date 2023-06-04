@@ -48,7 +48,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/MenuItemImage"
-                        android:src="@drawable/book_room"
+                        android:src="@drawable/icon_book_room"
                         android:focusable="true"/>
 
                     <TextView
@@ -58,7 +58,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/MenuItemText"
                         app:layout_constraintStart_toEndOf="@+id/MenuBookImage"
-                        android:text="Reservar cubiculo"
+                        android:text="Reservar cubículo"
                         android:focusable="true"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -73,7 +73,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         style="@style/MenuItemImage"
-                        android:src="@drawable/see_history" />
+                        android:src="@drawable/icon_see_history" />
 
                     <TextView
                         android:id="@+id/MenuBookedText"

@@ -76,6 +76,7 @@ class StudentFragment : Fragment() {
 
                     if (json.has("loggedIn") && json.get("loggedIn").asBoolean) {
                         // El usuario continúa con la sesión activa
+                        user.setCheckedInCurrentSession()
                     } else {
                         // Ya se cerró la sesión
                         user.setTimedOut()

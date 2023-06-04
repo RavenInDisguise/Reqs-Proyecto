@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
+import com.example.bibliotec.data.CheckboxListItem
 
 class FilterAdapter(private val elements : List<CheckboxListItem>) :
     RecyclerView.Adapter<FilterAdapter.ViewHolder>() {

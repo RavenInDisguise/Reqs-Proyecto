@@ -54,7 +54,16 @@
         <action
             android:id="@+id/action_FiltersFragment_to_StudentFragment"
             app:destination="@id/StudentFragment" />
+        <action
+            android:id="@+id/action_FiltersFragment_toAvailableRoomsFragment"
+            app:destination="@id/AvailableRoomsFragment"/>
 
+    </fragment>
+    <fragment
+        android:id="@+id/AvailableRoomsFragment"
+        android:name="com.example.bibliotec.ui.AvailableRoomsFragment"
+        android:label=""
+        tools:layout="@layout/fragment_available_rooms">
     </fragment>
 
     <fragment

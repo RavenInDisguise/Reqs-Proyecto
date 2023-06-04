@@ -7,4 +7,6 @@
     <string name="previous">Previous</string>
     <string name="session_timeout_title">Sesión expirada</string>
     <string name="session_timeout">Su sesión ha expirado. Por favor, inicie sesión nuevamente.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
