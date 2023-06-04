@@ -45,14 +45,16 @@
                     <ImageView
                         android:id="@+id/MenuBookImage"
                         style="@style/MenuItemImage"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="12dp"
+                        android:focusable="true"
                         android:src="@drawable/icon_book_room"
-                        android:focusable="true"/>
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/MenuBookText"
                         style="@style/MenuItemText"
-                        android:focusable="true"
-                        android:text="Reservar cubiculo"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/MenuBookImage"
