@@ -18,6 +18,7 @@ import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.data.CheckboxListItem
 import com.example.bibliotec.databinding.FragmentFiltersBinding
+import com.example.bibliotec.misc.LocalDate
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -57,7 +58,12 @@ class FiltersFragment : Fragment() {
 
         // Se agregan minutos a las horas de inicio y salida
         startCalendar.add(Calendar.MINUTE, 10)
+        startCalendar.set(Calendar.MILLISECOND, 0)
+        startCalendar.set(Calendar.SECOND, 0)
+
         endCalendar.add(Calendar.MINUTE, 70)
+        endCalendar.set(Calendar.MILLISECOND, 0)
+        endCalendar.set(Calendar.SECOND, 0)
 
         // Para evitar problemas si la instancia se creó para días diferentes
         // (por ejemplo, si la aplicación se abrió casi a medianoche)
@@ -130,11 +136,9 @@ class FiltersFragment : Fragment() {
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
             } else {
-                val dateformat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                dateformat.timeZone = TimeZone.getTimeZone("UTC")
                 val bundle = Bundle()
-                bundle.putString("horaInicio", dateformat.format(startCalendar.time))
-                bundle.putString("horaFin", dateformat.format(endCalendar.time))
+                bundle.putString("horaInicio", LocalDate.toUtc(startCalendar))
+                bundle.putString("horaFin", LocalDate.toUtc(endCalendar))
                 bundle.putInt("capacidad", capacity)
                 bundle.putStringArray("servicios", checkBoxItemList.filter { it.isChecked }
                     .map { it.text }.toTypedArray())

@@ -13,10 +13,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.data.BookingItem
+import com.example.bibliotec.misc.LocalDate
 import java.text.SimpleDateFormat
 import java.util.*
 
-class BookingListAdapter(private val elements : List<BookingItem>):
+class BookingListAdapter(private val elements: List<BookingItem>) :
     RecyclerView.Adapter<BookingListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,13 +39,15 @@ class BookingListAdapter(private val elements : List<BookingItem>):
         private val card: ConstraintLayout = itemView.findViewById(R.id.BookingCard)
 
         fun bind(element: BookingItem) {
-
-
             card.findViewById<TextView>(R.id.BookingIdText).text = element.id.toString()
             card.findViewById<TextView>(R.id.BookRoomNameText).text = element.nombre
-            card.findViewById<TextView>(R.id.BookingDateText).text = convertirFecha(element.fecha)
+            card.findViewById<TextView>(R.id.BookingDateText).text =
+                LocalDate.dateTime(element.fecha, true)
             card.findViewById<TextView>(R.id.StudentNameInfo).text = element.nombreEstudiante
-            card.findViewById<TextView>(R.id.bookingScheduleText).text = unirFechas(element.horaInicio,element.horaFin)
+            card.findViewById<TextView>(R.id.bookingScheduleText).text = "${
+                LocalDate.date(element.horaInicio,true)}, de ${
+                LocalDate.time(element.horaInicio, true)} a ${
+                LocalDate.time(element.horaFin, true)}"
 
             // Se agrega el listener
             itemView.setOnClickListener {
@@ -54,41 +57,12 @@ class BookingListAdapter(private val elements : List<BookingItem>):
                     val clickedItem = elements[adapterPosition]
                     AlertDialog.Builder(itemView.context)
                         .setTitle("Advertencia")
-                        .setMessage("Seleccionó la reserva ID:${clickedItem.id}")
+                        .setMessage("Seleccionó la reserva ID: ${clickedItem.id}")
                         .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                         .show()
 
                 }
             }
         }
-    }
-    fun convertirFecha(fecha: String): String {
-        val formatoEntrada = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        formatoEntrada.timeZone = TimeZone.getTimeZone("UTC")
-
-        val formatoSalida = SimpleDateFormat("dd 'de' MMMM, h:mm a", Locale.getDefault())
-        formatoSalida.timeZone = TimeZone.getDefault()
-
-        val fechaConvertida = formatoEntrada.parse(fecha)
-        return formatoSalida.format(fechaConvertida)
-    }
-
-    fun unirFechas(horaInicio: String, horaFin: String): String {
-        val formatoEntrada = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-        formatoEntrada.timeZone = TimeZone.getTimeZone("UTC")
-
-        val formatoSalida = SimpleDateFormat("d 'de' MMMM, 'de' h:mm a", Locale.getDefault())
-        formatoSalida.timeZone = TimeZone.getDefault()
-
-        val formatoSalidaFin = SimpleDateFormat("h:mm a", Locale.getDefault())
-        formatoSalidaFin.timeZone = TimeZone.getDefault()
-
-        val fechaInicio = formatoEntrada.parse(horaInicio)
-        val fechaFin = formatoEntrada.parse(horaFin)
-
-        val horaInicioFormateada = formatoSalida.format(fechaInicio)
-        val horaFinFormateada = formatoSalidaFin.format(fechaFin)
-
-        return "$horaInicioFormateada a $horaFinFormateada"
     }
 }
