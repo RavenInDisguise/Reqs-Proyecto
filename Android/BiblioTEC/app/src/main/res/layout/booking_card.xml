@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:textColor="#FF222222"
             tools:text="E12"
-            android:layout_marginLeft="-7dp"/>
+            android:layout_marginLeft="0dp"/>
     </LinearLayout>
     <ImageView
         android:id="@+id/BookingImage"

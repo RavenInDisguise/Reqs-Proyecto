@@ -1,7 +1,8 @@
 package com.example.bibliotec.data
 
 data class BookingItem(val id:Int,
-                       val nombre: String,
+                       val nombreCubiculo: String,
+                       val idCubiculo: Int,
                        val fecha: String,
                        val horaInicio: String,
                        val horaFin: String,

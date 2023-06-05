@@ -76,11 +76,11 @@ class AdminFragment : Fragment() {
         }
 
         view.findViewById<ConstraintLayout>(R.id.ManageRoomsButton).setOnClickListener {
-            findNavController().navigate(R.id.action_AdminFragment_to_BookingListFragment)
+            notImplementedWarning()
         }
 
         view.findViewById<ConstraintLayout>(R.id.ManageReservationsButton).setOnClickListener {
-            notImplementedWarning()
+            findNavController().navigate(R.id.action_AdminFragment_to_BookingListFragment)
         }
 
         // Si no se ha revisado el estado de la sesión desde que se abrió la aplicación,

@@ -40,7 +40,7 @@ class BookingListAdapter(private val elements: List<BookingItem>) :
 
         fun bind(element: BookingItem) {
             card.findViewById<TextView>(R.id.BookingIdText).text = element.id.toString()
-            card.findViewById<TextView>(R.id.BookRoomNameText).text = element.nombre
+            card.findViewById<TextView>(R.id.BookRoomNameText).text = "${element.nombreCubiculo} (ID:${element.idCubiculo})"
             card.findViewById<TextView>(R.id.BookingDateText).text =
                 LocalDate.dateTime(element.fecha, true)
             card.findViewById<TextView>(R.id.StudentNameInfo).text = element.nombreEstudiante
