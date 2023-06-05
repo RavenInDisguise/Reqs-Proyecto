@@ -201,7 +201,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/robotoslab_bold"
                     app:fontFamily="@font/robotoslab_bold"
-                    android:text="Horario de reserva:"
+                    android:text="Horario reservado:"
                     style="@style/MenuItemText"
                     android:id="@+id/bookingSchedule"
                     android:textColor="@color/blue_500"

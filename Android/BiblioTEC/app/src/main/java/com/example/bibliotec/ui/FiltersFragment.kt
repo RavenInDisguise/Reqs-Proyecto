@@ -25,9 +25,7 @@ import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.TimeZone
 
 class FiltersFragment : Fragment() {
 
@@ -231,7 +229,7 @@ class FiltersFragment : Fragment() {
                 startCalendar.set(y, m, d)
                 endCalendar.set(y, m, d)
 
-                dateBox.setText(LocalDate.date((startCalendar.time)))
+                dateBox.setText(LocalDate.date(startCalendar.time, fullDate = true))
             }
         }
 

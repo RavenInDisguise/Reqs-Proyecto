@@ -158,6 +158,11 @@ class BookingFragment : Fragment() {
         }
 
         binding.btnReservar.setOnClickListener {
+            val progressDialog2 = ProgressDialog(requireContext())
+            progressDialog2.setMessage("Cargando...")
+            progressDialog2.setCancelable(false)
+            progressDialog2.show()
+
             GlobalScope.launch(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/reservar"
                 val requestBody =
@@ -166,16 +171,12 @@ class BookingFragment : Fragment() {
                             "\"horaInicio\":\"$horaInicio\"," +
                             "\"horaFin\":\"$horaFin\"," +
                             "\"email\":\"${user.getEmail()}\"," +
-                            "\"nombre\":\"${nombreCubiculo.text.toString()}\"}").toRequestBody("application/json".toMediaTypeOrNull())
-                println(
-                    "{\"idCubiculo\": \"$cubiculoId\"," +
-                            "\"idEstudiante\":${user.getStudentId()}," +
-                            "\"horaInicio\":\"$horaInicio\"," +
-                            "\"horaFin\":\"$horaFin\"," +
-                            "\"email\":\"${user.getEmail()}\"," +
-                            "\"nombre\":\"${nombreCubiculo.text.toString()}\"}"
-                )
+                            "\"nombre\":\"${nombreCubiculo.text}\"}").toRequestBody("application/json".toMediaTypeOrNull())
+
                 val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
+
+                progressDialog2.dismiss()
+
                 if (responseStatus) {
                     requireActivity().runOnUiThread() {
                         AlertDialog.Builder(requireContext())
