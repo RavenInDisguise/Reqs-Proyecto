@@ -41,7 +41,7 @@ class BookingListAdapter(private val elements : List<BookingItem>):
 
 
             card.findViewById<TextView>(R.id.BookingIdText).text = element.id.toString()
-            card.findViewById<TextView>(R.id.BookRoomNameText).text = element.nombre
+            card.findViewById<TextView>(R.id.BookRoomNameText).text = "${element.nombreCubiculo} (ID:${element.idCubiculo})"
             card.findViewById<TextView>(R.id.BookingDateText).text = convertirFecha(element.fecha)
             card.findViewById<TextView>(R.id.StudentNameInfo).text = element.nombreEstudiante
             card.findViewById<TextView>(R.id.bookingScheduleText).text = unirFechas(element.horaInicio,element.horaFin)
