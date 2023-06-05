@@ -108,7 +108,7 @@
         android:id="@+id/reservasFragment"
         android:name="com.example.bibliotec.ui.ReservasFragment"
         android:label="fragment_reservas"
-        tools:layout="@layout/fragment_reservas" >
+        tools:layout="@layout/fragment_reservas">
         <action
             android:id="@+id/action_reservasFragment_to_StudentFragment"
             app:destination="@id/StudentFragment" />
