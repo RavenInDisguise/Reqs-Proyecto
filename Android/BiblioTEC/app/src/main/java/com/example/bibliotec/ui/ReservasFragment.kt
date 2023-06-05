@@ -123,7 +123,7 @@ class ReservasFragment : Fragment() {
                                     .setTitle("Confirmación")
                                     .setMessage("¿Estás seguro de eliminar esta reserva?")
                                     .setPositiveButton("OK") { dialog, _ ->
-                                        //eliminarReserva(reserva)
+                                        eliminarReserva(reserva)
                                         dialog.dismiss()
                                     }
                                     .setNegativeButton("Cancelar") { dialog, _ ->
@@ -170,6 +170,7 @@ class ReservasFragment : Fragment() {
                             .setMessage("La reserva fue confirmada")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
+                                view?.invalidate()
                             }
                             .create()
                         dialog.show()
@@ -192,13 +193,38 @@ class ReservasFragment : Fragment() {
 
 
     private fun eliminarReserva(reserva: Reserva) {
-//        val url = "https://appbibliotec.azurewebsites.net/api/reserva/eliminar" +
-//                "?id=${reserva.id}&nombre=${reserva.nombre}&horaInicio=${reserva.horaInicio}&horaFin=${reserva.horaFin}"
-//
-//        println("URL de eliminación: $url")
+        MainScope().launch {
+            val url = "https://appbibliotec.azurewebsites.net/api/reserva/eliminar" +
+                    "?id=${reserva.id}"
+            val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
+            withContext(Dispatchers.IO) {
+                val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
+                requireActivity().runOnUiThread {
+                    if (responseStatus) {
+                        val dialog = AlertDialog.Builder(requireContext())
+                            .setTitle("Confirmado")
+                            .setMessage("La reserva fue eliminada")
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                view?.invalidate()
+                            }
+                            .create()
+                        dialog.show()
+                    } else {
+                        val dialog = AlertDialog.Builder(requireContext())
+                            .setTitle("Error")
+                            .setMessage("Hubo un error al eliminar la reserva")
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .create()
+                        dialog.show()
+                    }
+                }
 
-        // Realizar la solicitud HTTP para eliminar la reserva utilizando la URL generada
-        // y realizar las acciones necesarias después de la eliminación.
+                println("URL de eliminación: $url")
+            }
+        }
     }
 
 
