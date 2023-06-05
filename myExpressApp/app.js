@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(cors({
-  origin: ["http://appbibliotec.azurewebsites.net", /http:\/\/appbibliotec.azurewebsites.net\/.+/],
+  origin: ["https://appbibliotec.azurewebsites.net", /https:\/\/appbibliotec.azurewebsites.net\/.+/],
   methods: ["GET", "POST", "PUT"],
   credentials: true
 }));

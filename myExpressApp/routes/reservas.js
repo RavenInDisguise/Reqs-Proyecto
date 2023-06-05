@@ -330,4 +330,55 @@ router.put('/', (req, res) => {
     });
 });
 
+// Código QR para una reserva
+router.get("/qr", async (req, res) => {
+    if (!estaAutenticado(req, false)) {
+        return res.status(403).send("Acceso denegado");
+    }
+    const saved = req.session.user;
+
+
+    if (!(req.query.id)) {
+        return res.status(401).send("Formato incorrecto");
+    }
+
+    const request = new sqlcon.Request();
+    request.input("IN_idReserva", sqlcon.Int, req.query.id);
+
+    // Ejecutar la consulta
+    request.execute("BiblioTEC_SP_ObtenerReserva", (error, resultado) => {
+        if (error) {
+            manejarError(res, error);
+        } else {
+            const salida = resultado.recordset[0];
+            const stJson = JSON.stringify({
+                idReserva: req.query.id,
+                nombre: salida.nombreCubiculo,
+                horaInicio: salida.horaInicio,
+                estudiante: salida.idEstudiante,
+            });
+
+            if (
+                saved.tipoUsuario === "Administrador" ||
+                salida.idEstudiante === saved.idEstudiante
+            ) {
+
+                qr.toBuffer(stJson, async (err, texto) => {
+                    if (error) {
+                        console.error('Error generating QR code:', err);
+                        return res.sendStatus(500);
+                    }
+
+                    res.setHeader('Content-Type', 'image/png');
+                    res.setHeader('Content-Disposition', 'inline; filename="qr.png"');
+                    
+                    return res.send(texto);
+                });
+            } else {
+                return res.status(403).send("Acceso denegado");
+            }
+        }
+    });
+});
+
 module.exports = router;
