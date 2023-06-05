@@ -98,6 +98,13 @@
         tools:layout="@layout/fragment_new_room">
     </fragment>
     <fragment
+        android:id="@+id/ModifyRoomFragment"
+        android:name="com.example.bibliotec.ui.ModifyRoomFragment"
+        android:label=""
+        tools:layout="@layout/fragment_modify_room">
+
+    </fragment>
+    <fragment
         android:id="@+id/reservasFragment"
         android:name="com.example.bibliotec.ui.ReservasFragment"
         android:label="fragment_reservas"

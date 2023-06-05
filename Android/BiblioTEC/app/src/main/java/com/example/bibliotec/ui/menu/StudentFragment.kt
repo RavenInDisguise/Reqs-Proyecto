@@ -45,7 +45,6 @@ class StudentFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
 
         // Listeners para quitar la sombra al tocar el botón

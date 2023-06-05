@@ -110,9 +110,11 @@ class BookingFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     // La sesión expiró

@@ -1,5 +1,6 @@
 package com.example.bibliotec.ui
 
+
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
@@ -18,38 +20,53 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.data.CheckboxListItem
-import com.example.bibliotec.databinding.FragmentNewRoomBinding
+import com.example.bibliotec.databinding.FragmentModifyRoomBinding
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.Calendar
 
 
-class NewRoomFragment : Fragment() {
-    private var _binding: FragmentNewRoomBinding? = null
+class ModifyRoomFragment : Fragment() {
+    private var _binding: FragmentModifyRoomBinding? = null
     private lateinit var apiRequest: ApiRequest
     private val binding get() = _binding!!
     private lateinit var recyclerView: RecyclerView
     private val gson = Gson()
     private lateinit var user: User
     private lateinit var checkBoxItemList: List<CheckboxListItem>
-    private var servicesLoaded = false
+    private var detailsLoaded = false
     private var statusesLoaded = false
     private var selectedStatus: String? = null
+    private var spinnerReady = false
+    private lateinit var estadosString: List<String>
+    private var roomId: Int = -1
+    private var oldStatus: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         apiRequest = ApiRequest.getInstance(requireContext())
-        _binding = FragmentNewRoomBinding.inflate(inflater, container, false)
+        _binding = FragmentModifyRoomBinding.inflate(inflater, container, false)
         user = User.getInstance(requireContext())
+
+        // Parámetros del fragmento
+        arguments?.let {
+            roomId = it.getInt("id", -1)
+        }
+
+        // Si no se brindó un número de cubículo, se devuelve
+        if (roomId == -1) {
+            findNavController().navigateUp()
+        }
+
         return binding.root
 
     }
@@ -57,19 +74,23 @@ class NewRoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Elementos
+        val idBox = view.findViewById<EditText>(R.id.id_edit)
+        val editNameBox = view.findViewById<EditText>(R.id.name_edit)
+        val capacityBox = view.findViewById<EditText>(R.id.capacity_edit)
+        val maxTimeBox = view.findViewById<EditText>(R.id.max_time_edit)
+        val spinner = view.findViewById<Spinner>(R.id.status_spinner)
+        val notifyUsers = view.findViewById<CheckBox>(R.id.notify_users)
+        val cancelBookings = view.findViewById<CheckBox>(R.id.cancel_current_bookings)
+
         // Se agrega el listener al botón "Buscar"
-        val buscarButton = view.findViewById<Button>(R.id.btnAgregar)
+        val buscarButton = view.findViewById<Button>(R.id.btnModificar)
         buscarButton.setOnClickListener {
             // Validaciones
             var fieldsOk = true
             var message = ""
             var capacity = 1
             var maxTime = 1
-
-            // Elementos
-            val editNameBox = view.findViewById<EditText>(R.id.name_edit)
-            val capacityBox = view.findViewById<EditText>(R.id.capacity_edit)
-            val maxTimeBox = view.findViewById<EditText>(R.id.max_time_edit)
 
             if (editNameBox.text.toString().isEmpty()) {
                 fieldsOk = false
@@ -111,8 +132,13 @@ class NewRoomFragment : Fragment() {
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
             } else {
-                val services = checkBoxItemList.filter { it.isChecked }
-                    .map { it.text }.toTypedArray()
+                val serviceArray = JsonArray()
+                checkBoxItemList.forEach {
+                    val jsonObject = JsonObject()
+                    jsonObject.addProperty("nombre", it.text)
+                    jsonObject.addProperty("activo", it.isChecked)
+                    serviceArray.add(jsonObject)
+                }
 
                 // Se abre un popup de "Cargando"
                 val progressDialog = ProgressDialog(requireContext())
@@ -121,24 +147,29 @@ class NewRoomFragment : Fragment() {
                 progressDialog.show()
 
                 GlobalScope.launch(Dispatchers.IO) {
-                    val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/crear"
+                    val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/"
 
                     val requestBody =
-                        ("{\"estadoActual\": \"${selectedStatus}\"," +
+                        ("{\"idCubiculo\": \"${roomId}\"," +
                                 "\"nombre\":\"${editNameBox.text}\"," +
+                                "\"estado\":\"${selectedStatus}\"," +
                                 "\"capacidad\":\"${capacity}\"," +
-                                "\"tiempoMaximo\":\"${maxTime}\"," +
-                                "\"servicios\":${services.map { "\"" + it + "\"" }}}").toRequestBody("application/json".toMediaTypeOrNull())
+                                "\"cancelarReservas\":\"${cancelBookings.isChecked}\"," +
+                                "\"notificarUsuarios\":\"${notifyUsers.isChecked}\"," +
+                                "\"minutosMaximo\":\"${maxTime}\"," +
+                                "\"servicios\":$serviceArray}").toRequestBody(
+                            "application/json".toMediaTypeOrNull()
+                        )
 
                     val (responseStatus, responseString) = apiRequest.putRequest(url, requestBody)
 
                     progressDialog.dismiss()
 
                     if (responseStatus) {
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Éxito")
-                                .setMessage("Cubículo agregado exitosamente")
+                                .setMessage("Cubículo modificado exitosamente")
                                 .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                                 .show()
                             findNavController().navigateUp()
@@ -147,7 +178,7 @@ class NewRoomFragment : Fragment() {
                     } else {
                         if (user.isLoggedIn()) {
                             // Ocurrió un error al hacer la consulta
-                            requireActivity().runOnUiThread() {
+                            requireActivity().runOnUiThread {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Error")
                                     .setMessage(responseString)
@@ -158,7 +189,7 @@ class NewRoomFragment : Fragment() {
                             }
                         } else {
                             // La sesión expiró
-                            requireActivity().runOnUiThread() {
+                            requireActivity().runOnUiThread {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle(R.string.session_timeout_title)
                                     .setMessage(R.string.session_timeout)
@@ -172,7 +203,7 @@ class NewRoomFragment : Fragment() {
             }
         }
 
-        // Se debe cargar la lista de servicios
+        // Se debe cargar la lista de estados y la información del cubículo
         recyclerView = view.findViewById(R.id.service_recycler)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -183,28 +214,68 @@ class NewRoomFragment : Fragment() {
         progressDialog.show()
 
         GlobalScope.launch(Dispatchers.IO) {
-            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/servicios"
+            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo?id=${roomId}"
 
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 
             // Se quita el popup de "Cargando"
-            servicesLoaded = true
+            detailsLoaded = true
             if (statusesLoaded) {
                 progressDialog.dismiss()
             }
 
             if (responseStatus) {
-                val json = gson.fromJson(responseString, JsonObject::class.java)
-                val serviciosList = json.get("servicios").asJsonArray
-                checkBoxItemList = serviciosList.map { CheckboxListItem(it.asString, false) }
-                requireActivity().runOnUiThread() {
+                val json = gson.fromJson(responseString, JsonArray::class.java)
+                val valores = json[0].asJsonObject
+
+                val nombre = valores.get("nombre").asString
+                val capacidad = valores.get("capacidad").asInt
+                val estado = valores.get("estado").asString
+                oldStatus = estado
+                val minutosMaximo = valores.get("minutosMaximo").asInt
+                val reservas = valores.get("reservas").asInt
+
+                val serviciosList = valores.get("servicios").asJsonArray
+                checkBoxItemList = serviciosList.map {
+                    CheckboxListItem(
+                        it.asJsonObject.get("nombre").asString,
+                        it.asJsonObject.get("activo").asBoolean
+                    )
+                }
+
+                requireActivity().runOnUiThread {
+                    idBox.setText("${roomId} ${getString(R.string.modify_room_id)}")
+                    editNameBox.setText(nombre)
+                    capacityBox.setText("$capacidad")
+                    maxTimeBox.setText("$minutosMaximo")
+
+                    if (reservas == 0) {
+                        notifyUsers.isEnabled = false
+                        cancelBookings.isEnabled = false
+
+                        cancelBookings.text = "${getString(R.string.cancel_bookings_label)} (no hay)"
+                    } else {
+                        notifyUsers.isEnabled = true
+                        cancelBookings.isEnabled = true
+
+                        cancelBookings.text = "${getString(R.string.cancel_bookings_label)} (total: $reservas)"
+                    }
+
+                    if (spinnerReady) {
+                        try {
+                            spinner.setSelection(estadosString.indexOf(oldStatus))
+                        } catch (e: Exception) {
+                            spinner.setSelection(0)
+                        }
+                    }
+
                     val adapter = FilterAdapter(checkBoxItemList)
                     recyclerView.adapter = adapter
                 }
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -216,7 +287,7 @@ class NewRoomFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)
@@ -237,18 +308,18 @@ class NewRoomFragment : Fragment() {
 
             // Se quita el popup de "Cargando"
             statusesLoaded = true
-            if (servicesLoaded) {
+            if (detailsLoaded) {
                 progressDialog.dismiss()
             }
 
             if (responseStatus) {
                 val json = gson.fromJson(responseString, JsonObject::class.java)
                 val estadosList = json.get("estados").asJsonArray
-                val estadosString = estadosList.map { it.asString }
+                estadosString = estadosList.map { it.asString }
                 selectedStatus = estadosString[0]
 
 
-                requireActivity().runOnUiThread() {
+                requireActivity().runOnUiThread {
                     val adapter = ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_spinner_item,
@@ -256,8 +327,16 @@ class NewRoomFragment : Fragment() {
                     )
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
-                    val spinner = view.findViewById<Spinner>(R.id.status_spinner)
                     spinner.adapter = adapter
+                    spinnerReady = true
+
+                    if (!oldStatus.isNullOrEmpty()) {
+                        try {
+                            spinner.setSelection(estadosString.indexOf(oldStatus))
+                        } catch (e: Exception) {
+                            spinner.setSelection(0)
+                        }
+                    }
 
                     spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                         override fun onItemSelected(
@@ -281,7 +360,7 @@ class NewRoomFragment : Fragment() {
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -290,11 +369,10 @@ class NewRoomFragment : Fragment() {
                                 findNavController().navigateUp()
                             }
                             .show()
-                        findNavController().navigateUp()
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)
