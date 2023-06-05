@@ -14,14 +14,26 @@
 
         <action
             android:id="@+id/action_LoginFragment_to_StudentFragment"
-            app:destination="@id/StudentFragment" />
+            app:destination="@id/StudentFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
 
         <action
             android:id="@+id/action_LoginFragment_to_AdminFragment"
-            app:destination="@id/AdminFragment" />
+            app:destination="@id/AdminFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_LoginFragment_to_RegistroFragment"
-            app:destination="@id/RegistroFragment" />
+            app:destination="@id/RegistroFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
     </fragment>
     <fragment
@@ -38,14 +50,26 @@
 
         <action
             android:id="@+id/action_StudentFragment_to_LoginFragment"
-            app:destination="@id/LoginFragment" />
+            app:destination="@id/LoginFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_StudentFragment_to_reservasFragment"
-            app:destination="@id/reservasFragment" />
+            app:destination="@id/reservasFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
 
         <action
             android:id="@+id/action_StudentFragment_to_FiltersFragment"
-            app:destination="@id/FiltersFragment" />
+            app:destination="@id/FiltersFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
     </fragment>
     <fragment
@@ -56,10 +80,18 @@
 
         <action
             android:id="@+id/action_FiltersFragment_to_StudentFragment"
-            app:destination="@id/StudentFragment" />
+            app:destination="@id/StudentFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_FiltersFragment_toAvailableRoomsFragment"
-            app:destination="@id/AvailableRoomsFragment"/>
+            app:destination="@id/AvailableRoomsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
 
     </fragment>
     <fragment
@@ -69,7 +101,11 @@
         tools:layout="@layout/fragment_available_rooms">
         <action
             android:id="@+id/action_AvailableRoomsFragment_toRegistroFragment"
-            app:destination="@id/ReservaFragment"/>
+            app:destination="@id/ReservaFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/ReservaFragment"
@@ -86,13 +122,25 @@
 
         <action
             android:id="@+id/action_AdminFragment_to_LoginFragment"
-            app:destination="@id/LoginFragment" />
+            app:destination="@id/LoginFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_AdminFragment_to_NewRoomFragment"
-            app:destination="@id/NewRoomFragment" />
+            app:destination="@id/NewRoomFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_AdminFragment_to_BookingListFragment"
-            app:destination="@id/BookingListFragment" />
+            app:destination="@id/BookingListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/NewRoomFragment"
@@ -114,7 +162,11 @@
         tools:layout="@layout/fragment_reservas">
         <action
             android:id="@+id/action_reservasFragment_to_StudentFragment"
-            app:destination="@id/StudentFragment" />
+            app:destination="@id/StudentFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
     </fragment>
     <fragment
         android:id="@+id/BookingListFragment"
