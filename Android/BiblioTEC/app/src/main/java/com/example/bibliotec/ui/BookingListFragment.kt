@@ -61,9 +61,6 @@ class BookingListFragment : Fragment() {
 
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 
-            // Se quita el popup de "Cargando"
-            progressDialog.dismiss()
-
             if (responseStatus) {
                 bookingItemList = gson.fromJson(responseString, Array<BookingItem>::class.java).toList()
 
@@ -110,6 +107,9 @@ class BookingListFragment : Fragment() {
                     }
                 }
             }
+
+            // Se quita el popup de "Cargando"
+            progressDialog.dismiss()
         }
     }
 

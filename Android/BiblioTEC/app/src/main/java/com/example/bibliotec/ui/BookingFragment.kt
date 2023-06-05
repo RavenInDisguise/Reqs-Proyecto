@@ -25,7 +25,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.text.SimpleDateFormat
 import java.util.*
 
 class BookingFragment : Fragment() {
@@ -100,7 +99,7 @@ class BookingFragment : Fragment() {
                 horaFinMaxCalendar.add(Calendar.MINUTE, minutosMaximo)
 
                 if (horaFinCalendar > horaFinMaxCalendar) {
-                    horaFinObject = horaFinCalendar.time
+                    horaFinObject = horaFinMaxCalendar.time
                     horaFin = LocalDate.toUtc(horaFinObject)
                 }
 
@@ -112,11 +111,21 @@ class BookingFragment : Fragment() {
                         )
                     }
 
+                val bookingTime = (horaFinObject.time - horaInicioObject.time) / (1000 * 60)
+
+                var bookingTimeString = LocalDate.durationString(bookingTime.toInt())
+
                 requireActivity().runOnUiThread() {
                     nombreCubiculo.setText(nombre)
-                    capacidadCubiculo.setText(capacidad)
+                    capacidadCubiculo.setText(
+                        "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
+                    )
                     horario.setText(
-                        "${LocalDate.date(horaInicioObject)}, de ${LocalDate.time(horaInicioObject)} a ${LocalDate.time(horaFinObject)}"
+                        "${
+                            LocalDate.date(horaInicioObject)
+                        }, de ${LocalDate.time(horaInicioObject)} a ${
+                            LocalDate.time(horaFinObject)
+                        }\n(durante $bookingTimeString)"
                     )
                     val adapter = BookingAdapter(servicePerRoomList)
                     recyclerView.adapter = adapter
@@ -174,7 +183,7 @@ class BookingFragment : Fragment() {
                             .setMessage("Reserva exitosa")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                findNavController().navigateUp()
+                                findNavController().navigate(R.id.StudentFragment)
                             }
                             .show()
                     }

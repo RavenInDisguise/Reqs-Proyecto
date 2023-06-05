@@ -226,8 +226,7 @@ class FiltersFragment : Fragment() {
                 startCalendar.set(y, m, d)
                 endCalendar.set(y, m, d)
 
-                val mes = m + 1
-                dateBox.setText("$y/$mes/$d")
+                dateBox.setText(LocalDate.date((startCalendar.time)))
             }
         }
 
@@ -257,9 +256,11 @@ class FiltersFragment : Fragment() {
             if (isStart) {
                 startCalendar.set(Calendar.HOUR_OF_DAY, h)
                 startCalendar.set(Calendar.MINUTE, m)
+                timeBox.setText(LocalDate.time(startCalendar.time))
             } else {
                 endCalendar.set(Calendar.HOUR_OF_DAY, h)
                 endCalendar.set(Calendar.MINUTE, m)
+                timeBox.setText(LocalDate.time(endCalendar.time))
 
                 // Para evitar problemas si la instancia se creó para días diferentes
                 // (por ejemplo, si la aplicación se abrió casi a medianoche)
@@ -269,8 +270,6 @@ class FiltersFragment : Fragment() {
                     startCalendar.get(Calendar.DAY_OF_MONTH)
                 )
             }
-
-            timeBox.setText(String.format("%02d:%02d", h, m))
         }
 
         TimePickerDialog(requireContext(), listener, hour, minute, false).show()

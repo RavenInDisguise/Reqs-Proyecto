@@ -39,7 +39,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:hint="Seleccione una fecha"
-                android:inputType="date"
                 android:clickable="true"
                 android:focusable="false" />
 
@@ -65,7 +64,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:hint="Seleccionar hora"
-                        android:inputType="time"
                         android:clickable="true"
                         android:focusable="false" />
 
@@ -88,7 +86,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
                         android:hint="Seleccionar hora"
-                        android:inputType="time"
                         android:clickable="true"
                         android:focusable="false" />
 

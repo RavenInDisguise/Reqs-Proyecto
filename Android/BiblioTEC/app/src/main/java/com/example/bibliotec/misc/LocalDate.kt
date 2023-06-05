@@ -94,5 +94,26 @@ class LocalDate {
             dateformat.timeZone = TimeZone.getTimeZone("UTC")
             return dateformat.format(date)
         }
+
+        fun durationString(duration : Int): String {
+            var resultingString = ""
+
+            if (duration >= 60) {
+                resultingString = (duration / 60).toString() + " h"
+            }
+
+            if (duration % 60 > 0) {
+                if (!resultingString.isEmpty()) {
+                    resultingString += " "
+                }
+                resultingString += (duration % 60).toString() + " min"
+            }
+
+            if (resultingString.isEmpty()) {
+                resultingString = "0 min"
+            }
+
+            return resultingString
+        }
     }
 }

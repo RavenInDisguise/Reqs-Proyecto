@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.R
 import com.example.bibliotec.databinding.FragmentSignupBinding
+import com.example.bibliotec.misc.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -50,7 +51,6 @@ class SignUpFragment : Fragment() {
             val editTextApellido2 = view.findViewById<EditText>(R.id.editTextApellido2)
             val editTextCedula = view.findViewById<EditText>(R.id.editTextCedula)
             val editTextCarnet = view.findViewById<EditText>(R.id.editTextCarnet)
-            val editTextFechaNacimiento = view.findViewById<EditText>(R.id.editTextFechaNacimiento)
             val editTextCorreo = view.findViewById<EditText>(R.id.editTextEmailRegistro)
             val editTextClaveRegistro = view.findViewById<EditText>(R.id.editTextClaveRegistro)
 
@@ -60,7 +60,9 @@ class SignUpFragment : Fragment() {
             val apellido2 = editTextApellido2.text.toString()
             val cedula = editTextCedula.text.toString()
             val carnet = editTextCarnet.text.toString()
-            val fechaNacimiento = editTextFechaNacimiento.text.toString()
+            val fechaNacimiento = "${
+                selectedCalendar.get(Calendar.YEAR)}/${selectedCalendar.get(Calendar.MONTH) + 1}/${
+                selectedCalendar.get(Calendar.DAY_OF_MONTH)}"
             val correo = editTextCorreo.text.toString()
             val clave = editTextClaveRegistro.text.toString()
 
@@ -137,8 +139,7 @@ class SignUpFragment : Fragment() {
         val day = selectedCalendar.get(Calendar.DAY_OF_MONTH)
         val listener = DatePickerDialog.OnDateSetListener{datePicker, y, m, d ->
             selectedCalendar.set(y, m, d)
-            val mes = m + 1
-            fechaNacimiento.setText("$y/$mes/$d")
+            fechaNacimiento.setText(LocalDate.date((selectedCalendar.time)))
         }
         DatePickerDialog(requireContext(), listener, year, month, day).show()
     }
