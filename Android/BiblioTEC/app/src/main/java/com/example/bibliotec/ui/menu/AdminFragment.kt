@@ -76,7 +76,7 @@ class AdminFragment : Fragment() {
         }
 
         view.findViewById<ConstraintLayout>(R.id.ManageRoomsButton).setOnClickListener {
-            notImplementedWarning()
+            findNavController().navigate(R.id.action_AdminFragment_to_BookingListFragment)
         }
 
         view.findViewById<ConstraintLayout>(R.id.ManageReservationsButton).setOnClickListener {

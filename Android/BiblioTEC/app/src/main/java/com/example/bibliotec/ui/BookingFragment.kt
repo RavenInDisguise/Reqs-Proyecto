@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
-import com.example.bibliotec.data.ServicePerRoom
+import com.example.bibliotec.data.ServicePerRoomItem
 import com.example.bibliotec.databinding.FragmentBookingBinding
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
@@ -37,7 +37,7 @@ class BookingFragment : Fragment() {
     private lateinit var horaFin: String
     private var cubiculoId = -1
     private val gson = Gson()
-    private lateinit var servicePerRoomList: List<ServicePerRoom>
+    private lateinit var servicePerRoomList: List<ServicePerRoomItem>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,7 +90,7 @@ class BookingFragment : Fragment() {
 
                 servicePerRoomList = valores.get("servicios")
                     .asJsonArray.map {
-                        ServicePerRoom(
+                        ServicePerRoomItem(
                             it.asJsonObject.get("nombre").asString,
                             it.asJsonObject.get("activo").asBoolean
                         )
