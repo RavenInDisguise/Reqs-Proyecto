@@ -14,7 +14,7 @@ import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.data.BookingItem
 import com.example.bibliotec.data.RoomItem
-import com.example.bibliotec.databinding.FragmentAvailableRoomsBinding
+import com.example.bibliotec.databinding.FragmentBookingListBinding
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class BookingListFragment : Fragment() {
-    private var _binding: FragmentAvailableRoomsBinding? = null
+    private var _binding: FragmentBookingListBinding? = null
     private val binding get() = _binding!!
     private lateinit var apiRequest: ApiRequest
     private lateinit var user: User
@@ -37,7 +37,7 @@ class BookingListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentAvailableRoomsBinding.inflate(inflater, container, false)
+        _binding = FragmentBookingListBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
 
         return binding.root
@@ -47,12 +47,12 @@ class BookingListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Se debe cargar la lista de servicios
-        recyclerView = view.findViewById(R.id.available_rooms_recycler)
+        recyclerView = view.findViewById(R.id.booking_list_recycler)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         // Se intenta cargar la información desde el servidor
         val progressDialog = ProgressDialog(requireContext())
-        progressDialog.setMessage("Buscando cubículos disponibles...")
+        progressDialog.setMessage("Buscando reservas existentes...")
         progressDialog.setCancelable(false)
         progressDialog.show()
 
