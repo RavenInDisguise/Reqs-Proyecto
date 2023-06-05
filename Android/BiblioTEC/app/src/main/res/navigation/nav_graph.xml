@@ -90,6 +90,9 @@
         <action
             android:id="@+id/action_AdminFragment_to_NewRoomFragment"
             app:destination="@id/NewRoomFragment" />
+        <action
+            android:id="@+id/action_AdminFragment_to_BookingListFragment"
+            app:destination="@id/BookingListFragment" />
     </fragment>
     <fragment
         android:id="@+id/NewRoomFragment"
@@ -105,5 +108,11 @@
         <action
             android:id="@+id/action_reservasFragment_to_StudentFragment"
             app:destination="@id/StudentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/BookingListFragment"
+        android:name="com.example.bibliotec.ui.BookingListFragment"
+        android:label="fragment_booking_list"
+        tools:layout="@layout/fragment_booking_list">
     </fragment>
 </navigation>

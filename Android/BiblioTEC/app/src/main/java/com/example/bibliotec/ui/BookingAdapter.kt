@@ -1,15 +1,14 @@
 package com.example.bibliotec.ui
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
-import com.example.bibliotec.data.ServicePerRoom
+import com.example.bibliotec.data.ServicePerRoomItem
 
-class BookingAdapter(private val elements : List<ServicePerRoom>) :
+class BookingAdapter(private val elements : List<ServicePerRoomItem>) :
     RecyclerView.Adapter<BookingAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,7 +30,7 @@ class BookingAdapter(private val elements : List<ServicePerRoom>) :
         private val checkbox: CheckBox = itemView.findViewById(R.id.service_filter_checkbox)
 
 
-        fun bind(element: ServicePerRoom) {
+        fun bind(element: ServicePerRoomItem) {
             checkbox.text = element.nombre
             checkbox.isChecked = element.activo
             checkbox.isClickable = false
