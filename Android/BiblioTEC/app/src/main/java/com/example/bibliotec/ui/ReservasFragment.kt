@@ -1,6 +1,7 @@
 package com.example.bibliotec.ui
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -33,6 +34,8 @@ class ReservasFragment : Fragment() {
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
     private lateinit var user: User
+    private lateinit var progressBar : ProgressBar
+
     data class Reserva(
         val id: Int,
         val nombre: String,
@@ -61,7 +64,7 @@ class ReservasFragment : Fragment() {
         val listViewReservas: ListView = view.findViewById(R.id.reserv_list)
         val elementos: MutableList<String> = mutableListOf()
 
-        val progressBar : ProgressBar = view.findViewById(R.id.progressBar)
+        progressBar = view.findViewById(R.id.progressBar)
 
         viewLifecycleOwner.lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -169,21 +172,20 @@ class ReservasFragment : Fragment() {
         }
     }
 
-
-
-
     private fun confirmarReserva(reserva: Reserva) {
         MainScope().launch {
+            val progressDialog = ProgressDialog(requireContext())
+            progressDialog.setMessage("Cargando...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+
             val url = "https://appbibliotec.azurewebsites.net/api/reserva/confirmar" +
                     "?id=${reserva.id}&nombre=${reserva.nombre}&horaInicio=${reserva.horaInicio}&horaFin=${reserva.horaFin}"
             val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
-            println("ayeye")
-            println(url)
             withContext(Dispatchers.IO) {
                 val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
-                println("juyajeeee")
-                println(responseStatus)
-                println(responseString)
+                progressDialog.dismiss()
+
                 requireActivity().runOnUiThread {
                     if (responseStatus) {
                         val dialog = AlertDialog.Builder(requireContext())
@@ -205,8 +207,6 @@ class ReservasFragment : Fragment() {
                         dialog.show()
                     }
                 }
-
-                println("URL de confirmación: $url")
             }
         }
     }
