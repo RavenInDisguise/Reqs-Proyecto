@@ -39,6 +39,7 @@ class FiltersFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var startCalendar = Calendar.getInstance()
     private var endCalendar = Calendar.getInstance()
+    private var calendarsReady = false
     private lateinit var checkBoxItemList: List<CheckboxListItem>
 
     override fun onCreateView(
@@ -56,22 +57,26 @@ class FiltersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Se agregan minutos a las horas de inicio y salida
-        startCalendar.add(Calendar.MINUTE, 10)
-        startCalendar.set(Calendar.MILLISECOND, 0)
-        startCalendar.set(Calendar.SECOND, 0)
+        if (!calendarsReady) {
+            calendarsReady = true
 
-        endCalendar.add(Calendar.MINUTE, 70)
-        endCalendar.set(Calendar.MILLISECOND, 0)
-        endCalendar.set(Calendar.SECOND, 0)
+            // Se agregan minutos a las horas de inicio y salida
+            startCalendar.add(Calendar.MINUTE, 10)
+            startCalendar.set(Calendar.MILLISECOND, 0)
+            startCalendar.set(Calendar.SECOND, 0)
 
-        // Para evitar problemas si la instancia se creó para días diferentes
-        // (por ejemplo, si la aplicación se abrió casi a medianoche)
-        endCalendar.set(
-            startCalendar.get(Calendar.YEAR),
-            startCalendar.get(Calendar.MONTH),
-            startCalendar.get(Calendar.DAY_OF_MONTH)
-        )
+            endCalendar.add(Calendar.MINUTE, 70)
+            endCalendar.set(Calendar.MILLISECOND, 0)
+            endCalendar.set(Calendar.SECOND, 0)
+
+            // Para evitar problemas si la instancia se creó para días diferentes
+            // (por ejemplo, si la aplicación se abrió casi a medianoche)
+            endCalendar.set(
+                startCalendar.get(Calendar.YEAR),
+                startCalendar.get(Calendar.MONTH),
+                startCalendar.get(Calendar.DAY_OF_MONTH)
+            )
+        }
 
         // Se agregan los listeners a la fecha y a las horas
         val editTextDateFilter = view.findViewById<EditText>(R.id.date_filter_edit)
