@@ -198,14 +198,24 @@ class ReservasFragment : Fragment() {
                             .create()
                         dialog.show()
                     } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al confirmar la reserva")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .create()
-                        dialog.show()
+                        if (user.isLoggedIn()) {
+                            // Ocurrió un error al hacer la consulta
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        } else {
+                            // La sesión expiró
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
                     }
                 }
             }
@@ -232,14 +242,24 @@ class ReservasFragment : Fragment() {
                             .create()
                         dialog.show()
                     } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al eliminar la reserva")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .create()
-                        dialog.show()
+                        if (user.isLoggedIn()) {
+                            // Ocurrió un error al hacer la consulta
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        } else {
+                            // La sesión expiró
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
                     }
                 }
 
