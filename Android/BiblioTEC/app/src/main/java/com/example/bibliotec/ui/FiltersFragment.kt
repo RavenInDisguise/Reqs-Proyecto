@@ -18,6 +18,7 @@ import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.data.CheckboxListItem
 import com.example.bibliotec.databinding.FragmentFiltersBinding
+import com.example.bibliotec.misc.LocalDate
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -38,6 +39,7 @@ class FiltersFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var startCalendar = Calendar.getInstance()
     private var endCalendar = Calendar.getInstance()
+    private var calendarsReady = false
     private lateinit var checkBoxItemList: List<CheckboxListItem>
 
     override fun onCreateView(
@@ -55,17 +57,26 @@ class FiltersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Se agregan minutos a las horas de inicio y salida
-        startCalendar.add(Calendar.MINUTE, 10)
-        endCalendar.add(Calendar.MINUTE, 70)
+        if (!calendarsReady) {
+            calendarsReady = true
 
-        // Para evitar problemas si la instancia se creó para días diferentes
-        // (por ejemplo, si la aplicación se abrió casi a medianoche)
-        endCalendar.set(
-            startCalendar.get(Calendar.YEAR),
-            startCalendar.get(Calendar.MONTH),
-            startCalendar.get(Calendar.DAY_OF_MONTH)
-        )
+            // Se agregan minutos a las horas de inicio y salida
+            startCalendar.add(Calendar.MINUTE, 10)
+            startCalendar.set(Calendar.MILLISECOND, 0)
+            startCalendar.set(Calendar.SECOND, 0)
+
+            endCalendar.add(Calendar.MINUTE, 70)
+            endCalendar.set(Calendar.MILLISECOND, 0)
+            endCalendar.set(Calendar.SECOND, 0)
+
+            // Para evitar problemas si la instancia se creó para días diferentes
+            // (por ejemplo, si la aplicación se abrió casi a medianoche)
+            endCalendar.set(
+                startCalendar.get(Calendar.YEAR),
+                startCalendar.get(Calendar.MONTH),
+                startCalendar.get(Calendar.DAY_OF_MONTH)
+            )
+        }
 
         // Se agregan los listeners a la fecha y a las horas
         val editTextDateFilter = view.findViewById<EditText>(R.id.date_filter_edit)
@@ -130,11 +141,9 @@ class FiltersFragment : Fragment() {
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
             } else {
-                val dateformat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                dateformat.timeZone = TimeZone.getTimeZone("UTC")
                 val bundle = Bundle()
-                bundle.putString("horaInicio", dateformat.format(startCalendar.time))
-                bundle.putString("horaFin", dateformat.format(endCalendar.time))
+                bundle.putString("horaInicio", LocalDate.toUtc(startCalendar))
+                bundle.putString("horaFin", LocalDate.toUtc(endCalendar))
                 bundle.putInt("capacidad", capacity)
                 bundle.putStringArray("servicios", checkBoxItemList.filter { it.isChecked }
                     .map { it.text }.toTypedArray())
@@ -222,8 +231,7 @@ class FiltersFragment : Fragment() {
                 startCalendar.set(y, m, d)
                 endCalendar.set(y, m, d)
 
-                val mes = m + 1
-                dateBox.setText("$y/$mes/$d")
+                dateBox.setText(LocalDate.date((startCalendar.time)))
             }
         }
 
@@ -253,9 +261,11 @@ class FiltersFragment : Fragment() {
             if (isStart) {
                 startCalendar.set(Calendar.HOUR_OF_DAY, h)
                 startCalendar.set(Calendar.MINUTE, m)
+                timeBox.setText(LocalDate.time(startCalendar.time))
             } else {
                 endCalendar.set(Calendar.HOUR_OF_DAY, h)
                 endCalendar.set(Calendar.MINUTE, m)
+                timeBox.setText(LocalDate.time(endCalendar.time))
 
                 // Para evitar problemas si la instancia se creó para días diferentes
                 // (por ejemplo, si la aplicación se abrió casi a medianoche)
@@ -265,8 +275,6 @@ class FiltersFragment : Fragment() {
                     startCalendar.get(Calendar.DAY_OF_MONTH)
                 )
             }
-
-            timeBox.setText(String.format("%02d:%02d", h, m))
         }
 
         TimePickerDialog(requireContext(), listener, hour, minute, false).show()

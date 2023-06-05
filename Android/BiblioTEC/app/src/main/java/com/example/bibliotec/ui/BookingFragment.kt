@@ -13,8 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
-import com.example.bibliotec.data.ServicePerRoom
+import com.example.bibliotec.data.ServicePerRoomItem
 import com.example.bibliotec.databinding.FragmentBookingBinding
+import com.example.bibliotec.misc.LocalDate
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonArray
@@ -24,7 +25,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.text.SimpleDateFormat
 import java.util.*
 
 class BookingFragment : Fragment() {
@@ -37,7 +37,7 @@ class BookingFragment : Fragment() {
     private lateinit var horaFin: String
     private var cubiculoId = -1
     private val gson = Gson()
-    private lateinit var servicePerRoomList: List<ServicePerRoom>
+    private lateinit var servicePerRoomList: List<ServicePerRoomItem>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,21 +85,48 @@ class BookingFragment : Fragment() {
                 val capacidad = valores.get("capacidad").asString
                 val minutosMaximo = valores.get("minutosMaximo").asInt
 
-                val fecha = getDate(horaInicio)
-                horaFin = sumarMinutosATiempo(horaInicio, minutosMaximo)
+                val horaInicioObject = LocalDate.parseUtc(horaInicio)
+                var horaFinObject = LocalDate.parseUtc(horaFin)
+
+                val horaInicioCalendar = Calendar.getInstance()
+                horaInicioCalendar.time = horaInicioObject
+
+                val horaFinCalendar = Calendar.getInstance()
+                horaFinCalendar.time = horaFinObject
+
+                val horaFinMaxCalendar = Calendar.getInstance()
+                horaFinMaxCalendar.time = horaInicioCalendar.time
+                horaFinMaxCalendar.add(Calendar.MINUTE, minutosMaximo)
+
+                if (horaFinCalendar > horaFinMaxCalendar) {
+                    horaFinObject = horaFinMaxCalendar.time
+                    horaFin = LocalDate.toUtc(horaFinObject)
+                }
 
                 servicePerRoomList = valores.get("servicios")
                     .asJsonArray.map {
-                        ServicePerRoom(
+                        ServicePerRoomItem(
                             it.asJsonObject.get("nombre").asString,
                             it.asJsonObject.get("activo").asBoolean
                         )
                     }
 
+                val bookingTime = (horaFinObject.time - horaInicioObject.time) / (1000 * 60)
+
+                var bookingTimeString = LocalDate.durationString(bookingTime.toInt())
+
                 requireActivity().runOnUiThread() {
                     nombreCubiculo.setText(nombre)
-                    capacidadCubiculo.setText(capacidad)
-                    horario.setText("$fecha de ${convertToUTCMinus6(horaInicio)} a ${convertToUTCMinus6(horaFin)}")
+                    capacidadCubiculo.setText(
+                        "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
+                    )
+                    horario.setText(
+                        "${
+                            LocalDate.date(horaInicioObject)
+                        }, de ${LocalDate.time(horaInicioObject)} a ${
+                            LocalDate.time(horaFinObject)
+                        }\n(durante $bookingTimeString)"
+                    )
                     val adapter = BookingAdapter(servicePerRoomList)
                     recyclerView.adapter = adapter
                 }
@@ -130,7 +157,7 @@ class BookingFragment : Fragment() {
             }
         }
 
-        binding.btnReservar.setOnClickListener{
+        binding.btnReservar.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/reservar"
                 val requestBody =
@@ -140,12 +167,14 @@ class BookingFragment : Fragment() {
                             "\"horaFin\":\"$horaFin\"," +
                             "\"email\":\"${user.getEmail()}\"," +
                             "\"nombre\":\"${nombreCubiculo.text.toString()}\"}").toRequestBody("application/json".toMediaTypeOrNull())
-                println("{\"idCubiculo\": \"$cubiculoId\"," +
-                        "\"idEstudiante\":${user.getStudentId()}," +
-                        "\"horaInicio\":\"$horaInicio\"," +
-                        "\"horaFin\":\"$horaFin\"," +
-                        "\"email\":\"${user.getEmail()}\"," +
-                        "\"nombre\":\"${nombreCubiculo.text.toString()}\"}")
+                println(
+                    "{\"idCubiculo\": \"$cubiculoId\"," +
+                            "\"idEstudiante\":${user.getStudentId()}," +
+                            "\"horaInicio\":\"$horaInicio\"," +
+                            "\"horaFin\":\"$horaFin\"," +
+                            "\"email\":\"${user.getEmail()}\"," +
+                            "\"nombre\":\"${nombreCubiculo.text.toString()}\"}"
+                )
                 val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
                 if (responseStatus) {
                     requireActivity().runOnUiThread() {
@@ -154,7 +183,7 @@ class BookingFragment : Fragment() {
                             .setMessage("Reserva exitosa")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                findNavController().navigateUp()
+                                findNavController().navigate(R.id.StudentFragment)
                             }
                             .show()
                     }
@@ -186,40 +215,5 @@ class BookingFragment : Fragment() {
             }
         }
 
-    }
-
-    fun convertToUTCMinus6(dateTimeString: String): String {
-        val sourceFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        sourceFormat.timeZone = TimeZone.getTimeZone("UTC")
-
-        val targetFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-        targetFormat.timeZone = TimeZone.getTimeZone("GMT-6:00")
-
-        val sourceDate = sourceFormat.parse(dateTimeString)
-        val targetTimeString = targetFormat.format(sourceDate)
-
-        return targetTimeString
-    }
-
-    fun getDate(dateTimeString: String): String {
-        val sourceFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val sourceDate = sourceFormat.parse(dateTimeString)
-
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
-        val date = dateFormat.format(sourceDate)
-
-        return date
-    }
-
-    fun sumarMinutosATiempo(tiempo: String, minutosASumar: Int): String {
-        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val tiempoDate = formato.parse(tiempo)
-
-        val calendar = Calendar.getInstance()
-        calendar.time = tiempoDate
-        calendar.add(Calendar.MINUTE, minutosASumar)
-
-        return formato.format(calendar.time)
     }
 }

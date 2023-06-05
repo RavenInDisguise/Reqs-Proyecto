@@ -87,7 +87,6 @@
                 android:layout_marginTop="30dp"
                 android:ems="10"
                 android:hint="Fecha de nacimiento"
-                android:inputType="date"
                 android:focusable="false"
                 android:clickable="true"
                 android:maxLines="1"
