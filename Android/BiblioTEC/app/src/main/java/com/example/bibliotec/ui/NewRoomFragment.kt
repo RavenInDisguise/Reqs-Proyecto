@@ -27,9 +27,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.TimeZone
 
 
 class NewRoomFragment : Fragment() {
@@ -72,8 +70,6 @@ class NewRoomFragment : Fragment() {
             val editNameBox = view.findViewById<EditText>(R.id.name_edit)
             val capacityBox = view.findViewById<EditText>(R.id.capacity_edit)
             val maxTimeBox = view.findViewById<EditText>(R.id.max_time_edit)
-
-            var currentCalendar = Calendar.getInstance()
 
             if (editNameBox.text.toString().isEmpty()) {
                 fieldsOk = false
@@ -214,6 +210,7 @@ class NewRoomFragment : Fragment() {
                             .setMessage(responseString)
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
+                                findNavController().navigateUp()
                             }
                             .show()
                     }
@@ -270,7 +267,6 @@ class NewRoomFragment : Fragment() {
                             id: Long
                         ) {
                             selectedStatus = estadosString[position]
-                            println(selectedStatus)
                         }
 
                         override fun onNothingSelected(parent: AdapterView<*>) {
@@ -289,7 +285,10 @@ class NewRoomFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
                             .show()
                         findNavController().navigateUp()
                     }

@@ -45,7 +45,6 @@ class StudentFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
 
         // Listeners para quitar la sombra al tocar el botón
@@ -61,7 +60,7 @@ class StudentFragment : Fragment() {
 
         // Se agregan los listeners al tocar
         view.findViewById<ConstraintLayout>(R.id.NewReservationButton).setOnClickListener {
-            navController.navigate(R.id.action_StudentFragment_to_FiltersFragment)
+            findNavController().navigate(R.id.action_StudentFragment_to_FiltersFragment)
         }
 
         view.findViewById<ConstraintLayout>(R.id.SeeReservationHistory).setOnClickListener {
