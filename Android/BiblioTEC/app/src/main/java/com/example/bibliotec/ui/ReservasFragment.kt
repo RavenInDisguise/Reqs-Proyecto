@@ -1,5 +1,3 @@
-package com.example.bibliotec.ui
-
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
@@ -17,8 +15,11 @@ import com.example.bibliotec.R
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 
 class ReservasFragment : Fragment() {
@@ -56,7 +57,8 @@ class ReservasFragment : Fragment() {
         val listViewReservas: ListView = view.findViewById(R.id.reserv_list)
         val elementos: MutableList<String> = mutableListOf()
 
-        GlobalScope.launch(Dispatchers.IO) {
+
+        MainScope().launch {
             val url = "https://appbibliotec.azurewebsites.net/api/reserva/estudiante?id=$studentId"
             val (responseStatus, responseString) = apiRequest.getRequest(url)
             println("Se hizo la solicitud a $url")
@@ -72,61 +74,65 @@ class ReservasFragment : Fragment() {
                     elementos.add(elemento)
                 }
 
-                requireActivity().runOnUiThread {
-                    val adapter = object : ArrayAdapter<String>(
-                        requireContext(),
-                        R.layout.list_item_layout,
-                        R.id.item_text,
-                        elementos
-                    ) {
-                        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                            val view = super.getView(position, convertView, parent)
+                val adapter = object : ArrayAdapter<String>(
+                    requireContext(),
+                    R.layout.list_item_layout,
+                    R.id.item_text,
+                    elementos
+                ) {
+                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = super.getView(position, convertView, parent)
 
-                            val itemText = view.findViewById<TextView>(R.id.item_text)
-                            val buttonConfirmar = view.findViewById<Button>(R.id.button_confirmar)
-                            val buttonEliminar = view.findViewById<Button>(R.id.button_eliminar)
+                        val itemText = view.findViewById<TextView>(R.id.item_text)
+                        val buttonConfirmar = view.findViewById<Button>(R.id.button_confirmar)
+                        val buttonEliminar = view.findViewById<Button>(R.id.button_eliminar)
+                        val reservaConfirmada = reservas[position].confirmado
 
-                            val reserva = reservas[position]
-                            itemText.text = elementos[position]
+                        // Actualizar el estado del botón Confirmar
+                        buttonConfirmar.isEnabled = !reservaConfirmada
 
-                            // Acciones al hacer clic en el botón Confirmar
-                            buttonConfirmar.setOnClickListener {
-                                val confirmDialog = AlertDialog.Builder(requireContext())
-                                    .setTitle("Confirmación")
-                                    .setMessage("¿Estás seguro de confirmar esta reserva?")
-                                    .setPositiveButton("OK") { dialog, _ ->
+                        val reserva = reservas[position]
+                        itemText.text = elementos[position]
+
+                        // Acciones al hacer clic en el botón Confirmar
+                        buttonConfirmar.setOnClickListener {
+                            val confirmDialog = AlertDialog.Builder(requireContext())
+                                .setTitle("Confirmación")
+                                .setMessage("¿Estás seguro de confirmar esta reserva?")
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    MainScope().launch {
                                         confirmarReserva(reserva)
-                                        dialog.dismiss()
                                     }
-                                    .setNegativeButton("Cancelar") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .create()
-                                confirmDialog.show()
-                            }
-
-                            // Acciones al hacer clic en el botón Eliminar
-                            buttonEliminar.setOnClickListener {
-                                val deleteDialog = AlertDialog.Builder(requireContext())
-                                    .setTitle("Confirmación")
-                                    .setMessage("¿Estás seguro de eliminar esta reserva?")
-                                    .setPositiveButton("OK") { dialog, _ ->
-                                        eliminarReserva(reserva)
-                                        dialog.dismiss()
-                                    }
-                                    .setNegativeButton("Cancelar") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .create()
-                                deleteDialog.show()
-                            }
-
-                            return view
+                                    dialog.dismiss()
+                                }
+                                .setNegativeButton("Cancelar") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .create()
+                            confirmDialog.show()
                         }
-                    }
 
-                    listViewReservas.adapter = adapter
+                        // Acciones al hacer clic en el botón Eliminar
+                        buttonEliminar.setOnClickListener {
+                            val deleteDialog = AlertDialog.Builder(requireContext())
+                                .setTitle("Confirmación")
+                                .setMessage("¿Estás seguro de eliminar esta reserva?")
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    eliminarReserva(reserva)
+                                    dialog.dismiss()
+                                }
+                                .setNegativeButton("Cancelar") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .create()
+                            deleteDialog.show()
+                        }
+
+                        return view
+                    }
                 }
+
+                listViewReservas.adapter = adapter
             } else {
                 println("Error al obtener las reservas")
                 println(responseString)
@@ -136,14 +142,31 @@ class ReservasFragment : Fragment() {
         return view
     }
 
-    private fun confirmarReserva(reserva: Reserva) {
-        val url = "https://appbibliotec.azurewebsites.net/api/reserva/confirmar" +
-                "?id=${reserva.id}&nombre=${reserva.nombre}&horaInicio=${reserva.horaInicio}&horaFin=${reserva.horaFin}"
-
-        println("URL de confirmación: $url")
-
-        // Realizar la solicitud HTTP para confirmar la reserva utilizando la URL generada
-        // y realizar las acciones necesarias después de la confirmación.
+    private suspend fun confirmarReserva(reserva: Reserva) {
+        withContext(Dispatchers.IO) {
+            val url = "https://appbibliotec.azurewebsites.net/api/reserva/confirmar" +
+                    "?id=${reserva.id}&nombre=${reserva.nombre}&horaInicio=${reserva.horaInicio}&horaFin=${reserva.horaFin}"
+            val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
+            val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
+            if (responseStatus) {
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle("Confirmado")
+                    .setMessage("La reserva fue confirmada")
+                    .setPositiveButton("OK") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+            } else {
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle("Error")
+                    .setMessage("Hubo un error al confirmar la reserva")
+                    .setPositiveButton("OK") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+            }
+            println("URL de confirmación: $url")
+        }
     }
 
     private fun eliminarReserva(reserva: Reserva) {
