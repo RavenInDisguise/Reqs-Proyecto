@@ -63,7 +63,7 @@ BEGIN
         END;
 
             UPDATE  C
-            SET     C.[idEstado] = 5
+            SET     C.[idEstado] = @ID_ELIMINADO
             FROM    [dbo].[Cubiculos] C
             WHERE   C.[id] = @IN_idCubiculo;
 
