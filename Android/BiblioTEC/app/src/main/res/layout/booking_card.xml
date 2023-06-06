@@ -40,13 +40,55 @@
             tools:text="500" />
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/bookRoomLayout"
+        android:id="@+id/bookingStatusLayout"
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toEndOf="@+id/BookingImage"
         app:layout_constraintTop_toBottomOf="@+id/bookingIdLayout"
         android:layout_marginTop="10dp"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/icon_status" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:id="@+id/bookingStatusLabel"
+                style="@style/MenuItemText"
+                android:focusable="true"
+                android:fontFamily="@font/robotoslab_bold"
+                app:fontFamily="@font/robotoslab_bold"
+                android:textColor="@color/blue_500"
+                android:text="Estado:"
+                android:textSize="15sp"
+                android:layout_marginStart="0dp" />
+            <TextView
+                android:id="@+id/bookingStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF222222"
+                tools:text="Confirmada"
+                android:layout_marginLeft="0dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/bookRoomLayout"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/BookingImage"
+        app:layout_constraintTop_toBottomOf="@+id/bookingStatusLayout"
+        android:layout_marginTop="5dp"
         android:gravity="center"
         >
 

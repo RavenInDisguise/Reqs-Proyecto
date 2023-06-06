@@ -48,6 +48,9 @@ class BookingListAdapter(private val elements: List<BookingItem>) :
                 LocalDate.date(element.horaInicio,true)}, de ${
                 LocalDate.time(element.horaInicio, true)} a ${
                 LocalDate.time(element.horaFin, true)}"
+            card.findViewById<TextView>(R.id.bookingStatusText).text = if (element.activo) {
+                if (element.confirmado) "Confirmada" else "Activa"
+            } else "Inactiva"
 
             // Se agrega el listener
             itemView.setOnClickListener {
