@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="25dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/filters_menu_tile"
+                style="@style/menuTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:text="Modificar reserva" />
+
+            <TextView
+                style="@style/FilterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ID" />
+
+            <EditText
+                android:id="@+id/id_edit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="@string/modify_room_id"
+                android:enabled="false"
+                android:textStyle="italic" />
+
+            <TextView
+                style="@style/FilterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fecha en que se hizo la reserva" />
+
+            <EditText
+                android:id="@+id/date_edit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Cargando..."
+                android:enabled="false"
+                android:textStyle="italic" />
+
+            <TextView
+                style="@style/FilterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cubículo" />
+
+            <Spinner
+                android:id="@+id/room_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <TextView
+                style="@style/FilterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estudiante" />
+
+            <Spinner
+                android:id="@+id/student_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <TextView
+                style="@style/FilterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fecha reservada" />
+
+            <EditText
+                android:id="@+id/booked_date"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Cargando..."
+                android:focusable="false"
+                android:clickable="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="2"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/FilterLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hora de inicio" />
+
+                    <EditText
+                        android:id="@+id/start_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:text="Cargando..."
+                        android:focusable="false"
+                        android:clickable="true" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/FilterLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Hora de salida" />
+
+                    <EditText
+                        android:id="@+id/end_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:text="Cargando..."
+                        android:focusable="false"
+                        android:clickable="true" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                style="@style/FilterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estado" />
+
+            <Spinner
+                android:id="@+id/status_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginVertical="30dp">
+
+                <Button
+                    android:id="@+id/btnModificar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Guardar cambios" />
+
+                <Button
+                    android:id="@+id/btnEliminar"
+                    android:backgroundTint="@color/red"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Eliminar reserva" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

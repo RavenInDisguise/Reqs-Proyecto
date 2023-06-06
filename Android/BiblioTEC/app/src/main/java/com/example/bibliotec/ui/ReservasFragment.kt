@@ -1,6 +1,7 @@
 package com.example.bibliotec.ui
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -12,9 +13,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
+import com.example.bibliotec.misc.LocalDate
+import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -24,36 +29,31 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
-
 class ReservasFragment : Fragment() {
-    private lateinit var sharedPreferences: SharedPreferences
     private val gson = Gson()
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
+    private lateinit var user: User
+    private lateinit var progressBar : ProgressBar
+
     data class Reserva(
         val id: Int,
         val nombre: String,
         val fecha: String,
         val horaInicio: String,
         val horaFin: String,
+        val activo: Boolean,
         val confirmado: Boolean
     )
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-//        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sharedPreferences = requireContext().getSharedPreferences("UserInfo",Context.MODE_PRIVATE)
-        studentId = sharedPreferences.getIntOrNull("studentId")
+        user = User.getInstance(requireContext())
+        studentId = user.getStudentId()
+
         apiRequest=ApiRequest.getInstance(requireContext())
         return inflater.inflate(R.layout.fragment_reservas, container, false)
     }
@@ -64,20 +64,22 @@ class ReservasFragment : Fragment() {
         val listViewReservas: ListView = view.findViewById(R.id.reserv_list)
         val elementos: MutableList<String> = mutableListOf()
 
+        progressBar = view.findViewById(R.id.progressBar)
+
         viewLifecycleOwner.lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/reserva/estudiante?id=$studentId"
                 val (responseStatus, responseString) = apiRequest.getRequest(url)
-                println("Se hizo la solicitud a $url")
-                println(responseStatus)
                 if (responseStatus) {
-                    println("Se obtuvo la respuesta")
-                    println(responseString)
                     val reservaType = object : TypeToken<List<Reserva>>() {}.type
-                    val reservas: List<Reserva> = Gson().fromJson(responseString, reservaType)
+                    val reservas: List<Reserva> = gson.fromJson(responseString, reservaType)
                     for (reserva in reservas) {
-                        val elemento = "${reserva.nombre} Fecha: ${reserva.fecha.substring(0, 10)} de ${reserva.horaInicio.substring(11, 16)} a ${reserva.horaFin.substring(11, 16)}"
-                        println(elemento)
+                        val elemento = """Cubículo: ${reserva.nombre}
+                            |Estado: ${if (reserva.activo) if (reserva.confirmado) "Confirmada" else "Activa" else "Inactiva"}
+                            |Hecha: ${LocalDate.dateTime(reserva.fecha, true)}
+                            |Horario reservado:
+                            |      ${LocalDate.date(reserva.horaInicio, true)},
+                            |      de ${LocalDate.time(reserva.horaInicio, true)} a ${LocalDate.time(reserva.horaFin, true)}""".trimMargin()
                         elementos.add(elemento)
                     }
 
@@ -105,7 +107,7 @@ class ReservasFragment : Fragment() {
                             buttonConfirmar.setOnClickListener {
                                 val confirmDialog = AlertDialog.Builder(requireContext())
                                     .setTitle("Confirmación")
-                                    .setMessage("¿Estás seguro de confirmar esta reserva?")
+                                    .setMessage("¿Está seguro de confirmar esta reserva?")
                                     .setPositiveButton("OK") { dialog, _ ->
                                         confirmarReserva(reserva)
                                         dialog.dismiss()
@@ -121,7 +123,7 @@ class ReservasFragment : Fragment() {
                             buttonEliminar.setOnClickListener {
                                 val deleteDialog = AlertDialog.Builder(requireContext())
                                     .setTitle("Confirmación")
-                                    .setMessage("¿Estás seguro de eliminar esta reserva?")
+                                    .setMessage("¿Está seguro de eliminar esta reserva?")
                                     .setPositiveButton("OK") { dialog, _ ->
                                         eliminarReserva(reserva)
                                         dialog.dismiss()
@@ -139,30 +141,51 @@ class ReservasFragment : Fragment() {
 
                     withContext(Dispatchers.Main) {
                         listViewReservas.adapter = adapter
+                        progressBar.visibility = View.GONE
                     }
                 } else {
-                    println("Error al obtener las reservas")
-                    println(responseString)
+                    if (user.isLoggedIn()) {
+                        // Ocurrió un error al hacer la consulta
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                    findNavController().navigateUp()
+                                }
+                                .show()
+                        }
+                    } else {
+                        // La sesión expiró
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
+                    }
                 }
             }
         }
     }
 
-
-
-
     private fun confirmarReserva(reserva: Reserva) {
         MainScope().launch {
+            val progressDialog = ProgressDialog(requireContext())
+            progressDialog.setMessage("Cargando...")
+            progressDialog.setCancelable(false)
+            progressDialog.show()
+
             val url = "https://appbibliotec.azurewebsites.net/api/reserva/confirmar" +
                     "?id=${reserva.id}&nombre=${reserva.nombre}&horaInicio=${reserva.horaInicio}&horaFin=${reserva.horaFin}"
             val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
-            println("ayeye")
-            println(url)
             withContext(Dispatchers.IO) {
                 val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
-                println("juyajeeee")
-                println(responseStatus)
-                println(responseString)
+                progressDialog.dismiss()
+
                 requireActivity().runOnUiThread {
                     if (responseStatus) {
                         val dialog = AlertDialog.Builder(requireContext())
@@ -175,18 +198,26 @@ class ReservasFragment : Fragment() {
                             .create()
                         dialog.show()
                     } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al confirmar la reserva")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .create()
-                        dialog.show()
+                        if (user.isLoggedIn()) {
+                            // Ocurrió un error al hacer la consulta
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        } else {
+                            // La sesión expiró
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
                     }
                 }
-
-                println("URL de confirmación: $url")
             }
         }
     }
@@ -211,28 +242,27 @@ class ReservasFragment : Fragment() {
                             .create()
                         dialog.show()
                     } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al eliminar la reserva")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .create()
-                        dialog.show()
+                        if (user.isLoggedIn()) {
+                            // Ocurrió un error al hacer la consulta
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+                                .show()
+                        } else {
+                            // La sesión expiró
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
                     }
                 }
-
-                println("URL de eliminación: $url")
             }
         }
-    }
-
-
-    private fun SharedPreferences.getIntOrNull(key: String): Int? {
-        // Función para retornar un Int solo si existe
-        if (contains(key)) {
-            return getInt(key, 0) // Retorna el valor almancenado
-        }
-        return null // Retorna un valor nulo
     }
 }

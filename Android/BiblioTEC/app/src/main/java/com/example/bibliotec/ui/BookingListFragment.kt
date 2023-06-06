@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,9 +29,9 @@ class BookingListFragment : Fragment() {
     private lateinit var user: User
     private val gson = Gson()
     private lateinit var recyclerView: RecyclerView
-
-
-    private lateinit var bookingItemList : List<BookingItem>
+    private lateinit var bookingItemList : MutableList<BookingItem>
+    private lateinit var completeBookingItemList : List<BookingItem>
+    private val elementsPerPage = 15
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +40,9 @@ class BookingListFragment : Fragment() {
     ): View? {
         _binding = FragmentBookingListBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
+
+        bookingItemList = mutableListOf()
+        completeBookingItemList = listOf()
 
         return binding.root
     }
@@ -49,12 +53,35 @@ class BookingListFragment : Fragment() {
         // Se debe cargar la lista de servicios
         recyclerView = view.findViewById(R.id.booking_list_recycler)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        val adapter = BookingListAdapter(bookingItemList)
+        recyclerView.adapter = adapter
 
-        // Se intenta cargar la información desde el servidor
-        val progressDialog = ProgressDialog(requireContext())
-        progressDialog.setMessage("Buscando reservas existentes...")
-        progressDialog.setCancelable(false)
-        progressDialog.show()
+        // Se agrega un listener para agregar elementos a la lista al hacer scroll al final
+        val progress = view.findViewById<ProgressBar>(R.id.progressBar)
+        progress.visibility = View.VISIBLE
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                    val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+                    val totalItemCount = layoutManager.itemCount
+
+                    if (bookingItemList.isNotEmpty() && lastVisibleItemPosition == totalItemCount - 1 && completeBookingItemList.size > bookingItemList.size) {
+                        // Se cargan más elementos
+                        val endIndex = (totalItemCount + elementsPerPage).coerceAtMost(completeBookingItemList.size)
+
+                        bookingItemList.addAll(completeBookingItemList.subList(totalItemCount, endIndex))
+                        adapter.notifyItemRangeInserted(totalItemCount, endIndex)
+
+                        if (completeBookingItemList.size <= bookingItemList.size) {
+                            progress.visibility = View.GONE
+                        }
+                    }
+                }
+            }
+        })
 
         GlobalScope.launch(Dispatchers.IO) {
             val url = "https://appbibliotec.azurewebsites.net/api/reserva/reservas"
@@ -62,9 +89,9 @@ class BookingListFragment : Fragment() {
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 
             if (responseStatus) {
-                bookingItemList = gson.fromJson(responseString, Array<BookingItem>::class.java).toList()
+                completeBookingItemList = gson.fromJson(responseString, Array<BookingItem>::class.java).toList()
 
-                if (bookingItemList.isNullOrEmpty()) {
+                if (completeBookingItemList.isNullOrEmpty()) {
                     val message = "No hay reservas existentes"
                     requireActivity().runOnUiThread() {
                         AlertDialog.Builder(requireContext())
@@ -77,9 +104,15 @@ class BookingListFragment : Fragment() {
                             .show()
                     }
                 } else {
+                    val endIndex = elementsPerPage.coerceAtMost(completeBookingItemList.size)
+                    bookingItemList.addAll(completeBookingItemList.subList(0, endIndex))
+
                     requireActivity().runOnUiThread() {
-                        val adapter = BookingListAdapter(bookingItemList)
-                        recyclerView.adapter = adapter
+                        adapter.notifyItemRangeInserted(0, endIndex)
+
+                        if (endIndex == completeBookingItemList.size) {
+                            progress.visibility = View.GONE
+                        }
                     }
                 }
             } else {
@@ -107,9 +140,6 @@ class BookingListFragment : Fragment() {
                     }
                 }
             }
-
-            // Se quita el popup de "Cargando"
-            progressDialog.dismiss()
         }
     }
 

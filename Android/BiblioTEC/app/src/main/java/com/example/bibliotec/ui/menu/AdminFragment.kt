@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.databinding.FragmentAdminBinding
+import com.example.bibliotec.misc.LocalDate
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -31,7 +32,7 @@ class AdminFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val activity = requireActivity() as AppCompatActivity
         activity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
@@ -99,7 +100,7 @@ class AdminFragment : Fragment() {
                     } else {
                         // Ya se cerró la sesión
                         user.setTimedOut()
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.session_timeout_title)
                                 .setMessage(R.string.session_timeout)
@@ -110,7 +111,7 @@ class AdminFragment : Fragment() {
                     }
 
                 } else {
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)

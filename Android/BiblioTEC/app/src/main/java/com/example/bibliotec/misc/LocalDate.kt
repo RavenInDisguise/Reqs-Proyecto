@@ -6,9 +6,9 @@ import java.util.*
 
 class LocalDate {
     companion object {
-        fun dateTime(dateTime: Date, includeSeconds: Boolean = false): String {
+        fun dateTime(dateTime: Date, includeSeconds: Boolean = false, fullDate : Boolean = false): String {
             val dateFormat = DateFormat.getDateInstance(
-                DateFormat.MEDIUM
+                if (fullDate) DateFormat.FULL else DateFormat.MEDIUM
             )
             val timeFormat = DateFormat.getTimeInstance(
                 if (includeSeconds) DateFormat.MEDIUM else DateFormat.SHORT
@@ -18,10 +18,10 @@ class LocalDate {
             return "${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}"
         }
 
-        fun dateTime(dateTime: String, isIso: Boolean, includeSeconds: Boolean = false): String {
+        fun dateTime(dateTime: String, isIso: Boolean, includeSeconds: Boolean = false, fullDate : Boolean = false): String {
             val dateTimeObject = if (isIso) parseIso(dateTime) else parseUtc(dateTime)
             val dateFormat = DateFormat.getDateInstance(
-                DateFormat.MEDIUM
+                if (fullDate) DateFormat.FULL else DateFormat.MEDIUM
             )
             val timeFormat = DateFormat.getTimeInstance(
                 if (includeSeconds) DateFormat.MEDIUM else DateFormat.SHORT
@@ -31,15 +31,15 @@ class LocalDate {
             return "${dateFormat.format(dateTimeObject)}, ${timeFormat.format(dateTimeObject)}"
         }
 
-        fun date(date: Date): String {
-            val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM)
+        fun date(date: Date, fullDate : Boolean = false): String {
+            val dateFormat = DateFormat.getDateInstance(if (fullDate) DateFormat.FULL else DateFormat.MEDIUM)
             dateFormat.timeZone = TimeZone.getDefault()
             return dateFormat.format(date)
         }
 
-        fun date(date: String, isIso: Boolean): String {
+        fun date(date: String, isIso: Boolean, fullDate : Boolean = false): String {
             val dateObject = if (isIso) parseIso(date) else parseUtc(date)
-            val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM)
+            val dateFormat = DateFormat.getDateInstance(if (fullDate) DateFormat.FULL else DateFormat.MEDIUM)
             dateFormat.timeZone = TimeZone.getDefault()
             return dateFormat.format(dateObject)
         }

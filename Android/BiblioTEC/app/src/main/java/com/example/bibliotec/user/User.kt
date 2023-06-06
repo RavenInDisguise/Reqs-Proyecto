@@ -84,7 +84,7 @@ class User private constructor(context: Context) {
     fun SharedPreferences.getIntOrNull(key: String): Int? {
         // Función para retornar un Int solo si existe
         if (contains(key)) {
-            return getInt(key, 0) // Retorna el valor almancenado
+            return getInt(key, 0) // Retorna el valor almacenado
         }
         return null // Retorna un valor nulo
     }
