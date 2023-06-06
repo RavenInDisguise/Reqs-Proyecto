@@ -32,7 +32,7 @@ class studListFragment : Fragment() {
 
     data class Estudiante(
         val id: Int,
-        val nombre: String,
+        val Nombre: String,
         val carnet: Long,
         val cedula: Int,
         val correo: String,
@@ -47,13 +47,13 @@ class studListFragment : Fragment() {
         sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
         studentId = sharedPreferences.getIntOrNull("studentId")
         apiRequest=ApiRequest.getInstance(requireContext())
-        return inflater.inflate(R.layout.fragment_reservas, container, false)
+        return inflater.inflate(R.layout.fragment_stud_list, container, false)
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val listViewReservas: ListView = view.findViewById(R.id.reserv_list)
+        val listViewEstudiante: ListView = view.findViewById(R.id.lista_estudiantes)
         val elementos: MutableList<String> = mutableListOf()
         viewLifecycleOwner.lifecycleScope.launch{
             withContext(Dispatchers.IO){
@@ -65,7 +65,7 @@ class studListFragment : Fragment() {
                     val estudianteType = object : TypeToken<List<Estudiante>>() {}.type
                     val estudiantes: List<Estudiante> = Gson().fromJson(responseString, estudianteType)
                     for (estud in estudiantes) {
-                        val elemento = "Nombre: ${estud.nombre} \nCarnet: ${estud.carnet} \nCedula: ${estud.cedula} "
+                        val elemento = "Nombre: ${estud.Nombre} \nCarnet: ${estud.carnet} \nCedula: ${estud.cedula} \n\n"
                         println(elemento)
                         elementos.add(elemento)
                     }
@@ -112,7 +112,7 @@ class studListFragment : Fragment() {
                         }
                     }
                     withContext(Dispatchers.Main) {
-                        listViewReservas.adapter = adapter
+                        listViewEstudiante.adapter = adapter
                     }
                 } else {
                     println("Error al obtener los cubiculos")
@@ -138,7 +138,7 @@ class studListFragment : Fragment() {
                             .setMessage("El estudiante fue eliminado")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.invalidate()
+                                view?.findNavController()?.navigate(R.id.action_studListFragment_self)
                             }
                             .create()
                         dialog.show()

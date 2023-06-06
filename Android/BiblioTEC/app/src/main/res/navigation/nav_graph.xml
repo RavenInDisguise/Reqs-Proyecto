@@ -126,6 +126,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_reservasFragment_self"
+            app:destination="@id/reservasFragment" />
     </fragment>
     <fragment
         android:id="@+id/AdminFragment"
@@ -196,12 +199,19 @@
         <action
             android:id="@+id/action_cubiListFragment_to_ModifyRoomFragment"
             app:destination="@id/ModifyRoomFragment" />
+        <action
+            android:id="@+id/action_cubiListFragment_self"
+            app:destination="@id/cubiListFragment" />
     </fragment>
     <fragment
         android:id="@+id/studListFragment"
         android:name="com.example.bibliotec.ui.studListFragment"
         android:label="fragment_stud_list"
-        tools:layout="@layout/fragment_stud_list" />
+        tools:layout="@layout/fragment_stud_list" >
+        <action
+            android:id="@+id/action_studListFragment_self"
+            app:destination="@id/studListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/ModifyBookingFragment"
         android:name="com.example.bibliotec.ui.ModifyBookingFragment"

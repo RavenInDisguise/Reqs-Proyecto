@@ -2,25 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/item_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="16sp" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:layout_weight="1"/>
+        android:orientation="vertical"
+        android:layout_gravity="end"
+        android:layout_marginStart="16dp">
 
-    <Button
-        android:id="@+id/button_editar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Editar" />
+        <Button
+            android:id="@+id/button_editar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Editar" />
 
-    <Button
-        android:id="@+id/button_eliminar"
-        android:layout_width="106dp"
-        android:layout_height="wrap_content"
-        android:text="Elimina" />
+        <Button
+            android:id="@+id/button_eliminar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Eliminar" />
+
+    </LinearLayout>
 
 </LinearLayout>

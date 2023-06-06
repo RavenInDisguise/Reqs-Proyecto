@@ -14,6 +14,7 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.google.gson.Gson
@@ -54,13 +55,13 @@ class cubiListFragment : Fragment() {
         sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
         studentId = sharedPreferences.getIntOrNull("studentId")
         apiRequest=ApiRequest.getInstance(requireContext())
-        return inflater.inflate(R.layout.fragment_reservas, container, false)
+        return inflater.inflate(R.layout.fragment_cubi_list, container, false)
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val listViewReservas: ListView = view.findViewById(R.id.reserv_list)
+        val listViewCubiculo: ListView = view.findViewById(R.id.listaCubiculos)
         val elementos: MutableList<String> = mutableListOf()
         viewLifecycleOwner.lifecycleScope.launch{
             withContext(Dispatchers.IO){
@@ -72,10 +73,11 @@ class cubiListFragment : Fragment() {
                     val cubiculoType = object : TypeToken<List<Cubiculo>>() {}.type
                     val cubiculos: List<Cubiculo> = Gson().fromJson(responseString, cubiculoType)
                     for (cubic in cubiculos) {
-                        var elemento = "${cubic.nombre} - ${cubic.id} \n Capacidad:${cubic.capacidad} \nTiempo maximo: ${cubic.minutosMaximo} \nServicios:"
+                        var elemento = " ${cubic.nombre} - ${cubic.id} \n Capacidad: ${cubic.capacidad} \n Tiempo maximo: ${cubic.minutosMaximo} \n Servicios:"
                         for (servicio in cubic.servicios){
-                            elemento += servicio
+                            elemento += "\n   - " + servicio
                         }
+                        elemento += "\n\n"
                         println(elemento)
                         elementos.add(elemento)
                     }
@@ -99,7 +101,7 @@ class cubiListFragment : Fragment() {
                             buttonEditar.setOnClickListener {
                                 val bundle = Bundle()
                                 bundle.putInt("id",cubic.id)
-                                view.findNavController().navigate(R.id.action_cubiListFragment_to_ModifyRoomFragment)
+                                view?.findNavController()?.navigate(R.id.action_cubiListFragment_to_ModifyRoomFragment,bundle)
                             }
 
                             // Acciones al hacer clic en el botón Eliminar
@@ -122,7 +124,7 @@ class cubiListFragment : Fragment() {
                         }
                     }
                     withContext(Dispatchers.Main) {
-                        listViewReservas.adapter = adapter
+                        listViewCubiculo.adapter = adapter
                     }
                 } else {
                     println("Error al obtener los cubiculos")
@@ -138,6 +140,8 @@ class cubiListFragment : Fragment() {
         MainScope().launch {
             val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/eliminar" +
                     "?id=${cubi.id}"
+            println("url: $url")
+            println("url: $url")
             val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
             withContext(Dispatchers.IO) {
                 val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
@@ -148,7 +152,7 @@ class cubiListFragment : Fragment() {
                             .setMessage("El cubiculo fue eliminado")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.invalidate()
+                                view?.findNavController()?.navigate(R.id.action_cubiListFragment_self)
                             }
                             .create()
                         dialog.show()
