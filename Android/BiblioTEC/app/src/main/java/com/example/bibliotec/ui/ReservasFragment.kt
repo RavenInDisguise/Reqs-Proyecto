@@ -16,6 +16,7 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.misc.LocalDate
@@ -193,7 +194,7 @@ class ReservasFragment : Fragment() {
                             .setMessage("La reserva fue confirmada")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.invalidate()
+                                view?.findNavController()?.navigate(R.id.action_reservasFragment_self)
                             }
                             .create()
                         dialog.show()
@@ -237,7 +238,7 @@ class ReservasFragment : Fragment() {
                             .setMessage("La reserva fue eliminada")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.invalidate()
+                                view?.findNavController()?.navigate(R.id.action_reservasFragment_self)
                             }
                             .create()
                         dialog.show()
