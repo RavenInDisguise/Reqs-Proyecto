@@ -50,7 +50,7 @@ BEGIN
             LEFT JOIN [dbo].[ServiciosDeCubiculo] SC
                 ON  C.[id] = SC.[idCubiculo]
                 AND SC.[activo] = 1 
-            INNER JOIN [dbo].[ServiciosEspeciales] SE
+            LEFT JOIN [dbo].[ServiciosEspeciales] SE
                 ON  SC.[idServiciosEspeciales] = SE.[id]
             WHERE EC.[id] != @ID_ELIMINADO;
         END;
