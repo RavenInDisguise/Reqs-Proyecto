@@ -93,6 +93,12 @@
         <action
             android:id="@+id/action_AdminFragment_to_BookingListFragment"
             app:destination="@id/BookingListFragment" />
+        <action
+            android:id="@+id/action_AdminFragment_to_cubiListFragment"
+            app:destination="@id/cubiListFragment" />
+        <action
+            android:id="@+id/action_AdminFragment_to_studListFragment"
+            app:destination="@id/studListFragment" />
     </fragment>
     <fragment
         android:id="@+id/NewRoomFragment"
@@ -122,4 +128,18 @@
         android:label="fragment_booking_list"
         tools:layout="@layout/fragment_booking_list">
     </fragment>
+    <fragment
+        android:id="@+id/cubiListFragment"
+        android:name="com.example.bibliotec.ui.cubiListFragment"
+        android:label="fragment_cubi_list"
+        tools:layout="@layout/fragment_cubi_list" >
+        <action
+            android:id="@+id/action_cubiListFragment_to_ModifyRoomFragment"
+            app:destination="@id/ModifyRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studListFragment"
+        android:name="com.example.bibliotec.ui.studListFragment"
+        android:label="fragment_stud_list"
+        tools:layout="@layout/fragment_stud_list" />
 </navigation>

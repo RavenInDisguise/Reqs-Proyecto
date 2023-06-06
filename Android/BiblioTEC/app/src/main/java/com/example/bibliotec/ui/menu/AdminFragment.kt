@@ -68,7 +68,7 @@ class AdminFragment : Fragment() {
 
         // Se agregan los listeners al tocar
         view.findViewById<ConstraintLayout>(R.id.ManageStudentsButton).setOnClickListener {
-            notImplementedWarning()
+            findNavController().navigate(R.id.action_AdminFragment_to_studListFragment)
         }
 
         view.findViewById<ConstraintLayout>(R.id.AddRoomButton).setOnClickListener {
@@ -76,7 +76,7 @@ class AdminFragment : Fragment() {
         }
 
         view.findViewById<ConstraintLayout>(R.id.ManageRoomsButton).setOnClickListener {
-            notImplementedWarning()
+            findNavController().navigate(R.id.action_AdminFragment_to_cubiListFragment)
         }
 
         view.findViewById<ConstraintLayout>(R.id.ManageReservationsButton).setOnClickListener {
