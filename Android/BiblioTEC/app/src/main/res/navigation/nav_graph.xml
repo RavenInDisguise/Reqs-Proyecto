@@ -213,6 +213,21 @@
             app:destination="@id/studListFragment" />
     </fragment>
     <fragment
+        android:id="@+id/StudentModFragment"
+        android:name="com.example.bibliotec.ui.StudentModFragment"
+        android:label=""
+        tools:layout="@layout/fragment_student_mod">
+
+    </fragment>
+    <fragment
+        android:id="@+id/BookingConfirmationFragment"
+        android:name="com.example.bibliotec.ui.BookingConfirmationFragment"
+        android:label=""
+        tools:layout="@layout/fragment_booking_confirmation">
+
+    </fragment>
+
+    <fragment
         android:id="@+id/ModifyBookingFragment"
         android:name="com.example.bibliotec.ui.ModifyBookingFragment"
         android:label=""
