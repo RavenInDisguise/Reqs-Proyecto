@@ -155,8 +155,8 @@ class ModifyRoomFragment : Fragment() {
                                 "\"nombre\":\"${editNameBox.text}\"," +
                                 "\"estado\":\"${selectedStatus}\"," +
                                 "\"capacidad\":\"${capacity}\"," +
-                                "\"cancelarReservas\":\"${cancelBookings.isChecked}\"," +
-                                "\"notificarUsuarios\":\"${notifyUsers.isChecked}\"," +
+                                "\"cancelarReservas\":${cancelBookings.isChecked}," +
+                                "\"notificarUsuarios\":${notifyUsers.isChecked}," +
                                 "\"minutosMaximo\":\"${maxTime}\"," +
                                 "\"servicios\":$serviceArray}").toRequestBody(
                             "application/json".toMediaTypeOrNull()
