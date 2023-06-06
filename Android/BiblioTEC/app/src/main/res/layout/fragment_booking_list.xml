@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Seleccione una reserva para ejecutar una acción"
+            android:text="Seleccione una reserva para modificarla o eliminarla"
             android:layout_marginBottom="15dp"
             android:textSize="13sp"
             android:textColor="@color/black"

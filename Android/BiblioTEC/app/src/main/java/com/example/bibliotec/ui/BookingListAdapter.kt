@@ -55,12 +55,9 @@ class BookingListAdapter(private val elements: List<BookingItem>) :
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     // Si es un índice válido, entra aquí
                     val clickedItem = elements[adapterPosition]
-                    AlertDialog.Builder(itemView.context)
-                        .setTitle("Advertencia")
-                        .setMessage("Seleccionó la reserva ID: ${clickedItem.id}")
-                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                        .show()
-
+                    val bundle = Bundle()
+                    bundle.putInt("id", clickedItem.id)
+                    itemView.findNavController().navigate(R.id.action_BookingListFragment_to_ModifyBookingFragment, bundle)
                 }
             }
         }
