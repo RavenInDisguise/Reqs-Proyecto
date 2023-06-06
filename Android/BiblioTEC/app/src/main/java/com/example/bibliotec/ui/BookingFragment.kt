@@ -184,7 +184,7 @@ class BookingFragment : Fragment() {
                             .setMessage("Reserva exitosa")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                findNavController().navigate(R.id.StudentFragment)
+                                findNavController().navigate(R.id.action_ReservaFragment_toreservasFragment)
                             }
                             .show()
                     }

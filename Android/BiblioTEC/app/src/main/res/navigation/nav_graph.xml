@@ -18,7 +18,9 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true"/>
 
         <action
             android:id="@+id/action_LoginFragment_to_AdminFragment"
@@ -26,7 +28,9 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_LoginFragment_to_RegistroFragment"
             app:destination="@id/RegistroFragment"
@@ -54,7 +58,9 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_StudentFragment_to_reservasFragment"
             app:destination="@id/reservasFragment"
@@ -113,22 +119,28 @@
         android:label=""
         tools:layout="@layout/fragment_booking">
 
+        <action
+            android:id="@+id/action_ReservaFragment_toreservasFragment"
+            app:destination="@id/reservasFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/StudentFragment"
+            app:popUpToInclusive="false" />
+
     </fragment>
     <fragment
         android:id="@+id/reservasFragment"
         android:name="com.example.bibliotec.ui.ReservasFragment"
         android:label="fragment_reservas"
         tools:layout="@layout/fragment_reservas">
-        <action
-            android:id="@+id/action_reservasFragment_to_StudentFragment"
-            app:destination="@id/StudentFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+
         <action
             android:id="@+id/action_reservasFragment_self"
-            app:destination="@id/reservasFragment" />
+            app:destination="@id/reservasFragment"
+            app:popUpTo="@+id/StudentFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/AdminFragment"
@@ -142,7 +154,9 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_AdminFragment_to_NewRoomFragment"
             app:destination="@id/NewRoomFragment"
@@ -159,10 +173,18 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_AdminFragment_to_cubiListFragment"
-            app:destination="@id/cubiListFragment" />
+            app:destination="@id/cubiListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_AdminFragment_to_studListFragment"
-            app:destination="@id/studListFragment" />
+            app:destination="@id/studListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/NewRoomFragment"
@@ -198,10 +220,16 @@
         tools:layout="@layout/fragment_cubi_list" >
         <action
             android:id="@+id/action_cubiListFragment_to_ModifyRoomFragment"
-            app:destination="@id/ModifyRoomFragment" />
+            app:destination="@id/ModifyRoomFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <action
             android:id="@+id/action_cubiListFragment_self"
-            app:destination="@id/cubiListFragment" />
+            app:destination="@id/cubiListFragment"
+            app:popUpTo="@+id/AdminFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/studListFragment"
@@ -210,7 +238,9 @@
         tools:layout="@layout/fragment_stud_list" >
         <action
             android:id="@+id/action_studListFragment_self"
-            app:destination="@id/studListFragment" />
+            app:destination="@id/studListFragment"
+            app:popUpTo="@+id/AdminFragment"
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         android:id="@+id/StudentModFragment"
