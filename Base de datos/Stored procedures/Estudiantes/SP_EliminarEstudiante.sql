@@ -25,9 +25,9 @@ BEGIN
         IF NOT EXISTS( SELECT 1 
                        FROM [Estudiantes] E 
                        WHERE E.[id] = @In_idEstudiante
-                       AND  E.[activo] != 0)
+                       AND E.[eliminado] = 0)
         BEGIN
-            RAISERROR ('No existe ningun estudiante con el ID %d', 16, 1, @In_idEstudiante)
+            RAISERROR ('No existe ningun estudiante con el ID %d', 16, 1, @In_idEstudiante);
         END
 
         -- INICIO DE LA TRANSACCIÓN
@@ -37,7 +37,14 @@ BEGIN
             BEGIN TRANSACTION;
         END;
 
-        UPDATE Estudiantes SET eliminado = 1 WHERE id = @In_idEstudiante
+        UPDATE Estudiantes SET eliminado = 1 WHERE id = @In_idEstudiante;
+
+        UPDATE R
+        SET R.[activo] = 0,
+            R.[confirmado] = 0,
+            R.[eliminada] = 1
+        FROM [dbo].[Reservas] R
+        WHERE R.[idEstudiante] = @In_idEstudiante;
 
         -- COMMIT DE LA TRANSACCIÓN
         IF @transaccion_iniciada = 1

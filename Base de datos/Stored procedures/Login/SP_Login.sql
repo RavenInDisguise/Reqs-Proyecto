@@ -26,7 +26,11 @@ BEGIN
             ON U.[idTipoUsuario] = TU.[id]
         LEFT JOIN Estudiantes E
             ON U.[id] = E.[idUsuario]   
-        WHERE U.[correo] = @IN_email;
+        WHERE U.[correo] = @IN_email
+            AND (
+                E.[eliminado] = 0
+                OR E.[eliminado] IS NULL
+            );
 
     END TRY
     BEGIN CATCH

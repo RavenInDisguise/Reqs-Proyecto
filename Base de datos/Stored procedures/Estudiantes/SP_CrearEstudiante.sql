@@ -34,23 +34,28 @@ BEGIN
         FROM    [dbo].[TiposUsuario] TU
         WHERE   TU.[descripcion] = @DESCRIPCION_ESTUDIANTE;
 
-        IF EXISTS( SELECT 1 
-                   FROM [Usuarios] U
-                   WHERE U.[correo] = @IN_Correo )
+        IF EXISTS(  SELECT 1 
+                    FROM [Usuarios] U
+                    INNER JOIN [Estudiantes] E
+                        ON  E.[idUsuario] = U.[id]
+                    WHERE U.[correo] = @IN_Correo
+                    AND E.[eliminado] = 0 )
         BEGIN
             RAISERROR('Ya existe un usuario con el correo %s',16,1,@IN_Correo)
         END
 
-        IF EXISTS( SELECT 1 
-                   FROM [Estudiantes] E
-                   WHERE E.[Cedula] = @IN_Cedula )
+        IF EXISTS(  SELECT 1 
+                    FROM [Estudiantes] E
+                    WHERE E.[Cedula] = @IN_Cedula
+                    AND E.[eliminado] = 0 )
         BEGIN
             RAISERROR('Ya existe un estudiante registrado con la cedula %d', 16, 1, @IN_Cedula)
         END
 
-        IF EXISTS( SELECT 1 
-                   FROM [Estudiantes] E
-                   WHERE E.[Carnet] = @IN_Carnet )
+        IF EXISTS(  SELECT 1 
+                    FROM [Estudiantes] E
+                    WHERE E.[Carnet] = @IN_Carnet
+                    AND E.[eliminado] = 0 )
         BEGIN
             RAISERROR('Ya existe un estudiante registrado con el carnet %d', 16, 1, @IN_Carnet)
         END

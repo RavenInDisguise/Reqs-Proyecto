@@ -32,7 +32,7 @@ BEGIN
                        FROM [Estudiantes] E
                        WHERE E.[id] = @IN_idEstudiante) 
         BEGIN
-            RAISERROR('No existe el estudiante con el ID %d', 16, 1, @IN_idEstudiante)
+            RAISERROR('No existe el estudiante con el ID %d', 16, 1, @IN_idEstudiante);
         END
 
         SELECT @idUsuario = COALESCE(E.[idUsuario], NULL)
@@ -43,25 +43,30 @@ BEGIN
         IF EXISTS ( SELECT 1
                     FROM [Estudiantes] E
                     WHERE E.[cedula] = @IN_Cedula
-                    AND E.[id] !=  @IN_idEstudiante)
+                    AND E.[id] !=  @IN_idEstudiante
+                    AND E.[eliminado] = 0)
         BEGIN
-            RAISERROR('Ya existe un estudiante con la cédula %d', 16, 1, @IN_Cedula)
+            RAISERROR('Ya existe un estudiante con la cédula %d', 16, 1, @IN_Cedula);
         END
         -- CAMBIO DE CARNET
         IF EXISTS ( SELECT 1
                     FROM [Estudiantes] E
                     WHERE E.[carnet] = @IN_Carnet
-                    AND E.[id] !=  @IN_idEstudiante)
+                    AND E.[id] !=  @IN_idEstudiante
+                    AND E.[eliminado] = 0)
         BEGIN
-            RAISERROR('Ya existe un estudiante con el carnet %d', 16, 1, @IN_Carnet)
+            RAISERROR('Ya existe un estudiante con el carnet %d', 16, 1, @IN_Carnet);
         END
         -- CAMBIO DE CORREO
         IF EXISTS ( SELECT 1
                     FROM [Usuarios] U
+                    INNER JOIN [Estudiantes] E
+                        ON  E.[idUsuario] = U.[id]
                     WHERE U.[correo] = @IN_correo
-                    AND U.[id] !=  @idUsuario)
+                    AND U.[id] !=  @idUsuario
+                    AND E.[eliminado] = 0)
         BEGIN
-            RAISERROR('Ya existe un estudiante con el correo %s', 16, 1, @IN_Correo)
+            RAISERROR('Ya existe un estudiante con el correo %s', 16, 1, @IN_Correo);
         END
         -- INICIO DE LA TRANSACCIÓN
         IF @@TRANCOUNT = 0
@@ -78,6 +83,7 @@ BEGIN
             Carnet = @IN_Carnet,
             fechaDeNacimiento = @IN_FechaNacimiento
         WHERE id = @IN_idEstudiante
+        AND eliminado = 0;
 
         IF(@IN_Clave = '')
         BEGIN
@@ -92,6 +98,15 @@ BEGIN
                 clave = @IN_Clave
             WHERE ID = @idUsuario
         END
+
+        -- Se desactivan las reservas futuras
+        UPDATE R
+        SET R.[activo] = 0,
+            R.[confirmado] = 0
+        FROM [dbo].[Reservas] R
+        WHERE R.[idEstudiante] = @In_idEstudiante
+            AND R.[eliminada] = 0
+            AND R.[horaFin] > GETUTCDATE();
 
         -- COMMIT DE LA TRANSACCIÓN
         IF @transaccion_iniciada = 1

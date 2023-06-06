@@ -22,9 +22,10 @@ BEGIN
 
         IF NOT EXISTS( SELECT 1 
                    FROM [Estudiantes] E
-                   WHERE E.[id] = @IN_idEstudiante)
+                   WHERE E.[id] = @IN_idEstudiante
+                   AND E.[eliminado] = 0)
         BEGIN
-            RAISERROR('No existe un estudiante con el id %d', 16, 1, @IN_idEstudiante)
+            RAISERROR('No existe un estudiante con el ID %d', 16, 1, @IN_idEstudiante)
         END
 
         SELECT 
