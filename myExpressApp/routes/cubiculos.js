@@ -250,7 +250,7 @@ router.put("/eliminar", (req, res) => {
   
 Se han hecho cambios en un cubículo, lo cual ocasionó que se cancelara su reserva.
   
-Puede hacer otra reserva a través del sitio web.`;
+Puede hacer otra reserva a través de la plataforma.`;
 
                 const mailOptions = {
                     from: transporter.options.auth.user,
@@ -329,7 +329,7 @@ router.put("/", (req, res) => {
 
 Se han hecho cambios en el cubículo ${nombre}, lo cual ocasionó que se cancelara su reserva.
 
-Puede hacer otra reserva a través del sitio web.`;
+Puede hacer otra reserva a través de la plataforma.`;
                 } else {
                     const serviciosActivos = servicios.filter((s) => s.activo).map((se) => se.nombre);
                     textoCorreo = `Hola:
@@ -343,7 +343,7 @@ La nueva información del cubículo es la siguiente:
 - Servicios disponibles:${(serviciosActivos.length > 0 ? (serviciosActivos.map((se, ind) => (" " + (ind + 1) + ". " + se))) : " Ninguno")}
 - Tiempo máximo de uso: ${minutosMaximo} minutos
 
-Su reserva sigue activa. Puede hacer cambios a sus reservas ingresando al sitio web.`;
+Su reserva sigue activa. Puede hacer cambios a sus reservas ingresando a la plataforma.`;
                 }
 
                 const mailOptions = {
