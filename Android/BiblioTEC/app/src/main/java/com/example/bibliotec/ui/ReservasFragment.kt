@@ -194,7 +194,11 @@ class ReservasFragment : Fragment() {
                             .setMessage("La reserva fue confirmada")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.findNavController()?.navigate(R.id.action_reservasFragment_self)
+                                val bundle = Bundle()
+                                bundle.putInt("id", reserva.id)
+                                 bundle.putString("horaInicio", reserva.horaInicio)
+                                 bundle.putString("horaFin", reserva.horaFin)
+                                findNavController().navigate(R.id.action_reservasFragment_to_BookingConfirmationFragment, bundle)
                             }
                             .create()
                         dialog.show()
