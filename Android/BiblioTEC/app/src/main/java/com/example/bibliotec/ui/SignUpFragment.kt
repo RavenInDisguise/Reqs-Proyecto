@@ -3,6 +3,7 @@ package com.example.bibliotec.ui
 import androidx.fragment.app.Fragment
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -90,8 +91,15 @@ class SignUpFragment : Fragment() {
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
             }
-            // Se realiza la llamda al API
+            // Se realiza la llamada al API
             else {
+
+                // Se abre un popup de "Cargando"
+                val progressDialog = ProgressDialog(requireContext())
+                progressDialog.setMessage("Iniciando sesión...")
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+
                 GlobalScope.launch(Dispatchers.IO) {
                     val url = "https://appbibliotec.azurewebsites.net/api/estudiante/crear"
                     val requestBody =
@@ -105,6 +113,10 @@ class SignUpFragment : Fragment() {
                                 "\"clave\":\"${clave}\"}").toRequestBody("application/json".toMediaTypeOrNull())
 
                     val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
+
+                    // Se quita el popup de "Cargando"
+                    progressDialog.dismiss()
+
                     if (responseStatus) {
                         requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
