@@ -411,7 +411,7 @@ class StudentModFragment : Fragment() {
     }
 
     private fun isValidEmail(email: String): Boolean {
-        val regex = Regex("^\\w+@estudiantec\\.cr$")
+        val regex = Regex(".+@estudiantec\\.cr\$")
         return regex.matches(email)
     }
 
