@@ -1,5 +1,5 @@
 let express = require('express');
-const {sqlcon} = require('./database.js');
+const {sqlcon, agregarVerificacion} = require('./database.js');
 let router = express.Router();
 let estaAutenticado = require('./autenticado.js')
 const { PDFDocument, rgb } = require('pdf-lib');
@@ -312,6 +312,15 @@ router.put('/', (req, res) => {
     const cuerpo = req.body;
     const request = new sqlcon.Request();
 
+    let horaInicio_obj, horaFin_obj;
+
+    try {
+        horaInicio_obj = new Date(cuerpo.horaInicio.replace(" ", "T") + ".000Z");
+        horaFin_obj = new Date(cuerpo.horaFin.replace(" ", "T") + ".000Z");
+    } catch (error) {
+        return res.status(401).send({ message : 'Datos erróneos' });
+    }
+
     // Parámetros de entrada
     request.input('IN_idReserva', sqlcon.Int, cuerpo.id);
     request.input('IN_idCubiculo', sqlcon.Int, cuerpo.idCubiculo)
@@ -325,6 +334,13 @@ router.put('/', (req, res) => {
         if (error) {
             manejarError(res, error);
         } else {
+            try {
+                // Se agrega a la cola de las verificaciones que se hacen para
+                // desactivar las reservas que no se confirmen
+                agregarVerificacion(horaInicio_obj);
+            } catch (error) {
+                console.dir(error);
+            }
             res.status(200).send();
         }
     });
