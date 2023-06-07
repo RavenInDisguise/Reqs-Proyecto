@@ -32,6 +32,7 @@ class BookingListFragment : Fragment() {
     private lateinit var bookingItemList : MutableList<BookingItem>
     private lateinit var completeBookingItemList : List<BookingItem>
     private var idCub: Int = -1
+    private var idEstud: Int = -1
     private val elementsPerPage = 15
 
     override fun onCreateView(
@@ -44,6 +45,7 @@ class BookingListFragment : Fragment() {
 
         arguments?.let{
             idCub = it.getInt("id")
+            idEstud = it.getInt("idEstudiante")
         }
         bookingItemList = mutableListOf()
         completeBookingItemList = listOf()
@@ -89,9 +91,12 @@ class BookingListFragment : Fragment() {
 
         GlobalScope.launch(Dispatchers.IO) {
 
-            val url = if(idCub == -1){
+            val url = if(idCub == -1 && idEstud == -1){
                 "https://appbibliotec.azurewebsites.net/api/reserva/reservas"
-            }else{
+            } else if(idEstud != -1){
+                "https://appbibliotec.azurewebsites.net/api/reserva/estudiante?id=$idEstud"
+            }
+            else{
                 "https://appbibliotec.azurewebsites.net/api/reserva/cubiculo?id=$idCub"
             }
 

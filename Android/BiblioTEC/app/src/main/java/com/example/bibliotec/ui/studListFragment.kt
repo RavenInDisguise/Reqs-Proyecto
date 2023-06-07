@@ -80,7 +80,7 @@ class studListFragment : Fragment() {
 
                             val itemText = view.findViewById<TextView>(R.id.item_text)
                             val buttonEditar = view.findViewById<Button>(R.id.button_editar)
-
+                            val buttonReservas = view.findViewById<Button>(R.id.btnReservas)
                             val estudent = estudiantes[position]
                             itemText.text = elementos[position]
 
@@ -89,6 +89,11 @@ class studListFragment : Fragment() {
                                 val bundle = Bundle()
                                 bundle.putInt("id",estudent.id)
                                 //view.findNavController().navigate(R.id.action_cubiListFragment_to_ModifyRoomFragment)
+                            }
+                            buttonReservas.setOnClickListener {
+                                val bundle = Bundle()
+                                bundle.putInt("idEstudiante",estudent.id)
+                                view.findNavController().navigate(R.id.action_studList_to_bookingList, bundle)
                             }
 
                             // Acciones al hacer clic en el botón Eliminar
@@ -108,41 +113,6 @@ class studListFragment : Fragment() {
         }
     }
 
-
-    private fun eliminarEstudiante(estud: Estudiante) {
-        MainScope().launch {
-            val url = "https://appbibliotec.azurewebsites.net/api/estudiante/eliminar" +
-                    "?id=${estud.id}"
-            val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
-            withContext(Dispatchers.IO) {
-                val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
-                requireActivity().runOnUiThread {
-                    if (responseStatus) {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Confirmado")
-                            .setMessage("El estudiante fue eliminado")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                                view?.findNavController()?.navigate(R.id.action_studListFragment_self)
-                            }
-                            .create()
-                        dialog.show()
-                    } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al eliminar el estudiante")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .create()
-                        dialog.show()
-                    }
-                }
-
-                println("URL de eliminación: $url")
-            }
-        }
-    }
 
 
     private fun SharedPreferences.getIntOrNull(key: String): Int? {
