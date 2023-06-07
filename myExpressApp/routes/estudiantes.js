@@ -1,5 +1,5 @@
 var express = require('express');
-const sqlcon = require('./database.js');
+const { sqlcon } = require('./database.js');
 var router = express.Router();
 let transporter = require('./correo.js');
 const manejarError = require('./errores.js');

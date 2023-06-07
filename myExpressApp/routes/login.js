@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const sqlcon = require('./database.js');
+const { sqlcon } = require('./database.js');
 const bcrypt = require('bcrypt');
 const manejarError = require('./errores.js');
 

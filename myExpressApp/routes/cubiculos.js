@@ -1,5 +1,5 @@
 var express = require('express');
-const sqlcon = require('./database.js');
+const { sqlcon, agregarVerificacion } = require('./database.js');
 var router = express.Router();
 let estaAutenticado = require('./autenticado.js');
 const manejarError = require('./errores.js');
@@ -399,6 +399,14 @@ router.post('/reservar', (req, res) => {
             manejarError(res, error);
         } else {
             res.send({ message: 'Reserva registrada existosamente' })
+
+            try {
+                // Se agrega a la cola de las verificaciones que se hacen para
+                // desactivar las reservas que no se confirmen
+                agregarVerificacion(horaInicio_obj);
+            } catch (error) {
+                console.dir(error);
+            }
 
             const mailOptions = {
                 from: transporter.options.auth.user,

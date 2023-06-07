@@ -1,5 +1,5 @@
 let express = require('express');
-const sqlcon = require('./database.js');
+const {sqlcon} = require('./database.js');
 let router = express.Router();
 let estaAutenticado = require('./autenticado.js')
 const { PDFDocument, rgb } = require('pdf-lib');
