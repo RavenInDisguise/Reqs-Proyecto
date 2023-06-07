@@ -14,8 +14,10 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
+import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +28,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class studListFragment : Fragment() {
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var user: User
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
 
@@ -44,8 +46,8 @@ class studListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-        studentId = sharedPreferences.getIntOrNull("studentId")
+        user = User.getInstance(requireContext())
+        studentId = user.getStudentId()
         apiRequest=ApiRequest.getInstance(requireContext())
         return inflater.inflate(R.layout.fragment_stud_list, container, false)
 
@@ -59,8 +61,6 @@ class studListFragment : Fragment() {
             withContext(Dispatchers.IO){
                 val url = "https://appbibliotec.azurewebsites.net/api/estudiante/estudiantes"
                 val (responseStatus, responseString) = apiRequest.getRequest(url)
-                println("Se hizo la solicitud a $url")
-                println(responseStatus)
                 if (responseStatus) {
                     val estudianteType = object : TypeToken<List<Estudiante>>() {}.type
                     val estudiantes: List<Estudiante> = Gson().fromJson(responseString, estudianteType)
@@ -80,8 +80,7 @@ class studListFragment : Fragment() {
 
                             val itemText = view.findViewById<TextView>(R.id.item_text)
                             val buttonEditar = view.findViewById<Button>(R.id.button_editar)
-                            val buttonEliminar = view.findViewById<Button>(R.id.button_eliminar)
-
+                            val buttonReservas = view.findViewById<Button>(R.id.btnReservas)
                             val estudent = estudiantes[position]
                             itemText.text = elementos[position]
 
@@ -91,22 +90,13 @@ class studListFragment : Fragment() {
                                 bundle.putInt("id",estudent.id)
                                 view.findNavController().navigate(R.id.action_studListFragment_to_StudentModFragment, bundle)
                             }
+                            buttonReservas.setOnClickListener {
+                                val bundle = Bundle()
+                                bundle.putInt("idEstudiante",estudent.id)
+                                view.findNavController().navigate(R.id.action_studList_to_bookingList, bundle)
+                            }
 
                             // Acciones al hacer clic en el botón Eliminar
-                            buttonEliminar.setOnClickListener {
-                                val deleteDialog = AlertDialog.Builder(requireContext())
-                                    .setTitle("Confirmación")
-                                    .setMessage("¿Estás seguro de eliminar este estudiante?")
-                                    .setPositiveButton("OK") { dialog, _ ->
-                                        eliminarEstudiante(estudent)
-                                        dialog.dismiss()
-                                    }
-                                    .setNegativeButton("Cancelar") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .create()
-                                deleteDialog.show()
-                            }
 
                             return view
                         }
@@ -115,56 +105,32 @@ class studListFragment : Fragment() {
                         listViewEstudiante.adapter = adapter
                     }
                 } else {
-                    println("Error al obtener los cubiculos")
-                    println(responseString)
-                }
-
-            }
-        }
-    }
-
-
-    private fun eliminarEstudiante(estud: Estudiante) {
-        MainScope().launch {
-            val url = "https://appbibliotec.azurewebsites.net/api/estudiante/eliminar" +
-                    "?id=${estud.id}"
-            val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
-            withContext(Dispatchers.IO) {
-                val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
-                requireActivity().runOnUiThread {
-                    if (responseStatus) {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Confirmado")
-                            .setMessage("El estudiante fue eliminado")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                                view?.findNavController()?.navigate(R.id.action_studListFragment_self)
-                            }
-                            .create()
-                        dialog.show()
+                    if (user.isLoggedIn()) {
+                        // Ocurrió un error al hacer la consulta
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                    findNavController().navigateUp()
+                                }
+                                .show()
+                        }
                     } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al eliminar el estudiante")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .create()
-                        dialog.show()
+                        // La sesión expiró
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
                     }
                 }
 
-                println("URL de eliminación: $url")
             }
         }
-    }
-
-
-    private fun SharedPreferences.getIntOrNull(key: String): Int? {
-        // Función para retornar un Int solo si existe
-        if (contains(key)) {
-            return getInt(key, 0) // Retorna el valor almancenado
-        }
-        return null // Retorna un valor nulo
     }
 }

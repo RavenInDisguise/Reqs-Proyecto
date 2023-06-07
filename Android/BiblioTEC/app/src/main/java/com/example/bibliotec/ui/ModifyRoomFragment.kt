@@ -14,6 +14,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,9 +26,8 @@ import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 
@@ -86,6 +86,24 @@ class ModifyRoomFragment : Fragment() {
 
         // Se agrega el listener al botón "Buscar"
         val buscarButton = view.findViewById<Button>(R.id.btnModificar)
+        val buttonEliminar = view.findViewById<Button>(R.id.btnEliminar)
+
+        buttonEliminar.setOnClickListener {
+
+            val deleteDialog = AlertDialog.Builder(requireContext())
+                .setTitle("Confirmación")
+                .setMessage("¿Estás seguro de eliminar este cubiculo?")
+                .setPositiveButton("OK") { dialog, _ ->
+                    eliminarCubiculo(roomId)
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancelar") { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .create()
+            deleteDialog.show()
+        }
+
         buscarButton.setOnClickListener {
             // Validaciones
             var fieldsOk = true
@@ -390,6 +408,43 @@ class ModifyRoomFragment : Fragment() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun eliminarCubiculo(id : Int) {
+        MainScope().launch {
+            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/eliminar" +
+                    "?id=${id}"
+            println("url: $url")
+            println("url: $url")
+            val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
+            withContext(Dispatchers.IO) {
+                val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
+                requireActivity().runOnUiThread {
+                    if (responseStatus) {
+                        val dialog = AlertDialog.Builder(requireContext())
+                            .setTitle("Confirmado")
+                            .setMessage("El cubiculo fue eliminado")
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                view?.findNavController()?.navigate(R.id.action_cubiListFragment_self)
+                            }
+                            .create()
+                        dialog.show()
+                    } else {
+                        val dialog = AlertDialog.Builder(requireContext())
+                            .setTitle("Error")
+                            .setMessage("Hubo un error al eliminar el cubiculo")
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                            }
+                            .create()
+                        dialog.show()
+                    }
+                }
+
+                println("URL de eliminación: $url")
             }
         }
     }

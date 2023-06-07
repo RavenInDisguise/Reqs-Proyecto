@@ -34,7 +34,7 @@ class LoginFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
@@ -76,17 +76,17 @@ class LoginFragment : Fragment() {
                     user.setCheckedInCurrentSession()
 
                     if (user.isAdmin()) {
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             findNavController().navigate(R.id.action_LoginFragment_to_AdminFragment)
                         }
                     } else {
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             findNavController().navigate(R.id.action_LoginFragment_to_StudentFragment)
                         }
                     }
 
                 } else {
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)

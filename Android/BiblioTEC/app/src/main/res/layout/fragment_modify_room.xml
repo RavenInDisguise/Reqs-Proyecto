@@ -129,14 +129,28 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/btnModificar"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
-                android:text="Guardar cambios" />
+                android:orientation="vertical"
+                android:layout_marginVertical="30dp">
+
+                <Button
+                    android:id="@+id/btnModificar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Guardar cambios" />
+
+                <Button
+                    android:id="@+id/btnEliminar"
+                    android:backgroundTint="@color/red"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Eliminar cubículo" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

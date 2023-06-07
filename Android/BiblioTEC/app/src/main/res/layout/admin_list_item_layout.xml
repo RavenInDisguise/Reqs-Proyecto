@@ -24,12 +24,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Editar" />
-
         <Button
-            android:id="@+id/button_eliminar"
+            android:id="@+id/btnReservas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Eliminar" />
+            android:text="Reservas" />
 
     </LinearLayout>
 

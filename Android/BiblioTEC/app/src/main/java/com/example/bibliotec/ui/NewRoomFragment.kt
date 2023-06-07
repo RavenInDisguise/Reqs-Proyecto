@@ -45,7 +45,7 @@ class NewRoomFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         apiRequest = ApiRequest.getInstance(requireContext())
         _binding = FragmentNewRoomBinding.inflate(inflater, container, false)
@@ -135,7 +135,7 @@ class NewRoomFragment : Fragment() {
                     progressDialog.dismiss()
 
                     if (responseStatus) {
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Éxito")
                                 .setMessage("Cubículo agregado exitosamente")
@@ -147,7 +147,7 @@ class NewRoomFragment : Fragment() {
                     } else {
                         if (user.isLoggedIn()) {
                             // Ocurrió un error al hacer la consulta
-                            requireActivity().runOnUiThread() {
+                            requireActivity().runOnUiThread {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Error")
                                     .setMessage(responseString)
@@ -158,7 +158,7 @@ class NewRoomFragment : Fragment() {
                             }
                         } else {
                             // La sesión expiró
-                            requireActivity().runOnUiThread() {
+                            requireActivity().runOnUiThread {
                                 AlertDialog.Builder(requireContext())
                                     .setTitle(R.string.session_timeout_title)
                                     .setMessage(R.string.session_timeout)
@@ -197,14 +197,14 @@ class NewRoomFragment : Fragment() {
                 val json = gson.fromJson(responseString, JsonObject::class.java)
                 val serviciosList = json.get("servicios").asJsonArray
                 checkBoxItemList = serviciosList.map { CheckboxListItem(it.asString, false) }
-                requireActivity().runOnUiThread() {
+                requireActivity().runOnUiThread {
                     val adapter = FilterAdapter(checkBoxItemList)
                     recyclerView.adapter = adapter
                 }
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -216,7 +216,7 @@ class NewRoomFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)
@@ -248,7 +248,7 @@ class NewRoomFragment : Fragment() {
                 selectedStatus = estadosString[0]
 
 
-                requireActivity().runOnUiThread() {
+                requireActivity().runOnUiThread {
                     val adapter = ArrayAdapter(
                         requireContext(),
                         android.R.layout.simple_spinner_item,
@@ -281,7 +281,7 @@ class NewRoomFragment : Fragment() {
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -294,7 +294,7 @@ class NewRoomFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)

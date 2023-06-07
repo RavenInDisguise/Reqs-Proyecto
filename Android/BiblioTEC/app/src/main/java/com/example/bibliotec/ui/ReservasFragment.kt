@@ -39,7 +39,7 @@ class ReservasFragment : Fragment() {
 
     data class Reserva(
         val id: Int,
-        val nombre: String,
+        val nombreCubiculo: String,
         val fecha: String,
         val horaInicio: String,
         val horaFin: String,
@@ -75,7 +75,7 @@ class ReservasFragment : Fragment() {
                     val reservaType = object : TypeToken<List<Reserva>>() {}.type
                     val reservas: List<Reserva> = gson.fromJson(responseString, reservaType)
                     for (reserva in reservas) {
-                        val elemento = """Cubículo: ${reserva.nombre}
+                        val elemento = """Cubículo: ${reserva.nombreCubiculo}
                             |Estado: ${if (reserva.activo) if (reserva.confirmado) "Confirmada" else "Activa" else "Inactiva"}
                             |Hecha: ${LocalDate.dateTime(reserva.fecha, true)}
                             |Horario reservado:
@@ -147,7 +147,7 @@ class ReservasFragment : Fragment() {
                 } else {
                     if (user.isLoggedIn()) {
                         // Ocurrió un error al hacer la consulta
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Error")
                                 .setMessage(responseString)
@@ -159,7 +159,7 @@ class ReservasFragment : Fragment() {
                         }
                     } else {
                         // La sesión expiró
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.session_timeout_title)
                                 .setMessage(R.string.session_timeout)
@@ -181,7 +181,7 @@ class ReservasFragment : Fragment() {
             progressDialog.show()
 
             val url = "https://appbibliotec.azurewebsites.net/api/reserva/confirmar" +
-                    "?id=${reserva.id}&nombre=${reserva.nombre}&horaInicio=${reserva.horaInicio}&horaFin=${reserva.horaFin}"
+                    "?id=${reserva.id}&nombre=${reserva.nombreCubiculo}&horaInicio=${reserva.horaInicio}&horaFin=${reserva.horaFin}"
             val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
             withContext(Dispatchers.IO) {
                 val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)

@@ -44,7 +44,7 @@ class FiltersFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentFiltersBinding.inflate(inflater, container, false)
         user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
@@ -174,14 +174,14 @@ class FiltersFragment : Fragment() {
                 val json = gson.fromJson(responseString, JsonObject::class.java)
                 val serviciosList = json.get("servicios").asJsonArray
                 checkBoxItemList = serviciosList.map { CheckboxListItem(it.asString, false) }
-                requireActivity().runOnUiThread() {
+                requireActivity().runOnUiThread {
                     val adapter = FilterAdapter(checkBoxItemList)
                     recyclerView.adapter = adapter
                 }
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -193,7 +193,7 @@ class FiltersFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)

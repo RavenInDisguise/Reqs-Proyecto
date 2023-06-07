@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,16 +32,23 @@ class BookingListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var bookingItemList : MutableList<BookingItem>
     private lateinit var completeBookingItemList : List<BookingItem>
+    private var idCub: Int = -1
+    private var idEstud: Int = -1
     private val elementsPerPage = 15
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentBookingListBinding.inflate(inflater, container, false)
+        user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
 
+        arguments?.let{
+            idCub = it.getInt("id", -1)
+            idEstud = it.getInt("idEstudiante", -1)
+        }
         bookingItemList = mutableListOf()
         completeBookingItemList = listOf()
 
@@ -49,6 +57,18 @@ class BookingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Se cambia el título
+        val titulo = view.findViewById<TextView>(R.id.booking_list_tile)
+
+        if(idCub == -1 && idEstud == -1){
+            titulo.text = "Reservas"
+        } else if(idEstud != -1){
+            titulo.text = "Reservas del estudiante"
+        }
+        else{
+            titulo.text = "Reservas del cubículo"
+        }
 
         // Se debe cargar la lista de servicios
         recyclerView = view.findViewById(R.id.booking_list_recycler)
@@ -84,7 +104,15 @@ class BookingListFragment : Fragment() {
         })
 
         GlobalScope.launch(Dispatchers.IO) {
-            val url = "https://appbibliotec.azurewebsites.net/api/reserva/reservas"
+
+            val url = if(idCub == -1 && idEstud == -1){
+                "https://appbibliotec.azurewebsites.net/api/reserva/reservas"
+            } else if(idEstud != -1){
+                "https://appbibliotec.azurewebsites.net/api/reserva/estudiante?id=$idEstud"
+            }
+            else{
+                "https://appbibliotec.azurewebsites.net/api/reserva/cubiculo?id=$idCub"
+            }
 
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 
@@ -93,7 +121,7 @@ class BookingListFragment : Fragment() {
 
                 if (completeBookingItemList.isNullOrEmpty()) {
                     val message = "No hay reservas existentes"
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Sin resultados")
                             .setMessage(message)
@@ -107,7 +135,7 @@ class BookingListFragment : Fragment() {
                     val endIndex = elementsPerPage.coerceAtMost(completeBookingItemList.size)
                     bookingItemList.addAll(completeBookingItemList.subList(0, endIndex))
 
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         adapter.notifyItemRangeInserted(0, endIndex)
 
                         if (endIndex == completeBookingItemList.size) {
@@ -118,7 +146,7 @@ class BookingListFragment : Fragment() {
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -130,7 +158,7 @@ class BookingListFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)
