@@ -217,11 +217,7 @@ class ModifyBookingFragment : Fragment() {
 
                         val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
 
-                        // Se quita el popup de "Cargando"
-                        detailsLoaded = true
-                        if (studentsLoaded && roomsLoaded) {
-                            progressDialog.dismiss()
-                        }
+                        progressDialog.dismiss()
 
                         if (responseStatus) {
                             requireActivity().runOnUiThread {
@@ -235,30 +231,26 @@ class ModifyBookingFragment : Fragment() {
                                     .show()
                             }
                         } else {
-                            if (!errorOccurred) {
-                                // Si más de un request da un error, solo se muestra una vez
-                                errorOccurred = true
-                                if (user.isLoggedIn()) {
-                                    // Ocurrió un error al hacer la consulta
-                                    requireActivity().runOnUiThread {
-                                        AlertDialog.Builder(requireContext())
-                                            .setTitle("Error")
-                                            .setMessage(responseString)
-                                            .setPositiveButton("OK") { dialog, _ ->
-                                                dialog.dismiss()
-                                            }
-                                            .show()
-                                    }
-                                } else {
-                                    // La sesión expiró
-                                    requireActivity().runOnUiThread {
-                                        AlertDialog.Builder(requireContext())
-                                            .setTitle(R.string.session_timeout_title)
-                                            .setMessage(R.string.session_timeout)
-                                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                                            .show()
-                                        findNavController().navigate(R.id.LoginFragment)
-                                    }
+                            if (user.isLoggedIn()) {
+                                // Ocurrió un error al hacer la consulta
+                                requireActivity().runOnUiThread {
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle("Error")
+                                        .setMessage(responseString)
+                                        .setPositiveButton("OK") { dialog, _ ->
+                                            dialog.dismiss()
+                                        }
+                                        .show()
+                                }
+                            } else {
+                                // La sesión expiró
+                                requireActivity().runOnUiThread {
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle(R.string.session_timeout_title)
+                                        .setMessage(R.string.session_timeout)
+                                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                        .show()
+                                    findNavController().navigate(R.id.LoginFragment)
                                 }
                             }
                         }

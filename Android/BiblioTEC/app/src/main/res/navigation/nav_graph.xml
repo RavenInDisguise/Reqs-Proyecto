@@ -247,13 +247,12 @@
         android:label="fragment_stud_list"
         tools:layout="@layout/fragment_stud_list" >
         <action
-            android:id="@+id/action_studListFragment_self"
-            app:destination="@id/studListFragment"
-            app:popUpTo="@+id/AdminFragment"
-            app:popUpToInclusive="false" />
-        <action
             android:id="@+id/action_studListFragment_to_StudentModFragment"
-            app:destination="@id/StudentModFragment" />
+            app:destination="@id/StudentModFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <action
             android:id="@+id/action_studList_to_bookingList"
             app:destination="@id/BookingListFragment"

@@ -3,32 +3,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="16dp">
+    android:padding="10dp"
+    android:gravity="center">
 
     <TextView
         android:id="@+id/item_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textColor="@color/black" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="end"
         android:layout_marginStart="16dp">
 
         <Button
             android:id="@+id/button_editar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Editar" />
+            android:text="Editar"
+            android:textSize="12sp" />
         <Button
             android:id="@+id/btnReservas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Reservas" />
+            android:text="Reservas"
+            android:textSize="12sp" />
 
     </LinearLayout>
 

@@ -92,7 +92,7 @@ class ModifyRoomFragment : Fragment() {
 
             val deleteDialog = AlertDialog.Builder(requireContext())
                 .setTitle("Confirmación")
-                .setMessage("¿Estás seguro de eliminar este cubiculo?")
+                .setMessage("¿Está seguro de eliminar este cubículo?")
                 .setPositiveButton("OK") { dialog, _ ->
                     eliminarCubiculo(roomId)
                     dialog.dismiss()
@@ -416,35 +416,45 @@ class ModifyRoomFragment : Fragment() {
         MainScope().launch {
             val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/eliminar" +
                     "?id=${id}"
-            println("url: $url")
-            println("url: $url")
             val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
             withContext(Dispatchers.IO) {
                 val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
                 requireActivity().runOnUiThread {
                     if (responseStatus) {
                         val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Confirmado")
-                            .setMessage("El cubiculo fue eliminado")
+                            .setTitle("Éxito")
+                            .setMessage("El cubículo fue eliminado correctamente")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.findNavController()?.navigate(R.id.action_cubiListFragment_self)
+                                view?.findNavController()?.navigateUp()
                             }
                             .create()
                         dialog.show()
                     } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al eliminar el cubiculo")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
+                        if (user.isLoggedIn()) {
+                            // Ocurrió un error al hacer la consulta
+                            requireActivity().runOnUiThread {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Error")
+                                    .setMessage(responseString)
+                                    .setPositiveButton("OK") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                    .show()
                             }
-                            .create()
-                        dialog.show()
+                        } else {
+                            // La sesión expiró
+                            requireActivity().runOnUiThread {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle(R.string.session_timeout_title)
+                                    .setMessage(R.string.session_timeout)
+                                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                    .show()
+                                findNavController().navigate(R.id.LoginFragment)
+                            }
+                        }
                     }
                 }
-
-                println("URL de eliminación: $url")
             }
         }
     }

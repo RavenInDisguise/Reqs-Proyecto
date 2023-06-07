@@ -11,12 +11,14 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
+import com.example.bibliotec.misc.LocalDate
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -31,6 +33,7 @@ class cubiListFragment : Fragment() {
     private lateinit var user: User
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
+    private lateinit var progressBar : ProgressBar
 
     data class Cubiculo(
         val id: Int,
@@ -57,6 +60,9 @@ class cubiListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val listViewCubiculo: ListView = view.findViewById(R.id.listaCubiculos)
         val elementos: MutableList<String> = mutableListOf()
+
+        progressBar = view.findViewById(R.id.progressBar)
+
         viewLifecycleOwner.lifecycleScope.launch{
             withContext(Dispatchers.IO){
                 val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/cubiculos"
@@ -65,16 +71,14 @@ class cubiListFragment : Fragment() {
                     val cubiculoType = object : TypeToken<List<Cubiculo>>() {}.type
                     val cubiculos: List<Cubiculo> = Gson().fromJson(responseString, cubiculoType)
                     for (cubic in cubiculos) {
-                        var elemento = " ${cubic.nombre} - ${cubic.id} \n Capacidad: ${cubic.capacidad} \n Tiempo máximo: ${cubic.minutosMaximo} \n Servicios:"
+                        var elemento = " ${cubic.nombre} (ID: ${cubic.id}) \n Capacidad: ${cubic.capacidad} persona${if (cubic.capacidad == 1) "" else "s"} \n Tiempo máximo: ${LocalDate.durationString(cubic.minutosMaximo)} \n Servicios:"
                         if (cubic.servicios.isEmpty()) {
-                            elemento += "Sin servicios especiales"
+                            elemento += "\n   - Ninguno"
                         } else {
                             for (servicio in cubic.servicios){
                                 elemento += "\n   - " + servicio
                             }
                         }
-                        elemento += "\n\n"
-                        println(elemento)
                         elementos.add(elemento)
                     }
                     val adapter = object : ArrayAdapter<String>(
@@ -93,7 +97,7 @@ class cubiListFragment : Fragment() {
                             val cubic = cubiculos[position]
                             itemText.text = elementos[position]
 
-                            // Acciones al hacer clic en el botón Confirmar
+                            // Acciones al hacer clic en el botón "Editar"
                             buttonEditar.setOnClickListener {
                                 val bundle = Bundle()
                                 bundle.putInt("id",cubic.id)
@@ -112,6 +116,7 @@ class cubiListFragment : Fragment() {
                     }
                     withContext(Dispatchers.Main) {
                         listViewCubiculo.adapter = adapter
+                        progressBar.visibility = View.GONE
                     }
                 } else {
                     if (user.isLoggedIn()) {

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ListView
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -31,6 +32,7 @@ class studListFragment : Fragment() {
     private lateinit var user: User
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
+    private lateinit var progressBar : ProgressBar
 
     data class Estudiante(
         val id: Int,
@@ -57,6 +59,9 @@ class studListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val listViewEstudiante: ListView = view.findViewById(R.id.lista_estudiantes)
         val elementos: MutableList<String> = mutableListOf()
+
+        progressBar = view.findViewById(R.id.progressBar)
+
         viewLifecycleOwner.lifecycleScope.launch{
             withContext(Dispatchers.IO){
                 val url = "https://appbibliotec.azurewebsites.net/api/estudiante/estudiantes"
@@ -65,8 +70,8 @@ class studListFragment : Fragment() {
                     val estudianteType = object : TypeToken<List<Estudiante>>() {}.type
                     val estudiantes: List<Estudiante> = Gson().fromJson(responseString, estudianteType)
                     for (estud in estudiantes) {
-                        val elemento = "Nombre: ${estud.Nombre} \nCarnet: ${estud.carnet} \nCedula: ${estud.cedula} \n\n"
-                        println(elemento)
+                        val activo = if (estud.activo) "Activo" else "Inactivo"
+                        val elemento = "${estud.Nombre}\n${estud.correo}\n\nID: ${estud.id} \nCarné: ${estud.carnet} \nCédula: ${estud.cedula}\nEstado: $activo"
                         elementos.add(elemento)
                     }
                     val adapter = object : ArrayAdapter<String>(
@@ -83,8 +88,9 @@ class studListFragment : Fragment() {
                             val buttonReservas = view.findViewById<Button>(R.id.btnReservas)
                             val estudent = estudiantes[position]
                             itemText.text = elementos[position]
+                            itemText.setLineSpacing(0f, 1.3f)
 
-                            // Acciones al hacer clic en el botón Confirmar
+                            // Acciones al hacer clic en el botón "Editar"
                             buttonEditar.setOnClickListener {
                                 val bundle = Bundle()
                                 bundle.putInt("id",estudent.id)
@@ -96,13 +102,12 @@ class studListFragment : Fragment() {
                                 view.findNavController().navigate(R.id.action_studList_to_bookingList, bundle)
                             }
 
-                            // Acciones al hacer clic en el botón Eliminar
-
                             return view
                         }
                     }
                     withContext(Dispatchers.Main) {
                         listViewEstudiante.adapter = adapter
+                        progressBar.visibility = View.GONE
                     }
                 } else {
                     if (user.isLoggedIn()) {
