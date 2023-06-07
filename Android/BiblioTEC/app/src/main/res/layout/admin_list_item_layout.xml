@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="Editar" />
         <Button
-            android:id="@+id/btn_reservas"
+            android:id="@+id/btnReservas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reservas" />

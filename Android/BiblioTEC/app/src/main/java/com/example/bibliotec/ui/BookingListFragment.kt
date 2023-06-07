@@ -31,6 +31,7 @@ class BookingListFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var bookingItemList : MutableList<BookingItem>
     private lateinit var completeBookingItemList : List<BookingItem>
+    private var idCub: Int = -1
     private val elementsPerPage = 15
 
     override fun onCreateView(
@@ -41,6 +42,9 @@ class BookingListFragment : Fragment() {
         _binding = FragmentBookingListBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
 
+        arguments?.let{
+            idCub = it.getInt("id")
+        }
         bookingItemList = mutableListOf()
         completeBookingItemList = listOf()
 
@@ -84,7 +88,12 @@ class BookingListFragment : Fragment() {
         })
 
         GlobalScope.launch(Dispatchers.IO) {
-            val url = "https://appbibliotec.azurewebsites.net/api/reserva/reservas"
+
+            val url = if(idCub == -1){
+                "https://appbibliotec.azurewebsites.net/api/reserva/reservas"
+            }else{
+                "https://appbibliotec.azurewebsites.net/api/reserva/cubiculo?id=$idCub"
+            }
 
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 

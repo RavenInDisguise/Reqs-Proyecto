@@ -92,7 +92,7 @@ class cubiListFragment : Fragment() {
 
                             val itemText = view.findViewById<TextView>(R.id.item_text)
                             val buttonEditar = view.findViewById<Button>(R.id.button_editar)
-
+                            val buttonReservas = view.findViewById<Button>(R.id.btnReservas)
 
                             val cubic = cubiculos[position]
                             itemText.text = elementos[position]
@@ -102,6 +102,12 @@ class cubiListFragment : Fragment() {
                                 val bundle = Bundle()
                                 bundle.putInt("id",cubic.id)
                                 view.findNavController().navigate(R.id.action_cubiListFragment_to_ModifyRoomFragment, bundle)
+                            }
+
+                            buttonReservas.setOnClickListener {
+                                val bundle = Bundle()
+                                bundle.putInt("id",cubic.id)
+                                view.findNavController().navigate(R.id.action_roomList_to_bookingList, bundle)
                             }
 
 
