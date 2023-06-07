@@ -92,7 +92,7 @@ class cubiListFragment : Fragment() {
 
                             val itemText = view.findViewById<TextView>(R.id.item_text)
                             val buttonEditar = view.findViewById<Button>(R.id.button_editar)
-                            val buttonEliminar = view.findViewById<Button>(R.id.button_eliminar)
+
 
                             val cubic = cubiculos[position]
                             itemText.text = elementos[position]
@@ -104,21 +104,6 @@ class cubiListFragment : Fragment() {
                                 view.findNavController().navigate(R.id.action_cubiListFragment_to_ModifyRoomFragment, bundle)
                             }
 
-                            // Acciones al hacer clic en el botón Eliminar
-                            buttonEliminar.setOnClickListener {
-                                val deleteDialog = AlertDialog.Builder(requireContext())
-                                    .setTitle("Confirmación")
-                                    .setMessage("¿Estás seguro de eliminar este cubiculo?")
-                                    .setPositiveButton("OK") { dialog, _ ->
-                                        eliminarCubiculo(cubic)
-                                        dialog.dismiss()
-                                    }
-                                    .setNegativeButton("Cancelar") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .create()
-                                deleteDialog.show()
-                            }
 
                             return view
                         }
@@ -131,44 +116,6 @@ class cubiListFragment : Fragment() {
                     println(responseString)
                 }
 
-            }
-        }
-    }
-
-
-    private fun eliminarCubiculo(cubi: Cubiculo) {
-        MainScope().launch {
-            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/eliminar" +
-                    "?id=${cubi.id}"
-            println("url: $url")
-            println("url: $url")
-            val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
-            withContext(Dispatchers.IO) {
-                val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
-                requireActivity().runOnUiThread {
-                    if (responseStatus) {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Confirmado")
-                            .setMessage("El cubiculo fue eliminado")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                                view?.findNavController()?.navigate(R.id.action_cubiListFragment_self)
-                            }
-                            .create()
-                        dialog.show()
-                    } else {
-                        val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage("Hubo un error al eliminar el cubiculo")
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                            }
-                            .create()
-                        dialog.show()
-                    }
-                }
-
-                println("URL de eliminación: $url")
             }
         }
     }

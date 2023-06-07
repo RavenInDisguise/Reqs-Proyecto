@@ -80,7 +80,6 @@ class studListFragment : Fragment() {
 
                             val itemText = view.findViewById<TextView>(R.id.item_text)
                             val buttonEditar = view.findViewById<Button>(R.id.button_editar)
-                            val buttonEliminar = view.findViewById<Button>(R.id.button_eliminar)
 
                             val estudent = estudiantes[position]
                             itemText.text = elementos[position]
@@ -93,20 +92,6 @@ class studListFragment : Fragment() {
                             }
 
                             // Acciones al hacer clic en el botón Eliminar
-                            buttonEliminar.setOnClickListener {
-                                val deleteDialog = AlertDialog.Builder(requireContext())
-                                    .setTitle("Confirmación")
-                                    .setMessage("¿Estás seguro de eliminar este estudiante?")
-                                    .setPositiveButton("OK") { dialog, _ ->
-                                        eliminarEstudiante(estudent)
-                                        dialog.dismiss()
-                                    }
-                                    .setNegativeButton("Cancelar") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .create()
-                                deleteDialog.show()
-                            }
 
                             return view
                         }
