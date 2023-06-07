@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,11 +42,12 @@ class BookingListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentBookingListBinding.inflate(inflater, container, false)
+        user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
 
         arguments?.let{
-            idCub = it.getInt("id")
-            idEstud = it.getInt("idEstudiante")
+            idCub = it.getInt("id", -1)
+            idEstud = it.getInt("idEstudiante", -1)
         }
         bookingItemList = mutableListOf()
         completeBookingItemList = listOf()
@@ -55,6 +57,18 @@ class BookingListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Se cambia el título
+        val titulo = view.findViewById<TextView>(R.id.booking_list_tile)
+
+        if(idCub == -1 && idEstud == -1){
+            titulo.text = "Reservas"
+        } else if(idEstud != -1){
+            titulo.text = "Reservas del estudiante"
+        }
+        else{
+            titulo.text = "Reservas del cubículo"
+        }
 
         // Se debe cargar la lista de servicios
         recyclerView = view.findViewById(R.id.booking_list_recycler)
