@@ -140,6 +140,17 @@
                 android:layout_height="50dp"
                 android:text="Cargando..." />
 
+            <TextView
+                style="@style/FilterLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Estado" />
+
+            <Spinner
+                android:id="@+id/status_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

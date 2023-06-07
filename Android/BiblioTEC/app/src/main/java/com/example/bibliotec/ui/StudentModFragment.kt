@@ -3,7 +3,6 @@ package com.example.bibliotec.ui
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
-import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +12,11 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
-import com.example.bibliotec.databinding.FragmentModifyBookingBinding
 import com.example.bibliotec.databinding.FragmentStudentModBinding
 import com.example.bibliotec.misc.LocalDate
 import com.example.bibliotec.user.User
@@ -38,10 +36,12 @@ class StudentModFragment : Fragment() {
     private lateinit var user: User
     private val binding get() = _binding!!
     private var studentId: Int = -1
-    private var startCalendar = Calendar.getInstance()
+    private var selectedCalendar = Calendar.getInstance()
     private var detailsLoaded = false
     private var errorOccurred = false
     private val gson = Gson()
+    private val statusString = mutableListOf("Activo", "Inactivo")
+    private var selectedStatus: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,6 +80,15 @@ class StudentModFragment : Fragment() {
         val claveBox = view.findViewById<EditText>(R.id.editEstClave)
         val submitButton = view.findViewById<Button>(R.id.btnEditStudent)
         val deleteButton = view.findViewById<Button>(R.id.btnEliminar)
+        val statusSpinner = view.findViewById<Spinner>(R.id.status_spinner)
+
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            statusString
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        statusSpinner.adapter = adapter
 
         // Se agregan los listeners a la fecha
         bdayBox.setOnClickListener {
@@ -96,7 +105,7 @@ class StudentModFragment : Fragment() {
             val selectedName = nameBox.text.toString()
             val selectedFName = firstLNameBox.text.toString()
             val selectedSName = secondLNameBox.text.toString()
-            val selecteCedula = cedulaBox.text.toString()
+            val selectedCedula = cedulaBox.text.toString()
             val selectedCarnet = carneBox.text.toString()
             val selectedCorreo = correoBox.text.toString()
             val selectedpassword = claveBox.text.toString()
@@ -104,7 +113,7 @@ class StudentModFragment : Fragment() {
             if (bdayBox.text.toString().isEmpty()) {
                 filtersOk = false
                 message = "La fecha de nacimiento no debe estar vacía"
-            } else if (startCalendar > currentCalendar) {
+            } else if (selectedCalendar > currentCalendar) {
                 filtersOk = false
                 message = "La fecha de nacimiento no puede ser futura"
             } else if (selectedName.isEmpty()) {
@@ -119,7 +128,7 @@ class StudentModFragment : Fragment() {
             } else if (selectedCarnet.isEmpty()) {
                 filtersOk = false
                 message = "El carné no puede estar vacío"
-            } else if (selecteCedula.isEmpty()) {
+            } else if (selectedCedula.isEmpty()) {
                 filtersOk = false
                 message = "La cédula no puede estar vacía"
             }
@@ -143,11 +152,12 @@ class StudentModFragment : Fragment() {
                                 "\"nombre\": \"$selectedName\"," +
                                 "\"apellido1\": \"$selectedFName\"," +
                                 "\"apellido2\": \"$selectedSName\"," +
-                                "\"cedula\": $selecteCedula," +
+                                "\"cedula\": $selectedCedula," +
                                 "\"carnet\": $selectedCarnet," +
-                                "\"fechaNacimiento\": \"${LocalDate.toIso(startCalendar)}\"," +
+                                "\"fechaNacimiento\": \"${LocalDate.toIso(selectedCalendar)}\"," +
                                 "\"correo\": \"$selectedCorreo\"," +
-                                "\"clave\": \"$selectedpassword\"}").toRequestBody("application/json".toMediaTypeOrNull())
+                                "\"clave\": \"$selectedpassword\"," +
+                                "\"activo\": $selectedStatus}").toRequestBody("application/json".toMediaTypeOrNull())
 
                     val (responseStatus, responseString) = apiRequest.putRequest(url, requestBody)
 
@@ -277,8 +287,7 @@ class StudentModFragment : Fragment() {
                 val json = gson.fromJson(responseString, JsonArray::class.java)
                 val valores = json[0].asJsonObject
 
-                startCalendar.time = LocalDate.parseIso(valores.get("fechaDeNacimiento").asString)
-                //endCalendar.time = LocalDate.parseIso(valores.get("horaFin").asString)
+                selectedCalendar.time = LocalDate.parseIso(valores.get("fechaDeNacimiento").asString)
 
                 requireActivity().runOnUiThread {
                     idBox.setText("$studentId ${getString(R.string.modify_room_id)}")
@@ -293,8 +302,6 @@ class StudentModFragment : Fragment() {
 
                     carneBox.setText(valores.get("carnet").asString)
 
-                    //bdayBox.setText(valores.get("fechaDeNacimiento").asString)
-
                     correoBox.setText(valores.get("correo").asString)
 
                     claveBox.setText("")
@@ -307,9 +314,31 @@ class StudentModFragment : Fragment() {
                         )
                     )
 
-                    /* */
-                   // startTimeBox.setText(LocalDate.time(startCalendar.time))
-                   // endTimeBox.setText(LocalDate.time(endCalendar.time))
+                    try {
+                        statusSpinner.setSelection(if (valores.get("activo").asBoolean) 0 else 1)
+                    } catch (e: Exception) {
+                        statusSpinner.setSelection(0)
+                    }
+
+                    statusSpinner.onItemSelectedListener =
+                        object : AdapterView.OnItemSelectedListener {
+                            override fun onItemSelected(
+                                parent: AdapterView<*>,
+                                view: View?,
+                                position: Int,
+                                id: Long
+                            ) {
+                                selectedStatus = position == 0
+                            }
+
+                            override fun onNothingSelected(parent: AdapterView<*>) {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Datos inválidos")
+                                    .setMessage("Debe seleccionar un estado")
+                                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                    .show()
+                            }
+                        }
                 }
             } else {
                 if (!errorOccurred) {
@@ -347,9 +376,9 @@ class StudentModFragment : Fragment() {
     private fun onClickDateFilter(view: View) {
         val bdayBox = view.findViewById<EditText>(R.id.editEstFNacimiento)
 
-        val year = startCalendar.get(Calendar.YEAR)
-        val month = startCalendar.get(Calendar.MONTH)
-        val day = startCalendar.get(Calendar.DAY_OF_MONTH)
+        val year = selectedCalendar.get(Calendar.YEAR)
+        val month = selectedCalendar.get(Calendar.MONTH)
+        val day = selectedCalendar.get(Calendar.DAY_OF_MONTH)
 
         val listener = DatePickerDialog.OnDateSetListener { _, y, m, d ->
             val currentCalendar = Calendar.getInstance()
@@ -364,10 +393,10 @@ class StudentModFragment : Fragment() {
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
             } else {
-                startCalendar.set(y, m, d)
+                selectedCalendar.set(y, m, d)
                 //endCalendar.set(y, m, d)
 
-                bdayBox.setText(LocalDate.date(startCalendar.time, fullDate = true))
+                bdayBox.setText(LocalDate.date(selectedCalendar.time, fullDate = true))
             }
         }
 
