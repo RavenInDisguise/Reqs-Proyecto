@@ -17,6 +17,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
+import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class cubiListFragment : Fragment() {
-    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var user: User
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
 
@@ -41,10 +42,6 @@ class cubiListFragment : Fragment() {
     )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-//            param1 = it.getString(ARG_PARAM1)
-//            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -52,8 +49,8 @@ class cubiListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-        studentId = sharedPreferences.getIntOrNull("studentId")
+        user = User.getInstance(requireContext())
+        studentId = user.getStudentId()
         apiRequest=ApiRequest.getInstance(requireContext())
         return inflater.inflate(R.layout.fragment_cubi_list, container, false)
 
@@ -67,15 +64,17 @@ class cubiListFragment : Fragment() {
             withContext(Dispatchers.IO){
                 val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/cubiculos"
                 val (responseStatus, responseString) = apiRequest.getRequest(url)
-                println("Se hizo la solicitud a $url")
-                println(responseStatus)
                 if (responseStatus) {
                     val cubiculoType = object : TypeToken<List<Cubiculo>>() {}.type
                     val cubiculos: List<Cubiculo> = Gson().fromJson(responseString, cubiculoType)
                     for (cubic in cubiculos) {
-                        var elemento = " ${cubic.nombre} - ${cubic.id} \n Capacidad: ${cubic.capacidad} \n Tiempo maximo: ${cubic.minutosMaximo} \n Servicios:"
-                        for (servicio in cubic.servicios){
-                            elemento += "\n   - " + servicio
+                        var elemento = " ${cubic.nombre} - ${cubic.id} \n Capacidad: ${cubic.capacidad} \n Tiempo máximo: ${cubic.minutosMaximo} \n Servicios:"
+                        if (cubic.servicios.isEmpty()) {
+                            elemento += "Sin servicios especiales"
+                        } else {
+                            for (servicio in cubic.servicios){
+                                elemento += "\n   - " + servicio
+                            }
                         }
                         elemento += "\n\n"
                         println(elemento)
@@ -118,20 +117,32 @@ class cubiListFragment : Fragment() {
                         listViewCubiculo.adapter = adapter
                     }
                 } else {
-                    println("Error al obtener los cubiculos")
-                    println(responseString)
+                    if (user.isLoggedIn()) {
+                        // Ocurrió un error al hacer la consulta
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                    findNavController().navigateUp()
+                                }
+                                .show()
+                        }
+                    } else {
+                        // La sesión expiró
+                        requireActivity().runOnUiThread() {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
+                    }
                 }
 
             }
         }
     }
-
-    private fun SharedPreferences.getIntOrNull(key: String): Int? {
-        // Función para retornar un Int solo si existe
-        if (contains(key)) {
-            return getInt(key, 0) // Retorna el valor almancenado
-        }
-        return null // Retorna un valor nulo
-    }
-
 }
