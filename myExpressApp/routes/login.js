@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
                     }
                 })
             } else {
-                res.status(401).send({ message: "El usuario no existe" });
+                res.status(401).send({ message: "El usuario no existe o está desactivado" });
             }
         }
     });

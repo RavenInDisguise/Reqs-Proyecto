@@ -42,8 +42,7 @@ router.put('/eliminar', (req, res) => {
     const correo = bod.correo
     const clave = bod.clave
     const fechaDeNacimiento = bod.fechaNacimiento.split("T")[0]
-    
-   
+    const activo = bod.activo   
     
     bcrypt.hash(clave, 10, (err, hash) => {
   
@@ -62,6 +61,7 @@ router.put('/eliminar', (req, res) => {
       request.input('IN_Correo', sqlcon.VarChar, correo)
       request.input('IN_FechaNacimiento', sqlcon.Date, fechaDeNacimiento)
       request.input('IN_Clave', sqlcon.VarChar, clave == "" ? clave : hash)
+      request.input('In_Activo', sqlcon.Bit, activo)
 
       request.execute("BiblioTEC_SP_ActualizarEstudiante",(error, resultado)=>{
         if(error){

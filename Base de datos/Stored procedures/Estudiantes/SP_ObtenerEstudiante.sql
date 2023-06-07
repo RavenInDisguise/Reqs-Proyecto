@@ -36,7 +36,8 @@ BEGIN
                   E.cedula,
                   E.carnet,
                   E.fechaDeNacimiento fechaDeNacimiento,
-                  U.correo
+                  U.correo,
+                  E.activo
                 FROM Estudiantes AS E 
                 LEFT JOIN Usuarios AS U 
                 ON U.id = E.idUsuario

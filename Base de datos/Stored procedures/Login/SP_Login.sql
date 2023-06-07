@@ -30,6 +30,10 @@ BEGIN
             AND (
                 E.[eliminado] = 0
                 OR E.[eliminado] IS NULL
+            )
+            AND (
+                E.[activo] = 1
+                OR E.[activo] IS NULL
             );
 
     END TRY

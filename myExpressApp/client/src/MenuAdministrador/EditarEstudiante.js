@@ -18,6 +18,7 @@ function EditarEstudiante() {
     const [correo, setCorreo] = useState('')
     const [fechaNacimiento, setFechaNacimiento] = useState('')
     const [clave, setClave] = useState('')
+    const [activo, setActivo] = useState(true)
 
     useEffect(()=>{
         axios.get("/api/login").then((response) => {
@@ -37,6 +38,7 @@ function EditarEstudiante() {
                 setCedula(response.data[0].cedula);
                 setCorreo(response.data[0].correo);
                 setFechaNacimiento(response.data[0].fechaDeNacimiento);
+                setActivo(response.data[0].activo)
             } catch (error) {
                 alert('Ocurrió un error al cargar la información');
             }
@@ -55,7 +57,8 @@ function EditarEstudiante() {
             carnet,
             correo,
             fechaNacimiento,
-            clave
+            clave,
+            activo
         }).then(res=>{
             alert(res.data.message);
             navigate('/Estudiantes')
@@ -115,6 +118,13 @@ function EditarEstudiante() {
                 <div className="form-group">
                     <label for='Clave'>Clave</label>
                     <input className="form-control" id="Clave" type="password" value={clave} onChange={e=>setClave(e.target.value)} />
+                </div>
+                <div className="form-group">
+                    <label for='Clave'>Estado</label>
+                    <select value={activo ? 'Activo' : 'Inactivo'} onChange={(e) => setActivo(e.target.value === 'Activo')}>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                    </select>
                 </div>
                 <input className="btn btn-primary" type="submit" value="Guardar" />
             </form> : <p>Cargando...</p>)}

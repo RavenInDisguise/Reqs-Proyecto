@@ -13,7 +13,8 @@ CREATE OR ALTER PROCEDURE [dbo].[BiblioTEC_SP_ActualizarEstudiante]
     @IN_Carnet INT,
     @IN_Correo VARCHAR(128),
     @IN_FechaNacimiento DATE,
-    @IN_Clave VARCHAR(64)
+    @IN_Clave VARCHAR(64),
+    @IN_Activo BIT
 AS
 BEGIN
     SET NOCOUNT ON;         -- No retorna metadatos
@@ -81,7 +82,8 @@ BEGIN
             Apellido2 = @IN_Apellido2,
             Cedula = @IN_Cedula,
             Carnet = @IN_Carnet,
-            fechaDeNacimiento = @IN_FechaNacimiento
+            fechaDeNacimiento = @IN_FechaNacimiento,
+            activo = @IN_Activo
         WHERE id = @IN_idEstudiante
         AND eliminado = 0;
 
