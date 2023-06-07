@@ -58,6 +58,7 @@ BEGIN
         BEGIN
             RAISERROR('Ya existe un estudiante con el carnet %d', 16, 1, @IN_Carnet);
         END
+        
         -- CAMBIO DE CORREO
         IF EXISTS ( SELECT 1
                     FROM [Usuarios] U
@@ -69,6 +70,12 @@ BEGIN
         BEGIN
             RAISERROR('Ya existe un estudiante con el correo %s', 16, 1, @IN_Correo);
         END
+
+        IF (@IN_correo NOT LIKE '%@estudiantec.cr')
+        BEGIN
+            RAISERROR('El correo %s no pertenece al dominio @estudiantec.cr', 16, 1, @IN_Correo);
+        END
+
         -- INICIO DE LA TRANSACCIÓN
         IF @@TRANCOUNT = 0
         BEGIN

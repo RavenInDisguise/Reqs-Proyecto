@@ -44,6 +44,11 @@ BEGIN
             RAISERROR('Ya existe un usuario con el correo %s',16,1,@IN_Correo)
         END
 
+        IF (@IN_correo NOT LIKE '%@estudiantec.cr')
+        BEGIN
+            RAISERROR('El correo %s no pertenece al dominio @estudiantec.cr', 16, 1, @IN_Correo);
+        END
+
         IF EXISTS(  SELECT 1 
                     FROM [Estudiantes] E
                     WHERE E.[Cedula] = @IN_Cedula
