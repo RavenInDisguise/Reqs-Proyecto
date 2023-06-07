@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="10dp"
-                android:text="Editar Estudiante" />
+                android:text="Editar estudiante" />
 
             <TextView
                 style="@style/FilterLabel"
@@ -57,7 +57,7 @@
                 style="@style/FilterLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Primer Apellido" />
+                android:text="Primer apellido" />
 
             <EditText
                 android:id="@+id/editEstFName"
@@ -69,7 +69,7 @@
                 style="@style/FilterLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Segundo Apellido" />
+                android:text="Segundo apellido" />
 
             <EditText
                 android:id="@+id/editEstSName"
@@ -118,7 +118,7 @@
                 style="@style/FilterLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Fecha de Nacimiento" />
+                android:text="Fecha de nacimiento" />
 
             <EditText
                 android:id="@+id/editEstFNacimiento"
@@ -153,6 +153,13 @@
                     android:layout_gravity="center_horizontal"
                     android:text="Guardar cambios" />
 
+                <Button
+                    android:id="@+id/btnEliminar"
+                    android:backgroundTint="@color/red"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="Eliminar estudiante" />
 
             </LinearLayout>
 

@@ -39,11 +39,9 @@ class StudentModFragment : Fragment() {
     private val binding get() = _binding!!
     private var studentId: Int = -1
     private var startCalendar = Calendar.getInstance()
-    private var endCalendar = Calendar.getInstance()
     private var detailsLoaded = false
     private var errorOccurred = false
     private val gson = Gson()
-    private var calendario = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,7 +79,7 @@ class StudentModFragment : Fragment() {
         val bdayBox = view.findViewById<EditText>(R.id.editEstFNacimiento)//calendar
         val claveBox = view.findViewById<EditText>(R.id.editEstClave)
         val submitButton = view.findViewById<Button>(R.id.btnEditStudent)
-
+        val deleteButton = view.findViewById<Button>(R.id.btnEliminar)
 
         // Se agregan los listeners a la fecha
         bdayBox.setOnClickListener {
@@ -95,9 +93,35 @@ class StudentModFragment : Fragment() {
             var filtersOk = true
             var message = ""
 
+            val selectedName = nameBox.text.toString()
+            val selectedFName = firstLNameBox.text.toString()
+            val selectedSName = secondLNameBox.text.toString()
+            val selecteCedula = cedulaBox.text.toString()
+            val selectedCarnet = carneBox.text.toString()
+            val selectedCorreo = correoBox.text.toString()
+            val selectedpassword = claveBox.text.toString()
+
             if (bdayBox.text.toString().isEmpty()) {
                 filtersOk = false
                 message = "La fecha de nacimiento no debe estar vacía"
+            } else if (startCalendar > currentCalendar) {
+                filtersOk = false
+                message = "La fecha de nacimiento no puede ser futura"
+            } else if (selectedName.isEmpty()) {
+                filtersOk = false
+                message = "El nombre no puede estar vacío"
+            } else if (selectedFName.isEmpty()) {
+                filtersOk = false
+                message = "El primer apellido no puede estar vacío"
+            } else if (selectedSName.isEmpty()) {
+                filtersOk = false
+                message = "El segundo apellido no puede estar vacío"
+            } else if (selectedCarnet.isEmpty()) {
+                filtersOk = false
+                message = "El carné no puede estar vacío"
+            } else if (selecteCedula.isEmpty()) {
+                filtersOk = false
+                message = "La cédula no puede estar vacía"
             }
 
             if (!filtersOk) {
@@ -112,15 +136,6 @@ class StudentModFragment : Fragment() {
                 progressDialog.setCancelable(false)
                 progressDialog.show()
 
-                var selectedName = nameBox.text.toString()
-                var selectedFName = firstLNameBox.text.toString()
-                var selectedSName = secondLNameBox.text.toString()
-                var selecteCedula = cedulaBox.text.toString()
-                var selectedCarne = carneBox.text.toString()
-                var selectedFecha = bdayBox.text.toString()
-                var selectedCorreo = correoBox.text.toString()
-                var selectedpassword = claveBox.text.toString()
-
                 GlobalScope.launch(Dispatchers.IO) {
                     val url = "https://appbibliotec.azurewebsites.net/api/estudiante/actualizar"
                     val requestBody =
@@ -129,7 +144,7 @@ class StudentModFragment : Fragment() {
                                 "\"apellido1\": \"$selectedFName\"," +
                                 "\"apellido2\": \"$selectedSName\"," +
                                 "\"cedula\": $selecteCedula," +
-                                "\"carnet\": $selectedCarne," +
+                                "\"carnet\": $selectedCarnet," +
                                 "\"fechaNacimiento\": \"${LocalDate.toIso(startCalendar)}\"," +
                                 "\"correo\": \"$selectedCorreo\"," +
                                 "\"clave\": \"$selectedpassword\"}").toRequestBody("application/json".toMediaTypeOrNull())
@@ -176,8 +191,70 @@ class StudentModFragment : Fragment() {
                     }
                 }
             }
-
         }
+
+    // Se agrega un listener para el botón de eliminar
+    deleteButton.setOnClickListener {
+        // Confirmación
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirmación")
+            .setMessage("Está a punto de eliminar el estudiante actual. ¿Desea continuar?")
+            .setPositiveButton("OK") { dialog, which ->
+                // Se abre un popup de "Cargando"
+                val progressDialog = ProgressDialog(requireContext())
+                progressDialog.setMessage("Cargando...")
+                progressDialog.setCancelable(false)
+                progressDialog.show()
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    val url = "https://appbibliotec.azurewebsites.net/api/estudiante/eliminar?id=${studentId}"
+                    val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
+
+                    val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
+
+                    // Se quita el popup de "Cargando"
+                    progressDialog.dismiss()
+
+                    if (responseStatus) {
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Éxito")
+                                .setMessage("Estudiante eliminado exitosamente")
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                    findNavController().navigateUp()
+                                }
+                                .show()
+                        }
+                    } else {
+                        if (user.isLoggedIn()) {
+                            // Ocurrió un error al hacer la consulta
+                            requireActivity().runOnUiThread {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle("Error")
+                                    .setMessage(responseString)
+                                    .setPositiveButton("OK") { dialog, _ ->
+                                        dialog.dismiss()
+                                    }
+                                    .show()
+                            }
+                        } else {
+                            // La sesión expiró
+                            requireActivity().runOnUiThread {
+                                AlertDialog.Builder(requireContext())
+                                    .setTitle(R.string.session_timeout_title)
+                                    .setMessage(R.string.session_timeout)
+                                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                    .show()
+                                findNavController().navigate(R.id.LoginFragment)
+                            }
+                        }
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar") { dialog, which -> }
+            .show()
+    }
 
         // Se abre un popup de "Cargando"
         val progressDialog = ProgressDialog(requireContext())
