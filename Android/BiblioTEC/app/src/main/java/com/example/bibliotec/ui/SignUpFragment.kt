@@ -86,7 +86,7 @@ class SignUpFragment : Fragment() {
             else if(!isValidEmail(correo)){
                 AlertDialog.Builder(requireContext())
                     .setTitle("Correo inválido")
-                    .setMessage("El correo debe pertenecer al dominio @estudiantec.cr")
+                    .setMessage("El correo electrónico debe pertenecer al dominio @estudiantec.cr")
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
             }
@@ -144,7 +144,7 @@ class SignUpFragment : Fragment() {
         DatePickerDialog(requireContext(), listener, year, month, day).show()
     }
 
-    fun isValidEmail(email: String): Boolean {
+    private fun isValidEmail(email: String): Boolean {
         val regex = Regex("^\\w+@estudiantec\\.cr$")
         return regex.matches(email)
     }

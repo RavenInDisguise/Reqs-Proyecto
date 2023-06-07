@@ -131,6 +131,13 @@ class StudentModFragment : Fragment() {
             } else if (selectedCedula.isEmpty()) {
                 filtersOk = false
                 message = "La cédula no puede estar vacía"
+            } else if (selectedCorreo.isEmpty()) {
+                filtersOk = false
+                message = "El correo electrónico no puede estar vacío"
+            } else if (!isValidEmail(selectedCorreo)) {
+                // Se valida que el correo pertenezca a @estudiantec.cr
+                filtersOk = false
+                message = "El correo electrónico debe pertenecer al dominio @estudiantec.cr"
             }
 
             if (!filtersOk) {
@@ -401,6 +408,11 @@ class StudentModFragment : Fragment() {
         }
 
         DatePickerDialog(requireContext(), listener, year, month, day).show()
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        val regex = Regex("^\\w+@estudiantec\\.cr$")
+        return regex.matches(email)
     }
 
 }
