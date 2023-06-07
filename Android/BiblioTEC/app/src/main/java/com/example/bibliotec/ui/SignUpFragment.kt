@@ -29,7 +29,7 @@ class SignUpFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSignupBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
         return binding.root
@@ -106,7 +106,7 @@ class SignUpFragment : Fragment() {
 
                     val (responseStatus, responseString) = apiRequest.postRequest(url, requestBody)
                     if (responseStatus) {
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Éxito")
                                 .setMessage("Registro exitoso")
@@ -116,7 +116,7 @@ class SignUpFragment : Fragment() {
                         }
 
                     } else {
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Error")
                                 .setMessage(responseString)

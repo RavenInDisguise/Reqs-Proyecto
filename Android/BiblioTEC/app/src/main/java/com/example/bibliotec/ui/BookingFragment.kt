@@ -42,14 +42,14 @@ class BookingFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentBookingBinding.inflate(inflater, container, false)
         user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
         arguments?.let {
             horaInicio = it.getString("horaInicio")!!
             horaFin = it.getString("horaFin")!!
-            cubiculoId = it.getInt("cubiculoId")!!
+            cubiculoId = it.getInt("cubiculoId")
         }
         return binding.root
     }
@@ -115,25 +115,21 @@ class BookingFragment : Fragment() {
 
                 var bookingTimeString = LocalDate.durationString(bookingTime.toInt())
 
-                requireActivity().runOnUiThread() {
-                    nombreCubiculo.setText(nombre)
-                    capacidadCubiculo.setText(
-                        "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
-                    )
-                    horario.setText(
-                        "${
-                            LocalDate.date(horaInicioObject)
-                        }, de ${LocalDate.time(horaInicioObject)} a ${
-                            LocalDate.time(horaFinObject)
-                        }\n(durante $bookingTimeString)"
-                    )
+                requireActivity().runOnUiThread {
+                    nombreCubiculo.text = nombre
+                    capacidadCubiculo.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
+                    horario.text = "${
+                        LocalDate.date(horaInicioObject)
+                    }, de ${LocalDate.time(horaInicioObject)} a ${
+                        LocalDate.time(horaFinObject)
+                    }\n(durante $bookingTimeString)"
                     val adapter = BookingAdapter(servicePerRoomList)
                     recyclerView.adapter = adapter
                 }
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -145,7 +141,7 @@ class BookingFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)
@@ -178,7 +174,7 @@ class BookingFragment : Fragment() {
                 progressDialog2.dismiss()
 
                 if (responseStatus) {
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Éxito")
                             .setMessage("Reserva exitosa")
@@ -192,7 +188,7 @@ class BookingFragment : Fragment() {
                 } else {
                     if (user.isLoggedIn()) {
                         // Ocurrió un error al hacer la consulta
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Error")
                                 .setMessage(responseString)
@@ -203,7 +199,7 @@ class BookingFragment : Fragment() {
                         }
                     } else {
                         // La sesión expiró
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.session_timeout_title)
                                 .setMessage(R.string.session_timeout)

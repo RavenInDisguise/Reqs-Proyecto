@@ -107,7 +107,7 @@ class studListFragment : Fragment() {
                 } else {
                     if (user.isLoggedIn()) {
                         // Ocurrió un error al hacer la consulta
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Error")
                                 .setMessage(responseString)
@@ -119,7 +119,7 @@ class studListFragment : Fragment() {
                         }
                     } else {
                         // La sesión expiró
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.session_timeout_title)
                                 .setMessage(R.string.session_timeout)

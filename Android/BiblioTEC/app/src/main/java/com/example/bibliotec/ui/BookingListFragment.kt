@@ -40,7 +40,7 @@ class BookingListFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentBookingListBinding.inflate(inflater, container, false)
         user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
@@ -121,7 +121,7 @@ class BookingListFragment : Fragment() {
 
                 if (completeBookingItemList.isNullOrEmpty()) {
                     val message = "No hay reservas existentes"
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Sin resultados")
                             .setMessage(message)
@@ -135,7 +135,7 @@ class BookingListFragment : Fragment() {
                     val endIndex = elementsPerPage.coerceAtMost(completeBookingItemList.size)
                     bookingItemList.addAll(completeBookingItemList.subList(0, endIndex))
 
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         adapter.notifyItemRangeInserted(0, endIndex)
 
                         if (endIndex == completeBookingItemList.size) {
@@ -146,7 +146,7 @@ class BookingListFragment : Fragment() {
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -158,7 +158,7 @@ class BookingListFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)

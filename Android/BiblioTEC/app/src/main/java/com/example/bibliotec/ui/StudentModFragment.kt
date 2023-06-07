@@ -55,7 +55,7 @@ class StudentModFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         apiRequest = ApiRequest.getInstance(requireContext())
         _binding = FragmentStudentModBinding.inflate(inflater, container, false)

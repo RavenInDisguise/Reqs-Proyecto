@@ -40,7 +40,7 @@ class AvailableRoomsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAvailableRoomsBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
 
@@ -49,7 +49,7 @@ class AvailableRoomsFragment : Fragment() {
             horaInicio = it.getString("horaInicio")!!
             horaFin = it.getString("horaFin")!!
             servicios = it.getStringArray("servicios")!!
-            capacidad = it.getInt("capacidad")!!
+            capacidad = it.getInt("capacidad")
         }
 
         roomItemList = mutableListOf()
@@ -112,7 +112,7 @@ class AvailableRoomsFragment : Fragment() {
                     } else {
                         "Ninguno de los cubículos disponibles en el horario seleccionado cumplen con los criterios de servicios o capacidad mínimos"
                     }
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Sin resultados")
                             .setMessage(message)
@@ -126,7 +126,7 @@ class AvailableRoomsFragment : Fragment() {
                     val endIndex = elementsPerPage.coerceAtMost(completeRoomItemList.size)
                     roomItemList.addAll(completeRoomItemList.subList(0, endIndex))
 
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         adapter.notifyItemRangeInserted(0, endIndex)
 
                         if (endIndex == completeRoomItemList.size) {
@@ -137,7 +137,7 @@ class AvailableRoomsFragment : Fragment() {
             } else {
                 if (user.isLoggedIn()) {
                     // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
@@ -149,7 +149,7 @@ class AvailableRoomsFragment : Fragment() {
                     }
                 } else {
                     // La sesión expiró
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle(R.string.session_timeout_title)
                             .setMessage(R.string.session_timeout)

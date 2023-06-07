@@ -32,7 +32,7 @@ class StudentFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
 
         val activity = requireActivity() as AppCompatActivity
@@ -83,7 +83,7 @@ class StudentFragment : Fragment() {
                     } else {
                         // Ya se cerró la sesión
                         user.setTimedOut()
-                        requireActivity().runOnUiThread() {
+                        requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle(R.string.session_timeout_title)
                                 .setMessage(R.string.session_timeout)
@@ -94,7 +94,7 @@ class StudentFragment : Fragment() {
                     }
 
                 } else {
-                    requireActivity().runOnUiThread() {
+                    requireActivity().runOnUiThread {
                         AlertDialog.Builder(requireContext())
                             .setTitle("Error")
                             .setMessage(responseString)
