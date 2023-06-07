@@ -101,7 +101,7 @@ function Apartados() {
                     <div className="reserva-lista">
                         <div className="datos">
                             <p>
-                                <span className="nombre">Cubículo: {e.nombre}</span>
+                                <span className="nombre">Cubículo: {e.nombreCubiculo}</span>
                                 <b> · Capacidad:</b> {e.capacidad}
                                 <b> · Fecha:</b> {formatoLocal(e.fecha)}
                                 <b></b>

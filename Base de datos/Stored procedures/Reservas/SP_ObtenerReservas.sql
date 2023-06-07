@@ -17,7 +17,8 @@ BEGIN
 
         SELECT  R.[id],
                 C.[nombre] AS 'nombreCubiculo', 
-                C.[id] AS 'idCubiculo', 
+                C.[id] AS 'idCubiculo',
+				C.[capacidad] AS 'capacidad',
                 R.[fecha] AS 'fecha',
                 R.[horaInicio] AS 'horaInicio',
                 R.[horaFin] AS 'horaFin',

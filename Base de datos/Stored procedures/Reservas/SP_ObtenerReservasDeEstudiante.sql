@@ -29,17 +29,21 @@ BEGIN
         END;
 
         SELECT  R.[id],
-                C.[nombre], 
-                C.[capacidad],
-                R.[activo],
-                R.[confirmado],
+                C.[nombre] AS 'nombreCubiculo', 
+                C.[id] AS 'idCubiculo',
+				C.[capacidad] AS 'capacidad',
                 R.[fecha] AS 'fecha',
                 R.[horaInicio] AS 'horaInicio',
-                R.[horaFin] AS 'horaFin'
+                R.[horaFin] AS 'horaFin',
+                R.[activo] AS 'activo',
+                R.[confirmado] AS 'confirmado',
+                CONCAT(E.[nombre], ' ', E.[apellido1], ' ', E.[apellido2]) AS 'nombreEstudiante',
+                E.[id] AS 'idEstudiante'
         FROM [dbo].[Reservas] R 
         INNER JOIN [dbo].[Cubiculos] C
             ON  R.[idCubiculo] = C.[id]
-        WHERE R.[idEstudiante] = @IN_idEstudiante
+        INNER JOIN [dbo].[Estudiantes] E ON E.[id] = R.[idEstudiante]
+		WHERE R.[idEstudiante] = @IN_idEstudiante
             AND R.[eliminada] = 0
         ORDER BY Activo DESC, Confirmado ASC;
 
