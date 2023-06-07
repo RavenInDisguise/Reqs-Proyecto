@@ -89,7 +89,7 @@ class studListFragment : Fragment() {
                             buttonEditar.setOnClickListener {
                                 val bundle = Bundle()
                                 bundle.putInt("id",estudent.id)
-                                //view.findNavController().navigate(R.id.action_cubiListFragment_to_ModifyRoomFragment)
+                                view.findNavController().navigate(R.id.action_studListFragment_to_StudentModFragment, bundle)
                             }
 
                             // Acciones al hacer clic en el botón Eliminar

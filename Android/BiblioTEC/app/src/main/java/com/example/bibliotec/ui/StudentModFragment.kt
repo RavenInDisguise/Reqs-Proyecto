@@ -38,19 +38,12 @@ class StudentModFragment : Fragment() {
     private lateinit var user: User
     private val binding get() = _binding!!
     private var studentId: Int = -1
-    private var selectedName: String? = null
-    private var selectedFName: String? = null
-    private var selectedSName: String? = null
-    private var selecteCedula: Int? = null
-    private var selectedCarne: Int? = null
-    private var selectedCorreo: String? = null
-    private var selectedFecha: String? = null
-    private var selectedpassword: String? = null
     private var startCalendar = Calendar.getInstance()
     private var endCalendar = Calendar.getInstance()
     private var detailsLoaded = false
     private var errorOccurred = false
     private val gson = Gson()
+    private var calendario = Calendar.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,21 +52,21 @@ class StudentModFragment : Fragment() {
 
         apiRequest = ApiRequest.getInstance(requireContext())
         _binding = FragmentStudentModBinding.inflate(inflater, container, false)
-        //user = User.getInstance(requireContext())
+        user = User.getInstance(requireContext())
 
         // Parámetros del fragmento
-       /* arguments?.let {
+        arguments?.let {
             studentId = it.getInt("id", -1)
         }
 
         // Si no se brindó un número de reserva, se devuelve
         if (studentId == -1) {
             findNavController().navigateUp()
-        } */
+        }
 
         return binding.root
     }
-/*
+/* */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -85,13 +78,12 @@ class StudentModFragment : Fragment() {
         val cedulaBox = view.findViewById<EditText>(R.id.editEstCedula)
         val carneBox = view.findViewById<EditText>(R.id.editEstCarne)
         val correoBox = view.findViewById<EditText>(R.id.editEstCorreo)
-        val bdayBox = view.findViewById<EditText>(R.id.editEstFNacimiento)
+        val bdayBox = view.findViewById<EditText>(R.id.editEstFNacimiento)//calendar
         val claveBox = view.findViewById<EditText>(R.id.editEstClave)
         val submitButton = view.findViewById<Button>(R.id.btnEditStudent)
-        val deleteButton = view.findViewById<Button>(R.id.btnDeleteStudent)
 
 
-        // Se agregan los listeners a la fecha y a las horas
+        // Se agregan los listeners a la fecha
         bdayBox.setOnClickListener {
             onClickDateFilter(view)
         }
@@ -105,7 +97,7 @@ class StudentModFragment : Fragment() {
 
             if (bdayBox.text.toString().isEmpty()) {
                 filtersOk = false
-                message = "La fecha reservada no debe estar vacía"
+                message = "La fecha de nacimiento no debe estar vacía"
             }
 
             if (!filtersOk) {
@@ -120,18 +112,27 @@ class StudentModFragment : Fragment() {
                 progressDialog.setCancelable(false)
                 progressDialog.show()
 
+                var selectedName = nameBox.text.toString()
+                var selectedFName = firstLNameBox.text.toString()
+                var selectedSName = secondLNameBox.text.toString()
+                var selecteCedula = cedulaBox.text.toString()
+                var selectedCarne = carneBox.text.toString()
+                var selectedFecha = bdayBox.text.toString()
+                var selectedCorreo = correoBox.text.toString()
+                var selectedpassword = claveBox.text.toString()
+
                 GlobalScope.launch(Dispatchers.IO) {
                     val url = "https://appbibliotec.azurewebsites.net/api/estudiante/actualizar"
                     val requestBody =
                         ("{\"idEstudiante\": \"$studentId\"," +
-                                "\"nombre\": $selectedName," +
-                                "\"apellido1\": $selectedFName," +
-                                "\"apellido2\": $selectedSName," +
+                                "\"nombre\": \"$selectedName\"," +
+                                "\"apellido1\": \"$selectedFName\"," +
+                                "\"apellido2\": \"$selectedSName\"," +
                                 "\"cedula\": $selecteCedula," +
-                                "\"carnet\": $selectedSName," +
-                                "\"fechaNacimiento\": $selectedFecha," +
-                                "\"correo\": $selectedSName," +
-                                "\"clave\": $selectedpassword").toRequestBody("application/json".toMediaTypeOrNull())
+                                "\"carnet\": $selectedCarne," +
+                                "\"fechaNacimiento\": \"${LocalDate.toIso(startCalendar)}\"," +
+                                "\"correo\": \"$selectedCorreo\"," +
+                                "\"clave\": \"$selectedpassword\"}").toRequestBody("application/json".toMediaTypeOrNull())
 
                     val (responseStatus, responseString) = apiRequest.putRequest(url, requestBody)
 
@@ -141,7 +142,7 @@ class StudentModFragment : Fragment() {
                         requireActivity().runOnUiThread {
                             AlertDialog.Builder(requireContext())
                                 .setTitle("Éxito")
-                                .setMessage("Reserva modificada exitosamente")
+                                .setMessage("Estudiante modificado exitosamente")
                                 .setPositiveButton("OK") { dialog, _ ->
                                     dialog.dismiss()
                                     findNavController().navigateUp()
@@ -178,76 +179,6 @@ class StudentModFragment : Fragment() {
 
         }
 
-        // Se agrega un listener para el botón de eliminar
-        deleteButton.setOnClickListener {
-            // Confirmación
-            AlertDialog.Builder(requireContext())
-                .setTitle("Confirmación")
-                .setMessage("Está a punto de eliminar el estudiante actual. ¿Desea continuar?")
-                .setPositiveButton("OK") { dialog, which ->
-                    // Se abre un popup de "Cargando"
-                    val progressDialog = ProgressDialog(requireContext())
-                    progressDialog.setMessage("Cargando...")
-                    progressDialog.setCancelable(false)
-                    progressDialog.show()
-
-                    GlobalScope.launch(Dispatchers.IO) {
-                        val url = "https://appbibliotec.azurewebsites.net/api/estudiante/eliminar?id=${studentId}"
-                        val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
-
-                        val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
-
-                        // Se quita el popup de "Cargando"
-                        detailsLoaded = true
-                        if (detailsLoaded) { //prueba
-                            progressDialog.dismiss()
-                        }
-
-                        if (responseStatus) {
-                            requireActivity().runOnUiThread {
-                                AlertDialog.Builder(requireContext())
-                                    .setTitle("Éxito")
-                                    .setMessage("Reserva eliminada exitosamente")
-                                    .setPositiveButton("OK") { dialog, _ ->
-                                        dialog.dismiss()
-                                        findNavController().navigateUp()
-                                    }
-                                    .show()
-                            }
-                        } else {
-                            if (!errorOccurred) {
-                                // Si más de un request da un error, solo se muestra una vez
-                                errorOccurred = true
-                                if (user.isLoggedIn()) {
-                                    // Ocurrió un error al hacer la consulta
-                                    requireActivity().runOnUiThread {
-                                        AlertDialog.Builder(requireContext())
-                                            .setTitle("Error")
-                                            .setMessage(responseString)
-                                            .setPositiveButton("OK") { dialog, _ ->
-                                                dialog.dismiss()
-                                            }
-                                            .show()
-                                    }
-                                } else {
-                                    // La sesión expiró
-                                    requireActivity().runOnUiThread {
-                                        AlertDialog.Builder(requireContext())
-                                            .setTitle(R.string.session_timeout_title)
-                                            .setMessage(R.string.session_timeout)
-                                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                                            .show()
-                                        findNavController().navigate(R.id.LoginFragment)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                .setNegativeButton("Cancelar") { dialog, which -> }
-                .show()
-        }
-
         // Se abre un popup de "Cargando"
         val progressDialog = ProgressDialog(requireContext())
         progressDialog.setMessage("Cargando...")
@@ -269,20 +200,37 @@ class StudentModFragment : Fragment() {
                 val json = gson.fromJson(responseString, JsonArray::class.java)
                 val valores = json[0].asJsonObject
 
-                startCalendar.time = LocalDate.parseIso(valores.get("horaInicio").asString)
-                endCalendar.time = LocalDate.parseIso(valores.get("horaFin").asString)
+                startCalendar.time = LocalDate.parseIso(valores.get("fechaDeNacimiento").asString)
+                //endCalendar.time = LocalDate.parseIso(valores.get("horaFin").asString)
 
                 requireActivity().runOnUiThread {
                     idBox.setText("$studentId ${getString(R.string.modify_room_id)}")
 
+                    nameBox.setText(valores.get("nombre").asString)
+
+                    firstLNameBox.setText(valores.get("apellido1").asString)
+
+                    secondLNameBox.setText(valores.get("apellido2").asString)
+
+                    cedulaBox.setText(valores.get("cedula").asString)
+
+                    carneBox.setText(valores.get("carnet").asString)
+
+                    //bdayBox.setText(valores.get("fechaDeNacimiento").asString)
+
+                    correoBox.setText(valores.get("correo").asString)
+
+                    claveBox.setText("")
+
                     bdayBox.setText(
                         LocalDate.date(
-                            valores.get("horaInicio").asString,
+                            valores.get("fechaDeNacimiento").asString,
                             true,
                             fullDate = true
                         )
                     )
 
+                    /* */
                    // startTimeBox.setText(LocalDate.time(startCalendar.time))
                    // endTimeBox.setText(LocalDate.time(endCalendar.time))
                 }
@@ -332,15 +280,15 @@ class StudentModFragment : Fragment() {
             val currMonth = currentCalendar.get(Calendar.MONTH)
             val currDay = currentCalendar.get(Calendar.DAY_OF_MONTH)
 
-            if (y < currYear || (y == currYear && m < currMonth) || (y == currYear && m == currMonth && d < currDay)) {
+            if (y > currYear || (y == currYear && m > currMonth) || (y == currYear && m == currMonth && d > currDay)) {
                 AlertDialog.Builder(requireContext())
                     .setTitle("Datos inválidos")
-                    .setMessage("No puede ingresar una fecha pasada")
+                    .setMessage("No puede ingresar una fecha futura")
                     .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                     .show()
             } else {
                 startCalendar.set(y, m, d)
-                endCalendar.set(y, m, d)
+                //endCalendar.set(y, m, d)
 
                 bdayBox.setText(LocalDate.date(startCalendar.time, fullDate = true))
             }
@@ -348,5 +296,5 @@ class StudentModFragment : Fragment() {
 
         DatePickerDialog(requireContext(), listener, year, month, day).show()
     }
-*/
+
 }

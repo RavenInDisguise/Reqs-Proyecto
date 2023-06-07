@@ -241,6 +241,9 @@
             app:destination="@id/studListFragment"
             app:popUpTo="@+id/AdminFragment"
             app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_studListFragment_to_StudentModFragment"
+            app:destination="@id/StudentModFragment" />
     </fragment>
     <fragment
         android:id="@+id/StudentModFragment"

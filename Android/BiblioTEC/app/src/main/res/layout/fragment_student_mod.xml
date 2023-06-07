@@ -50,9 +50,7 @@
                 android:id="@+id/editEstName"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic" />
+                android:text="Cargando..." />
 
 
             <TextView
@@ -65,9 +63,7 @@
                 android:id="@+id/editEstFName"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic" />
+                android:text="Cargando..." />
 
             <TextView
                 style="@style/FilterLabel"
@@ -79,9 +75,7 @@
                 android:id="@+id/editEstSName"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic" />
+                android:text="Cargando..." />
 
             <TextView
                 style="@style/FilterLabel"
@@ -93,9 +87,7 @@
                 android:id="@+id/editEstCedula"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic" />
+                android:text="Cargando..." />
 
 
             <TextView
@@ -108,9 +100,7 @@
                 android:id="@+id/editEstCarne"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic" />
+                android:text="Cargando..." />
 
             <TextView
                 style="@style/FilterLabel"
@@ -122,9 +112,7 @@
                 android:id="@+id/editEstCorreo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic" />
+                android:text="Cargando..." />
 
             <TextView
                 style="@style/FilterLabel"
@@ -137,8 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic"
+                android:focusable="false"
                 android:clickable="true" />
 
             <TextView
@@ -151,9 +138,7 @@
                 android:id="@+id/editEstClave"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Cargando..."
-                android:enabled="false"
-                android:textStyle="italic" />
+                android:text="Cargando..." />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -167,14 +152,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:text="Guardar cambios" />
-
-                <Button
-                    android:id="@+id/btnDeleteStudent"
-                    android:backgroundTint="@color/red"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Eliminar Estudiante" />
 
 
             </LinearLayout>
