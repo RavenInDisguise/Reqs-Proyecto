@@ -108,7 +108,7 @@ function Apartados() {
                                 <b></b>
                             </p>
                             <div className="otros-datos">
-                                <p><b>Estado:</b> {(e.confirmado?'Confirmado':(e.activo?'Sin confirmar':'Eliminada'))} <b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
+                                <p><b>Estado:</b> {(e.confirmado?'Confirmado':(e.activo?'Sin confirmar':'Inactiva'))} <b>· Fecha reservada:</b> {formatoLocal(e.horaInicio, true, false)}, de {formatoLocal(e.horaInicio, false, true)} a {formatoLocal(e.horaFin, false, true)}</p>
                             </div>
                         </div>
                         <div className="opciones">
