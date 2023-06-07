@@ -92,7 +92,7 @@ class ModifyRoomFragment : Fragment() {
 
             val deleteDialog = AlertDialog.Builder(requireContext())
                 .setTitle("Confirmación")
-                .setMessage("¿Está seguro de eliminar este cubículo?")
+                .setMessage("¿Está seguro de eliminar este cubículo?\n\nAutomáticamente se notificará a los usuarios con reservas activas.")
                 .setPositiveButton("OK") { dialog, _ ->
                     eliminarCubiculo(roomId)
                     dialog.dismiss()
