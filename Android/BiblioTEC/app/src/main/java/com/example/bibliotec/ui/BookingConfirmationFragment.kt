@@ -151,10 +151,10 @@ class BookingConfirmationFragment : Fragment() {
                     cubicleName?.text = nombre
                     cubicleCapacity?.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
                     cubicleSchedule?.text = "${
-                        LocalDate.date(horaInicioObject)
-                    }, de ${LocalDate.time(horaInicioObject)} a ${
+                        LocalDate.date(horaInicioObject, true)
+                    },\nde ${LocalDate.time(horaInicioObject)} a ${
                         LocalDate.time(horaFinObject)
-                    }\n(durante $bookingTimeString)"
+                    } ($bookingTimeString)"
                     val adapter = BookingAdapter(servicePerRoomList)
                     cubicleRecycler?.adapter = adapter
                 }

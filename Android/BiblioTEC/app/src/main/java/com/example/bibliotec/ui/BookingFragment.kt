@@ -119,10 +119,10 @@ class BookingFragment : Fragment() {
                     nombreCubiculo.text = nombre
                     capacidadCubiculo.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
                     horario.text = "${
-                        LocalDate.date(horaInicioObject)
-                    }, de ${LocalDate.time(horaInicioObject)} a ${
+                        LocalDate.date(horaInicioObject, true)
+                    },\nde ${LocalDate.time(horaInicioObject)} a ${
                         LocalDate.time(horaFinObject)
-                    }\n(durante $bookingTimeString)"
+                    } ($bookingTimeString)"
                     val adapter = BookingAdapter(servicePerRoomList)
                     recyclerView.adapter = adapter
                 }

@@ -15,6 +15,8 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -110,6 +112,8 @@ class ReservasFragment : Fragment() {
 
                             // Acciones al hacer clic en el botón Confirmar
                             if (reservaActiva && !reservaConfirmada) {
+                                buttonConfirmar.backgroundTintList =
+                                    ContextCompat.getColorStateList(requireContext(), R.color.green)
                                 buttonConfirmar.setOnClickListener {
                                     val confirmDialog = AlertDialog.Builder(requireContext())
                                         .setTitle("Confirmación")
@@ -125,6 +129,10 @@ class ReservasFragment : Fragment() {
                                     confirmDialog.show()
                                 }
                             } else {
+                                val buttonBackground = buttonConfirmar.background
+                                DrawableCompat.clearColorFilter(buttonBackground)
+                                buttonConfirmar.background = buttonBackground
+
                                 if (reservaActiva) {
                                     buttonConfirmar.text = "Código QR"
                                     buttonConfirmar.setOnClickListener {
@@ -211,8 +219,8 @@ class ReservasFragment : Fragment() {
                 requireActivity().runOnUiThread {
                     if (responseStatus) {
                         val dialog = AlertDialog.Builder(requireContext())
-                            .setTitle("Confirmado")
-                            .setMessage("La reserva fue confirmada")
+                            .setTitle("Éxito")
+                            .setMessage("La reserva fue confirmada\n\nEn breve, recibirá un correo electrónico con los datos de la reserva")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
                                 val bundle = Bundle()
