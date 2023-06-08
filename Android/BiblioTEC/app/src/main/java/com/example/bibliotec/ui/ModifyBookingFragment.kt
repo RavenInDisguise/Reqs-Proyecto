@@ -14,7 +14,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
@@ -212,10 +211,14 @@ class ModifyBookingFragment : Fragment() {
                     progressDialog.show()
 
                     GlobalScope.launch(Dispatchers.IO) {
-                        val url = "https://appbibliotec.azurewebsites.net/api/reserva/eliminar?id=${bookingId}"
+                        val url =
+                            "https://appbibliotec.azurewebsites.net/api/reserva/eliminar?id=${bookingId}"
                         val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
 
-                        val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
+                        val (responseStatus, responseString) = apiRequest.putRequest(
+                            url,
+                            emptyRequestBody
+                        )
 
                         progressDialog.dismiss()
 

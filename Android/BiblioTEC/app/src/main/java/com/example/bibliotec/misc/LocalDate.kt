@@ -2,11 +2,18 @@ package com.example.bibliotec.misc
 
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 class LocalDate {
     companion object {
-        fun dateTime(dateTime: Date, includeSeconds: Boolean = false, fullDate : Boolean = false): String {
+        fun dateTime(
+            dateTime: Date,
+            includeSeconds: Boolean = false,
+            fullDate: Boolean = false
+        ): String {
             val dateFormat = DateFormat.getDateInstance(
                 if (fullDate) DateFormat.FULL else DateFormat.MEDIUM
             )
@@ -18,7 +25,12 @@ class LocalDate {
             return "${dateFormat.format(dateTime)}, ${timeFormat.format(dateTime)}"
         }
 
-        fun dateTime(dateTime: String, isIso: Boolean, includeSeconds: Boolean = false, fullDate : Boolean = false): String {
+        fun dateTime(
+            dateTime: String,
+            isIso: Boolean,
+            includeSeconds: Boolean = false,
+            fullDate: Boolean = false
+        ): String {
             val dateTimeObject = if (isIso) parseIso(dateTime) else parseUtc(dateTime)
             val dateFormat = DateFormat.getDateInstance(
                 if (fullDate) DateFormat.FULL else DateFormat.MEDIUM
@@ -31,15 +43,17 @@ class LocalDate {
             return "${dateFormat.format(dateTimeObject)}, ${timeFormat.format(dateTimeObject)}"
         }
 
-        fun date(date: Date, fullDate : Boolean = false): String {
-            val dateFormat = DateFormat.getDateInstance(if (fullDate) DateFormat.FULL else DateFormat.MEDIUM)
+        fun date(date: Date, fullDate: Boolean = false): String {
+            val dateFormat =
+                DateFormat.getDateInstance(if (fullDate) DateFormat.FULL else DateFormat.MEDIUM)
             dateFormat.timeZone = TimeZone.getDefault()
             return dateFormat.format(date)
         }
 
-        fun date(date: String, isIso: Boolean, fullDate : Boolean = false): String {
+        fun date(date: String, isIso: Boolean, fullDate: Boolean = false): String {
             val dateObject = if (isIso) parseIso(date) else parseUtc(date)
-            val dateFormat = DateFormat.getDateInstance(if (fullDate) DateFormat.FULL else DateFormat.MEDIUM)
+            val dateFormat =
+                DateFormat.getDateInstance(if (fullDate) DateFormat.FULL else DateFormat.MEDIUM)
             dateFormat.timeZone = TimeZone.getDefault()
             return dateFormat.format(dateObject)
         }
@@ -71,31 +85,31 @@ class LocalDate {
             return sourceFormat.parse(utcString)
         }
 
-        fun toUtc(calendar : Calendar): String {
+        fun toUtc(calendar: Calendar): String {
             val dateformat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             dateformat.timeZone = TimeZone.getTimeZone("UTC")
             return dateformat.format(calendar.time)
         }
 
-        fun toUtc(date : Date): String {
+        fun toUtc(date: Date): String {
             val dateformat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             dateformat.timeZone = TimeZone.getTimeZone("UTC")
             return dateformat.format(date)
         }
 
-        fun toIso(calendar : Calendar): String {
+        fun toIso(calendar: Calendar): String {
             val dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             dateformat.timeZone = TimeZone.getTimeZone("UTC")
             return dateformat.format(calendar.time)
         }
 
-        fun toIso(date : Date): String {
+        fun toIso(date: Date): String {
             val dateformat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             dateformat.timeZone = TimeZone.getTimeZone("UTC")
             return dateformat.format(date)
         }
 
-        fun durationString(duration : Int): String {
+        fun durationString(duration: Int): String {
             var resultingString = ""
 
             if (duration >= 60) {

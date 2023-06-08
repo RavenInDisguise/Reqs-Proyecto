@@ -2,11 +2,7 @@ package com.example.bibliotec.ui
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import com.example.bibliotec.api.ApiRequest
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +13,12 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
+import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.misc.LocalDate
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
@@ -37,7 +35,7 @@ class ReservasFragment : Fragment() {
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
     private lateinit var user: User
-    private lateinit var progressBar : ProgressBar
+    private lateinit var progressBar: ProgressBar
 
     data class Reserva(
         val id: Int,
@@ -58,7 +56,7 @@ class ReservasFragment : Fragment() {
         user = User.getInstance(requireContext())
         studentId = user.getStudentId()
 
-        apiRequest=ApiRequest.getInstance(requireContext())
+        apiRequest = ApiRequest.getInstance(requireContext())
         return inflater.inflate(R.layout.fragment_reservas, container, false)
     }
 
@@ -72,7 +70,8 @@ class ReservasFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                val url = "https://appbibliotec.azurewebsites.net/api/reserva/estudiante?id=$studentId"
+                val url =
+                    "https://appbibliotec.azurewebsites.net/api/reserva/estudiante?id=$studentId"
                 val (responseStatus, responseString) = apiRequest.getRequest(url)
                 if (responseStatus) {
                     val reservaType = object : TypeToken<List<Reserva>>() {}.type
@@ -83,7 +82,12 @@ class ReservasFragment : Fragment() {
                             |Hecha: ${LocalDate.dateTime(reserva.fecha, true)}
                             |Horario reservado:
                             |      ${LocalDate.date(reserva.horaInicio, true)},
-                            |      de ${LocalDate.time(reserva.horaInicio, true)} a ${LocalDate.time(reserva.horaFin, true)}""".trimMargin()
+                            |      de ${
+                            LocalDate.time(
+                                reserva.horaInicio,
+                                true
+                            )
+                        } a ${LocalDate.time(reserva.horaFin, true)}""".trimMargin()
                         elementos.add(elemento)
                     }
 
@@ -93,7 +97,11 @@ class ReservasFragment : Fragment() {
                         R.id.item_text,
                         elementos
                     ) {
-                        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        override fun getView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup
+                        ): View {
                             val view = super.getView(position, convertView, parent)
 
                             val itemText = view.findViewById<TextView>(R.id.item_text)
@@ -228,7 +236,10 @@ class ReservasFragment : Fragment() {
                                 bundle.putString("horaInicio", reserva.horaInicio)
                                 bundle.putString("horaFin", reserva.horaFin)
                                 bundle.putInt("idCubiculo", reserva.idCubiculo)
-                                findNavController().navigate(R.id.action_reservasFragment_to_BookingConfirmationFragment, bundle)
+                                findNavController().navigate(
+                                    R.id.action_reservasFragment_to_BookingConfirmationFragment,
+                                    bundle
+                                )
                             }
                             .create()
                         dialog.show()
@@ -272,7 +283,8 @@ class ReservasFragment : Fragment() {
                             .setMessage("La reserva fue eliminada")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.findNavController()?.navigate(R.id.action_reservasFragment_self)
+                                view?.findNavController()
+                                    ?.navigate(R.id.action_reservasFragment_self)
                             }
                             .create()
                         dialog.show()

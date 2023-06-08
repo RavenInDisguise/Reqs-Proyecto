@@ -1,7 +1,6 @@
 package com.example.bibliotec.ui
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.data.BookingItem
-import com.example.bibliotec.data.RoomItem
 import com.example.bibliotec.databinding.FragmentBookingListBinding
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
@@ -30,8 +28,8 @@ class BookingListFragment : Fragment() {
     private lateinit var user: User
     private val gson = Gson()
     private lateinit var recyclerView: RecyclerView
-    private lateinit var bookingItemList : MutableList<BookingItem>
-    private lateinit var completeBookingItemList : List<BookingItem>
+    private lateinit var bookingItemList: MutableList<BookingItem>
+    private lateinit var completeBookingItemList: List<BookingItem>
     private var idCub: Int = -1
     private var idEstud: Int = -1
     private val elementsPerPage = 15
@@ -45,7 +43,7 @@ class BookingListFragment : Fragment() {
         user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
 
-        arguments?.let{
+        arguments?.let {
             idCub = it.getInt("id", -1)
             idEstud = it.getInt("idEstudiante", -1)
         }
@@ -61,12 +59,11 @@ class BookingListFragment : Fragment() {
         // Se cambia el título
         val titulo = view.findViewById<TextView>(R.id.booking_list_tile)
 
-        if(idCub == -1 && idEstud == -1){
+        if (idCub == -1 && idEstud == -1) {
             titulo.text = "Reservas"
-        } else if(idEstud != -1){
+        } else if (idEstud != -1) {
             titulo.text = "Reservas del estudiante"
-        }
-        else{
+        } else {
             titulo.text = "Reservas del cubículo"
         }
 
@@ -90,9 +87,15 @@ class BookingListFragment : Fragment() {
 
                     if (bookingItemList.isNotEmpty() && lastVisibleItemPosition == totalItemCount - 1 && completeBookingItemList.size > bookingItemList.size) {
                         // Se cargan más elementos
-                        val endIndex = (totalItemCount + elementsPerPage).coerceAtMost(completeBookingItemList.size)
+                        val endIndex =
+                            (totalItemCount + elementsPerPage).coerceAtMost(completeBookingItemList.size)
 
-                        bookingItemList.addAll(completeBookingItemList.subList(totalItemCount, endIndex))
+                        bookingItemList.addAll(
+                            completeBookingItemList.subList(
+                                totalItemCount,
+                                endIndex
+                            )
+                        )
                         adapter.notifyItemRangeInserted(totalItemCount, endIndex)
 
                         if (completeBookingItemList.size <= bookingItemList.size) {
@@ -105,19 +108,19 @@ class BookingListFragment : Fragment() {
 
         GlobalScope.launch(Dispatchers.IO) {
 
-            val url = if(idCub == -1 && idEstud == -1){
+            val url = if (idCub == -1 && idEstud == -1) {
                 "https://appbibliotec.azurewebsites.net/api/reserva/reservas"
-            } else if(idEstud != -1){
+            } else if (idEstud != -1) {
                 "https://appbibliotec.azurewebsites.net/api/reserva/estudiante?id=$idEstud"
-            }
-            else{
+            } else {
                 "https://appbibliotec.azurewebsites.net/api/reserva/cubiculo?id=$idCub"
             }
 
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 
             if (responseStatus) {
-                completeBookingItemList = gson.fromJson(responseString, Array<BookingItem>::class.java).toList()
+                completeBookingItemList =
+                    gson.fromJson(responseString, Array<BookingItem>::class.java).toList()
 
                 if (completeBookingItemList.isNullOrEmpty()) {
                     val message = "No hay reservas existentes"

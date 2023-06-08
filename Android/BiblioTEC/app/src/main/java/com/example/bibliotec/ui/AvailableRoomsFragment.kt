@@ -1,13 +1,12 @@
 package com.example.bibliotec.ui
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -30,11 +29,11 @@ class AvailableRoomsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var horaInicio: String
     private lateinit var horaFin: String
-    private lateinit var servicios : Array<String>
-    private var capacidad : Int = 1
+    private lateinit var servicios: Array<String>
+    private var capacidad: Int = 1
     private val elementsPerPage = 15
-    private lateinit var roomItemList : MutableList<RoomItem>
-    private lateinit var completeRoomItemList : List<RoomItem>
+    private lateinit var roomItemList: MutableList<RoomItem>
+    private lateinit var completeRoomItemList: List<RoomItem>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,7 +80,8 @@ class AvailableRoomsFragment : Fragment() {
 
                     if (roomItemList.isNotEmpty() && lastVisibleItemPosition == totalItemCount - 1 && completeRoomItemList.size > roomItemList.size) {
                         // Se cargan más elementos
-                        val endIndex = (totalItemCount + elementsPerPage).coerceAtMost(completeRoomItemList.size)
+                        val endIndex =
+                            (totalItemCount + elementsPerPage).coerceAtMost(completeRoomItemList.size)
 
                         roomItemList.addAll(completeRoomItemList.subList(totalItemCount, endIndex))
                         adapter.notifyItemRangeInserted(totalItemCount, endIndex)
@@ -95,7 +95,8 @@ class AvailableRoomsFragment : Fragment() {
         })
 
         GlobalScope.launch(Dispatchers.IO) {
-            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/disponibles?horaInicio=${horaInicio}&${horaFin}"
+            val url =
+                "https://appbibliotec.azurewebsites.net/api/cubiculo/disponibles?horaInicio=${horaInicio}&${horaFin}"
 
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 

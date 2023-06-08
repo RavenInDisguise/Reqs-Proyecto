@@ -7,7 +7,6 @@
     tools:context=".ui.menu.StudentFragment">
 
     <ScrollView
-        android:id="@+id/admin_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,13 +19,12 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/admin_menu_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/menuTitle"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="20dp"
-                android:text="Menú"/>
+                android:text="Menú" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,7 +34,7 @@
 
                 <TextView
                     style="@style/MenuCategoryText"
-                    android:text="Cubículos"/>
+                    android:text="Cubículos" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/NewReservationButton"
@@ -51,14 +49,13 @@
                         android:src="@drawable/icon_book_room" />
 
                     <TextView
-                        android:id="@+id/MenuBookText"
                         style="@style/MenuItemText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/MenuBookImage"
                         android:text="Reservar cubículo"
-                        android:focusable="true"/>
+                        android:focusable="true" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -75,7 +72,6 @@
                         android:src="@drawable/icon_see_history" />
 
                     <TextView
-                        android:id="@+id/MenuBookedText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

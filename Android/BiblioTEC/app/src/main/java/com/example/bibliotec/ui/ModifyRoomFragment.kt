@@ -26,7 +26,11 @@ import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -272,12 +276,14 @@ class ModifyRoomFragment : Fragment() {
                         notifyUsers.isEnabled = false
                         cancelBookings.isEnabled = false
 
-                        cancelBookings.text = "${getString(R.string.cancel_bookings_label)} (no hay)"
+                        cancelBookings.text =
+                            "${getString(R.string.cancel_bookings_label)} (no hay)"
                     } else {
                         notifyUsers.isEnabled = true
                         cancelBookings.isEnabled = true
 
-                        cancelBookings.text = "${getString(R.string.cancel_bookings_label)} (total: $reservas)"
+                        cancelBookings.text =
+                            "${getString(R.string.cancel_bookings_label)} (total: $reservas)"
                     }
 
                     if (spinnerReady) {
@@ -412,7 +418,7 @@ class ModifyRoomFragment : Fragment() {
         }
     }
 
-    private fun eliminarCubiculo(id : Int) {
+    private fun eliminarCubiculo(id: Int) {
         MainScope().launch {
             val url = "https://appbibliotec.azurewebsites.net/api/cubiculo/eliminar" +
                     "?id=${id}"

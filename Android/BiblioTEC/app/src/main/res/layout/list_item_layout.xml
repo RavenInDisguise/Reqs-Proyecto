@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:padding="10dp"
@@ -16,7 +15,7 @@
         android:textSize="16sp"
         android:textColor="@color/black"
         tools:text="Cubículo: A04\nHecha: 4 jun. 2023, 1:25 p. m.\nHorario reservado: 5 jun. 2023, de 1:30 p. m. a 2:30 p. m."
-        android:paddingEnd="10dp"/>
+        android:paddingEnd="10dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -29,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Confirmar"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/button_eliminar"

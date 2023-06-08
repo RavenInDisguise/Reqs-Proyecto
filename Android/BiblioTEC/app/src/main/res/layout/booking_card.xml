@@ -19,11 +19,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/BookingImage"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="5dp"
-        >
+        android:layout_marginStart="5dp">
 
         <TextView
-            android:id="@+id/BookingText"
             style="@style/MenuItemText"
             android:focusable="true"
             android:fontFamily="@font/robotoslab_bold"
@@ -31,7 +29,8 @@
             android:textColor="@color/blue_500"
             android:layout_marginStart="0dp"
             android:text="ID:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
+
         <TextView
             android:id="@+id/BookingIdText"
             android:layout_width="wrap_content"
@@ -39,6 +38,7 @@
             android:textColor="#FF222222"
             tools:text="500" />
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/bookingStatusLayout"
         android:orientation="horizontal"
@@ -61,7 +61,6 @@
             android:layout_marginStart="10dp">
 
             <TextView
-                android:id="@+id/bookingStatusLabel"
                 style="@style/MenuItemText"
                 android:focusable="true"
                 android:fontFamily="@font/robotoslab_bold"
@@ -70,17 +69,19 @@
                 android:text="Estado:"
                 android:textSize="15sp"
                 android:layout_marginStart="0dp" />
+
             <TextView
                 android:id="@+id/bookingStatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#FF222222"
                 tools:text="Confirmada"
-                android:layout_marginLeft="0dp"/>
+                android:layout_marginLeft="0dp" />
 
         </LinearLayout>
 
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/bookRoomLayout"
         android:orientation="horizontal"
@@ -89,8 +90,7 @@
         app:layout_constraintStart_toEndOf="@+id/BookingImage"
         app:layout_constraintTop_toBottomOf="@+id/bookingStatusLayout"
         android:layout_marginTop="5dp"
-        android:gravity="center"
-        >
+        android:gravity="center">
 
         <ImageView
             android:layout_width="25dp"
@@ -104,7 +104,6 @@
             android:layout_marginStart="10dp">
 
             <TextView
-                android:id="@+id/BookRoomText"
                 style="@style/MenuItemText"
                 android:focusable="true"
                 android:fontFamily="@font/robotoslab_bold"
@@ -113,16 +112,18 @@
                 android:text="Cubículo:"
                 android:textSize="15sp"
                 android:layout_marginStart="0dp" />
+
             <TextView
                 android:id="@+id/BookRoomNameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#FF222222"
                 tools:text="E12"
-                android:layout_marginLeft="0dp"/>
+                android:layout_marginLeft="0dp" />
 
         </LinearLayout>
     </LinearLayout>
+
     <ImageView
         android:id="@+id/BookingImage"
         app:layout_constraintStart_toStartOf="parent"
@@ -130,7 +131,7 @@
         app:layout_constraintTop_toTopOf="parent"
         style="@style/MenuItemImage"
         android:src="@drawable/icon_booking"
-        android:focusable="true"/>
+        android:focusable="true" />
 
     <LinearLayout
         android:id="@+id/studentNameLayout"
@@ -140,8 +141,7 @@
         app:layout_constraintStart_toEndOf="@+id/BookingImage"
         app:layout_constraintTop_toBottomOf="@+id/bookRoomLayout"
         android:gravity="center"
-        android:layout_marginTop="5dp"
-         >
+        android:layout_marginTop="5dp">
 
         <ImageView
             android:layout_width="25dp"
@@ -187,7 +187,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/BookingDate"
             style="@style/MenuItemText"
             android:fontFamily="@font/robotoslab_bold"
             app:fontFamily="@font/robotoslab_bold"
@@ -197,7 +196,7 @@
             android:text="Hecha:"
             android:layout_marginStart="0dp"
             android:layout_marginEnd="0dp"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/BookingDateText"
@@ -245,7 +244,6 @@
                     app:fontFamily="@font/robotoslab_bold"
                     android:text="Horario reservado:"
                     style="@style/MenuItemText"
-                    android:id="@+id/bookingSchedule"
                     android:textColor="@color/blue_500"
                     android:textSize="15sp"
                     android:layout_marginStart="0dp" />
@@ -256,7 +254,7 @@
                     android:lineSpacingMultiplier="1"
                     tools:text="30 jun. 2023, de 12:00 p. m. a 12:50 p. m."
                     android:id="@+id/bookingScheduleText"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 

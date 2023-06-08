@@ -19,13 +19,12 @@
             android:gravity="center">
 
             <TextView
-                android:id="@+id/available_rooms_tile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/menuTitle"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="5dp"
-                android:text="Cubículos disponibles"/>
+                android:text="Cubículos disponibles" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -38,7 +37,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/available_rooms_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -46,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"/>
+                android:layout_marginBottom="15dp" />
 
         </LinearLayout>
 

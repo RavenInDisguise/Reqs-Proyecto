@@ -2,12 +2,12 @@ package com.example.bibliotec.ui
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import androidx.fragment.app.Fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +25,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.*
+import java.util.Calendar
 
 class BookingFragment : Fragment() {
     private var _binding: FragmentBookingBinding? = null
@@ -117,7 +117,8 @@ class BookingFragment : Fragment() {
 
                 requireActivity().runOnUiThread {
                     nombreCubiculo.text = nombre
-                    capacidadCubiculo.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
+                    capacidadCubiculo.text =
+                        "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
                     horario.text = "${
                         LocalDate.date(horaInicioObject, true)
                     },\nde ${LocalDate.time(horaInicioObject)} a ${

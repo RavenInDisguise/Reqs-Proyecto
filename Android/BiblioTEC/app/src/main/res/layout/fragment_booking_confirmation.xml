@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/constlayoutqr"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedScrolQR"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,68 +14,63 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:id="@+id/linearlayQR"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginHorizontal="35dp"
-            >
+            android:layout_marginHorizontal="35dp">
 
             <TextView
-                android:id="@+id/confirmationTitle"
                 style="@style/menuTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comprobante"
-                />
+                android:text="Comprobante" />
+
             <TextView
-                android:id="@+id/cubicleNameT"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cubículo:"
-                style="@style/SectionTitle"/>
+                style="@style/SectionTitle" />
+
             <TextView
                 android:id="@+id/cubiName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cargando..."
                 android:textColor="@color/black"
-                android:paddingStart="30dp"
-                />
+                android:paddingStart="30dp" />
+
             <TextView
-                android:id="@+id/titleCapacityCubi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Capacidad:"
-                style="@style/SectionTitle"/>
+                style="@style/SectionTitle" />
+
             <TextView
                 android:id="@+id/capacityCubi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cargando..."
                 android:textColor="@color/black"
-                android:paddingStart="30dp"
-                />
+                android:paddingStart="30dp" />
 
             <TextView
-                android:id="@+id/sericiosCubiculos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Servicios especiales:"
-                style="@style/SectionTitle"/>
+                style="@style/SectionTitle" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/servicesCubiRecycler"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="30dp"/>
+                android:paddingLeft="30dp" />
 
             <TextView
-                android:id="@+id/scheduleCubiTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Horario:"
-                style="@style/SectionTitle"/>
+                style="@style/SectionTitle" />
+
             <TextView
                 android:id="@+id/scheduleCubiReserva"
                 android:layout_width="wrap_content"
@@ -92,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Código QR:"
-                style="@style/SectionTitle"/>
+                style="@style/SectionTitle" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -106,19 +98,19 @@
                 android:layout_height="300dp"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_marginVertical="20dp">
+
                 <Button
                     android:id="@+id/btnReserveCubi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Aceptar"
-                    />
+                    android:text="Aceptar" />
             </LinearLayout>
 
         </LinearLayout>

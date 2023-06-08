@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.data.ServicePerRoomItem
 
-class BookingAdapter(private val elements : List<ServicePerRoomItem>) :
+class BookingAdapter(private val elements: List<ServicePerRoomItem>) :
     RecyclerView.Adapter<BookingAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -35,7 +35,7 @@ class BookingAdapter(private val elements : List<ServicePerRoomItem>) :
             checkbox.isChecked = element.activo
             checkbox.isClickable = false
             checkbox.isFocusable = false
-            if(!element.activo){
+            if (!element.activo) {
                 checkbox.isEnabled = false
             }
         }

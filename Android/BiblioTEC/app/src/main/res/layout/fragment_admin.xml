@@ -7,12 +7,11 @@
     tools:context=".ui.menu.AdminFragment">
 
     <ScrollView
-        android:id="@+id/admin_scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
-        
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,13 +19,12 @@
             android:layout_marginHorizontal="30dp">
 
             <TextView
-                android:id="@+id/admin_menu_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/menuTitle"
                 android:text="Menú"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="20dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,7 +34,7 @@
 
                 <TextView
                     style="@style/MenuCategoryText"
-                    android:text="Estudiantes"/>
+                    android:text="Estudiantes" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/ManageStudentsButton"
@@ -51,7 +49,6 @@
                         android:src="@drawable/icon_manage_people" />
 
                     <TextView
-                        android:id="@+id/MenuStudentText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -71,7 +68,7 @@
 
                 <TextView
                     style="@style/MenuCategoryText"
-                    android:text="Cubículos"/>
+                    android:text="Cubículos" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/AddRoomButton"
@@ -86,7 +83,6 @@
                         android:src="@drawable/icon_add_room" />
 
                     <TextView
-                        android:id="@+id/MenuAddRoomText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -109,7 +105,6 @@
                         android:src="@drawable/icon_manage_rooms" />
 
                     <TextView
-                        android:id="@+id/MenuManageRoomText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -129,7 +124,7 @@
 
                 <TextView
                     style="@style/MenuCategoryText"
-                    android:text="Reservas"/>
+                    android:text="Reservas" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/ManageReservationsButton"
@@ -144,7 +139,6 @@
                         android:src="@drawable/icon_edit_booking" />
 
                     <TextView
-                        android:id="@+id/MenuReservationText"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"

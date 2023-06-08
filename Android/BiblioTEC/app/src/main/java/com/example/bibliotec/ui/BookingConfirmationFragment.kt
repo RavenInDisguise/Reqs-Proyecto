@@ -5,18 +5,15 @@ import android.app.ProgressDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.nfc.Tag
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,19 +21,18 @@ import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.data.ServicePerRoomItem
 import com.example.bibliotec.databinding.FragmentBookingConfirmationBinding
-import com.example.bibliotec.user.User
 import com.example.bibliotec.misc.LocalDate
+import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Calendar
 
 class BookingConfirmationFragment : Fragment() {
     //variables
@@ -44,8 +40,8 @@ class BookingConfirmationFragment : Fragment() {
     private lateinit var apiRequest: ApiRequest
     private val binding get() = _binding!!
     private lateinit var user: User
-    private lateinit var horaInicio : String
-    private lateinit var horaFin : String
+    private lateinit var horaInicio: String
+    private lateinit var horaFin: String
     private val gson = Gson()
     private var reservationId: Int = -1
     private var idCubiculo: Int = -1
@@ -57,7 +53,7 @@ class BookingConfirmationFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentBookingConfirmationBinding.inflate(inflater, container, false)
         user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
@@ -69,7 +65,7 @@ class BookingConfirmationFragment : Fragment() {
             idCubiculo = it.getInt("idCubiculo")
         }
 
-        if (id == -1){
+        if (id == -1) {
             findNavController().navigateUp()
         }
 
@@ -93,7 +89,7 @@ class BookingConfirmationFragment : Fragment() {
         progressDialog.setCancelable(false)
         progressDialog.show()
 
-        btnAceptar.setOnClickListener{
+        btnAceptar.setOnClickListener {
             findNavController().navigateUp()
         }
 
@@ -149,7 +145,8 @@ class BookingConfirmationFragment : Fragment() {
 
                 requireActivity().runOnUiThread {
                     cubicleName?.text = nombre
-                    cubicleCapacity?.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
+                    cubicleCapacity?.text =
+                        "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
                     cubicleSchedule?.text = "${
                         LocalDate.date(horaInicioObject, true)
                     },\nde ${LocalDate.time(horaInicioObject)} a ${
@@ -189,7 +186,7 @@ class BookingConfirmationFragment : Fragment() {
             }
         }
 
-        GlobalScope.launch(Dispatchers.IO){
+        GlobalScope.launch(Dispatchers.IO) {
             val url = "https://appbibliotec.azurewebsites.net/api/reserva/qr?id=$reservationId"
 
             val (responseStatus, responseString, imageData) = apiRequest.getRequestBytes(url)

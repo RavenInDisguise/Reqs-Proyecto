@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
-import androidx.core.view.isEmpty
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.bibliotec.R
@@ -64,7 +63,8 @@ class StudentModFragment : Fragment() {
 
         return binding.root
     }
-/* */
+
+    /* */
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -210,68 +210,72 @@ class StudentModFragment : Fragment() {
             }
         }
 
-    // Se agrega un listener para el botón de eliminar
-    deleteButton.setOnClickListener {
-        // Confirmación
-        AlertDialog.Builder(requireContext())
-            .setTitle("Confirmación")
-            .setMessage("Está a punto de eliminar el estudiante actual. ¿Desea continuar?")
-            .setPositiveButton("OK") { dialog, which ->
-                // Se abre un popup de "Cargando"
-                val progressDialog = ProgressDialog(requireContext())
-                progressDialog.setMessage("Cargando...")
-                progressDialog.setCancelable(false)
-                progressDialog.show()
+        // Se agrega un listener para el botón de eliminar
+        deleteButton.setOnClickListener {
+            // Confirmación
+            AlertDialog.Builder(requireContext())
+                .setTitle("Confirmación")
+                .setMessage("Está a punto de eliminar el estudiante actual. ¿Desea continuar?")
+                .setPositiveButton("OK") { dialog, which ->
+                    // Se abre un popup de "Cargando"
+                    val progressDialog = ProgressDialog(requireContext())
+                    progressDialog.setMessage("Cargando...")
+                    progressDialog.setCancelable(false)
+                    progressDialog.show()
 
-                GlobalScope.launch(Dispatchers.IO) {
-                    val url = "https://appbibliotec.azurewebsites.net/api/estudiante/eliminar?id=${studentId}"
-                    val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
+                    GlobalScope.launch(Dispatchers.IO) {
+                        val url =
+                            "https://appbibliotec.azurewebsites.net/api/estudiante/eliminar?id=${studentId}"
+                        val emptyRequestBody = "".toRequestBody("application/json".toMediaType())
 
-                    val (responseStatus, responseString) = apiRequest.putRequest(url, emptyRequestBody)
+                        val (responseStatus, responseString) = apiRequest.putRequest(
+                            url,
+                            emptyRequestBody
+                        )
 
-                    // Se quita el popup de "Cargando"
-                    progressDialog.dismiss()
+                        // Se quita el popup de "Cargando"
+                        progressDialog.dismiss()
 
-                    if (responseStatus) {
-                        requireActivity().runOnUiThread {
-                            AlertDialog.Builder(requireContext())
-                                .setTitle("Éxito")
-                                .setMessage("Estudiante eliminado exitosamente")
-                                .setPositiveButton("OK") { dialog, _ ->
-                                    dialog.dismiss()
-                                    findNavController().navigateUp()
-                                }
-                                .show()
-                        }
-                    } else {
-                        if (user.isLoggedIn()) {
-                            // Ocurrió un error al hacer la consulta
+                        if (responseStatus) {
                             requireActivity().runOnUiThread {
                                 AlertDialog.Builder(requireContext())
-                                    .setTitle("Error")
-                                    .setMessage(responseString)
+                                    .setTitle("Éxito")
+                                    .setMessage("Estudiante eliminado exitosamente")
                                     .setPositiveButton("OK") { dialog, _ ->
                                         dialog.dismiss()
+                                        findNavController().navigateUp()
                                     }
                                     .show()
                             }
                         } else {
-                            // La sesión expiró
-                            requireActivity().runOnUiThread {
-                                AlertDialog.Builder(requireContext())
-                                    .setTitle(R.string.session_timeout_title)
-                                    .setMessage(R.string.session_timeout)
-                                    .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                                    .show()
-                                findNavController().navigate(R.id.LoginFragment)
+                            if (user.isLoggedIn()) {
+                                // Ocurrió un error al hacer la consulta
+                                requireActivity().runOnUiThread {
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle("Error")
+                                        .setMessage(responseString)
+                                        .setPositiveButton("OK") { dialog, _ ->
+                                            dialog.dismiss()
+                                        }
+                                        .show()
+                                }
+                            } else {
+                                // La sesión expiró
+                                requireActivity().runOnUiThread {
+                                    AlertDialog.Builder(requireContext())
+                                        .setTitle(R.string.session_timeout_title)
+                                        .setMessage(R.string.session_timeout)
+                                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                        .show()
+                                    findNavController().navigate(R.id.LoginFragment)
+                                }
                             }
                         }
                     }
                 }
-            }
-            .setNegativeButton("Cancelar") { dialog, which -> }
-            .show()
-    }
+                .setNegativeButton("Cancelar") { dialog, which -> }
+                .show()
+        }
 
         // Se abre un popup de "Cargando"
         val progressDialog = ProgressDialog(requireContext())
@@ -294,7 +298,8 @@ class StudentModFragment : Fragment() {
                 val json = gson.fromJson(responseString, JsonArray::class.java)
                 val valores = json[0].asJsonObject
 
-                selectedCalendar.time = LocalDate.parseIso(valores.get("fechaDeNacimiento").asString)
+                selectedCalendar.time =
+                    LocalDate.parseIso(valores.get("fechaDeNacimiento").asString)
 
                 requireActivity().runOnUiThread {
                     idBox.setText("$studentId ${getString(R.string.modify_room_id)}")

@@ -1,6 +1,5 @@
 package com.example.bibliotec.ui
 
-import androidx.fragment.app.Fragment
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.ProgressDialog
@@ -9,9 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.R
+import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.databinding.FragmentSignupBinding
 import com.example.bibliotec.misc.LocalDate
 import kotlinx.coroutines.Dispatchers
@@ -19,11 +19,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.*
+import java.util.Calendar
 
 class SignUpFragment : Fragment() {
     private var _binding: FragmentSignupBinding? = null
-    private lateinit var apiRequest : ApiRequest
+    private lateinit var apiRequest: ApiRequest
     private val binding get() = _binding!!
     val selectedCalendar = Calendar.getInstance()
 
@@ -40,12 +40,12 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val editTextFechaNacimiento = view.findViewById<EditText>(R.id.editTextFechaNacimiento)
-        editTextFechaNacimiento.setOnClickListener{
+        editTextFechaNacimiento.setOnClickListener {
             onClickFechaDate(view)
         }
 
         // Acción de click al botón de registrarse
-        binding.btnRegistro.setOnClickListener{
+        binding.btnRegistro.setOnClickListener {
             // Obteniendo cada input
             val editTextNombre = view.findViewById<EditText>(R.id.editTextNombre)
             val editTextApellido1 = view.findViewById<EditText>(R.id.editTextApellido1)
@@ -62,21 +62,23 @@ class SignUpFragment : Fragment() {
             val cedula = editTextCedula.text.toString()
             val carnet = editTextCarnet.text.toString()
             val fechaNacimiento = "${
-                selectedCalendar.get(Calendar.YEAR)}/${selectedCalendar.get(Calendar.MONTH) + 1}/${
-                selectedCalendar.get(Calendar.DAY_OF_MONTH)}"
+                selectedCalendar.get(Calendar.YEAR)
+            }/${selectedCalendar.get(Calendar.MONTH) + 1}/${
+                selectedCalendar.get(Calendar.DAY_OF_MONTH)
+            }"
             val correo = editTextCorreo.text.toString()
             val clave = editTextClaveRegistro.text.toString()
 
             // Se valida que cada input no sea vacio
-            if(nombre.isNullOrEmpty() ||
-                    apellido1.isNullOrEmpty() ||
-                    apellido2.isNullOrEmpty() ||
-                    cedula.isNullOrEmpty() ||
-                    carnet.isNullOrEmpty() ||
-                    fechaNacimiento.isNullOrEmpty() ||
-                    correo.isNullOrEmpty() ||
-                    clave.isNullOrEmpty()
-            ){
+            if (nombre.isNullOrEmpty() ||
+                apellido1.isNullOrEmpty() ||
+                apellido2.isNullOrEmpty() ||
+                cedula.isNullOrEmpty() ||
+                carnet.isNullOrEmpty() ||
+                fechaNacimiento.isNullOrEmpty() ||
+                correo.isNullOrEmpty() ||
+                clave.isNullOrEmpty()
+            ) {
                 AlertDialog.Builder(requireContext())
                     .setTitle("Datos inválidos")
                     .setMessage("Debe llenar todos los datos correctamente.")
@@ -84,7 +86,7 @@ class SignUpFragment : Fragment() {
                     .show()
             }
             // Se valida que el correo pertenezca a @estudiantec.cr
-            else if(!isValidEmail(correo)){
+            else if (!isValidEmail(correo)) {
                 AlertDialog.Builder(requireContext())
                     .setTitle("Correo inválido")
                     .setMessage("El correo electrónico debe pertenecer al dominio @estudiantec.cr")
@@ -142,14 +144,14 @@ class SignUpFragment : Fragment() {
     }
 
     // Función para el datepicker de la fecha de nacimiento
-    private fun onClickFechaDate(view:View){
+    private fun onClickFechaDate(view: View) {
 
         val fechaNacimiento = view.findViewById<EditText>(R.id.editTextFechaNacimiento)
 
         val year = selectedCalendar.get(Calendar.YEAR)
         val month = selectedCalendar.get(Calendar.MONTH)
         val day = selectedCalendar.get(Calendar.DAY_OF_MONTH)
-        val listener = DatePickerDialog.OnDateSetListener{datePicker, y, m, d ->
+        val listener = DatePickerDialog.OnDateSetListener { datePicker, y, m, d ->
             selectedCalendar.set(y, m, d)
             fechaNacimiento.setText(LocalDate.date((selectedCalendar.time)))
         }

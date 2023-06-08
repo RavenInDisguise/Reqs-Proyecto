@@ -1,10 +1,7 @@
 package com.example.bibliotec.ui
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +10,7 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -22,17 +20,14 @@ import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
 
 class studListFragment : Fragment() {
     private lateinit var user: User
     private var studentId: Int? = null
     private lateinit var apiRequest: ApiRequest
-    private lateinit var progressBar : ProgressBar
+    private lateinit var progressBar: ProgressBar
 
     data class Estudiante(
         val id: Int,
@@ -50,7 +45,7 @@ class studListFragment : Fragment() {
     ): View? {
         user = User.getInstance(requireContext())
         studentId = user.getStudentId()
-        apiRequest=ApiRequest.getInstance(requireContext())
+        apiRequest = ApiRequest.getInstance(requireContext())
         return inflater.inflate(R.layout.fragment_stud_list, container, false)
 
     }
@@ -62,16 +57,18 @@ class studListFragment : Fragment() {
 
         progressBar = view.findViewById(R.id.progressBar)
 
-        viewLifecycleOwner.lifecycleScope.launch{
-            withContext(Dispatchers.IO){
+        viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
                 val url = "https://appbibliotec.azurewebsites.net/api/estudiante/estudiantes"
                 val (responseStatus, responseString) = apiRequest.getRequest(url)
                 if (responseStatus) {
                     val estudianteType = object : TypeToken<List<Estudiante>>() {}.type
-                    val estudiantes: List<Estudiante> = Gson().fromJson(responseString, estudianteType)
+                    val estudiantes: List<Estudiante> =
+                        Gson().fromJson(responseString, estudianteType)
                     for (estud in estudiantes) {
                         val activo = if (estud.activo) "Activo" else "Inactivo"
-                        val elemento = "${estud.Nombre}\n${estud.correo}\n\nID: ${estud.id} \nCarné: ${estud.carnet} \nCédula: ${estud.cedula}\nEstado: $activo"
+                        val elemento =
+                            "${estud.Nombre}\n${estud.correo}\n\nID: ${estud.id} \nCarné: ${estud.carnet} \nCédula: ${estud.cedula}\nEstado: $activo"
                         elementos.add(elemento)
                     }
                     val adapter = object : ArrayAdapter<String>(
@@ -79,8 +76,12 @@ class studListFragment : Fragment() {
                         R.layout.admin_list_item_layout,
                         R.id.item_text,
                         elementos
-                    ){
-                        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                    ) {
+                        override fun getView(
+                            position: Int,
+                            convertView: View?,
+                            parent: ViewGroup
+                        ): View {
                             val view = super.getView(position, convertView, parent)
 
                             val itemText = view.findViewById<TextView>(R.id.item_text)
@@ -93,13 +94,17 @@ class studListFragment : Fragment() {
                             // Acciones al hacer clic en el botón "Editar"
                             buttonEditar.setOnClickListener {
                                 val bundle = Bundle()
-                                bundle.putInt("id",estudent.id)
-                                view.findNavController().navigate(R.id.action_studListFragment_to_StudentModFragment, bundle)
+                                bundle.putInt("id", estudent.id)
+                                view.findNavController().navigate(
+                                    R.id.action_studListFragment_to_StudentModFragment,
+                                    bundle
+                                )
                             }
                             buttonReservas.setOnClickListener {
                                 val bundle = Bundle()
-                                bundle.putInt("idEstudiante",estudent.id)
-                                view.findNavController().navigate(R.id.action_studList_to_bookingList, bundle)
+                                bundle.putInt("idEstudiante", estudent.id)
+                                view.findNavController()
+                                    .navigate(R.id.action_studList_to_bookingList, bundle)
                             }
 
                             return view

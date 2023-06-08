@@ -16,7 +16,7 @@
             style="@style/menuTitle"
             android:layout_marginTop="30dp"
             android:layout_marginBottom="5dp"
-            android:text="Reservas"/>
+            android:text="Reservas" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,12 +25,12 @@
             android:layout_marginBottom="15dp"
             android:textSize="13sp"
             android:textColor="@color/black"
-            android:paddingHorizontal="20dp"/>
+            android:paddingHorizontal="20dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/booking_list_recycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="15dp" />
 
     </LinearLayout>
 

@@ -24,11 +24,12 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var apiRequest : ApiRequest
-    private lateinit var user : User
-    private val destinationChangedListener = NavController.OnDestinationChangedListener { _, destination, _ ->
-        invalidateOptionsMenu()
-    }
+    private lateinit var apiRequest: ApiRequest
+    private lateinit var user: User
+    private val destinationChangedListener =
+        NavController.OnDestinationChangedListener { _, destination, _ ->
+            invalidateOptionsMenu()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,7 +90,8 @@ class MainActivity : AppCompatActivity() {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
         return (currentFragment !is LoginFragment) && (currentFragment !is SignUpFragment)
@@ -98,10 +100,12 @@ class MainActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val logoutItem = menu.findItem(R.id.action_logout)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-        logoutItem?.isVisible = (currentFragment !is LoginFragment) && (currentFragment !is SignUpFragment)
+        logoutItem?.isVisible =
+            (currentFragment !is LoginFragment) && (currentFragment !is SignUpFragment)
 
         return true
     }
@@ -115,6 +119,7 @@ class MainActivity : AppCompatActivity() {
                 logout()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -124,8 +129,10 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
+
     override fun onBackPressed() {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main)
         val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
         if (currentFragment is StudentFragment || currentFragment is AdminFragment || currentFragment is LoginFragment) {

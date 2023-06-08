@@ -5,10 +5,14 @@ import com.example.bibliotec.R
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import okhttp3.*
+import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
 
-class ApiRequest private constructor(context : Context, user : User) {
+class ApiRequest private constructor(context: Context, user: User) {
     private val client = OkHttpClient()
     private val gson = Gson()
     private val context: Context = context
@@ -20,7 +24,7 @@ class ApiRequest private constructor(context : Context, user : User) {
         @Volatile
         private var instance: ApiRequest? = null
 
-        fun getInstance(context : Context) =
+        fun getInstance(context: Context) =
             instance ?: synchronized(this) {
                 instance ?: ApiRequest(context, User.getInstance(context)).also {
                     instance = it
@@ -36,7 +40,7 @@ class ApiRequest private constructor(context : Context, user : User) {
             .header("Cookie", cookies.joinToString("; "))
             .build()
 
-        var response : Response
+        var response: Response
 
         try {
             response = client.newCall(request).execute()
@@ -44,7 +48,7 @@ class ApiRequest private constructor(context : Context, user : User) {
             return Pair(false, context.getString(R.string.request_timeout))
         }
 
-        return response.use { response : Response ->
+        return response.use { response: Response ->
             var responseString = response.body?.string() ?: ""
             var status = true
             if (!response.isSuccessful) {
@@ -90,7 +94,7 @@ class ApiRequest private constructor(context : Context, user : User) {
             .header("Cookie", cookies.joinToString("; "))
             .build()
 
-        var response : Response
+        var response: Response
 
         try {
             response = client.newCall(request).execute()
@@ -98,15 +102,15 @@ class ApiRequest private constructor(context : Context, user : User) {
             return Triple(false, context.getString(R.string.request_timeout), null)
         }
 
-        return response.use { response : Response ->
+        return response.use { response: Response ->
             val byteData = response.body?.bytes()
-            var responseString : String?
+            var responseString: String?
             try {
                 responseString = byteData?.let { String(it, Charsets.UTF_8) }
                 if (responseString == null) {
                     responseString = ""
                 }
-            } catch (e : Exception) {
+            } catch (e: Exception) {
                 responseString = ""
             }
             var status = true
@@ -153,7 +157,7 @@ class ApiRequest private constructor(context : Context, user : User) {
             .put(requestBody)
             .build()
 
-        var response : Response
+        var response: Response
 
         try {
             response = client.newCall(request).execute()
@@ -161,7 +165,7 @@ class ApiRequest private constructor(context : Context, user : User) {
             return Pair(false, context.getString(R.string.request_timeout))
         }
 
-        return response.use { response : Response ->
+        return response.use { response: Response ->
             var responseString = response.body?.string() ?: ""
             var status = true
             if (!response.isSuccessful) {
@@ -207,7 +211,7 @@ class ApiRequest private constructor(context : Context, user : User) {
             .post(requestBody)
             .build()
 
-        var response : Response
+        var response: Response
 
         try {
             response = client.newCall(request).execute()
@@ -215,7 +219,7 @@ class ApiRequest private constructor(context : Context, user : User) {
             return Pair(false, context.getString(R.string.request_timeout))
         }
 
-        return response.use { response : Response ->
+        return response.use { response: Response ->
             var responseString = response.body?.string() ?: ""
             var status = true
             if (!response.isSuccessful) {

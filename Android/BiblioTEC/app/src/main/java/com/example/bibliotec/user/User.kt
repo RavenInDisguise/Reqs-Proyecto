@@ -2,7 +2,6 @@ package com.example.bibliotec.user
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.example.bibliotec.api.ApiRequest
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 
@@ -11,11 +10,11 @@ class User private constructor(context: Context) {
         context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
     private val gson = Gson()
 
-    private var userId : Int? = sharedPreferences.getIntOrNull("userId")
-    private var studentId : Int? = sharedPreferences.getIntOrNull("studentId")
-    private var email : String? = sharedPreferences.getString("email", null)
-    private var userType : String? = sharedPreferences.getString("userType", null)
-    private var timedOut : Boolean = sharedPreferences.getBoolean("timedOut", false)
+    private var userId: Int? = sharedPreferences.getIntOrNull("userId")
+    private var studentId: Int? = sharedPreferences.getIntOrNull("studentId")
+    private var email: String? = sharedPreferences.getString("email", null)
+    private var userType: String? = sharedPreferences.getString("userType", null)
+    private var timedOut: Boolean = sharedPreferences.getBoolean("timedOut", false)
     private var checkedInCurrentSession = false
 
     companion object {
@@ -23,7 +22,7 @@ class User private constructor(context: Context) {
         @Volatile
         private var instance: User? = null
 
-        fun getInstance(context : Context) =
+        fun getInstance(context: Context) =
             instance ?: synchronized(this) {
                 instance ?: User(context).also {
                     instance = it
@@ -31,7 +30,7 @@ class User private constructor(context: Context) {
             }
     }
 
-    fun storeUserInfo(responseString : String) {
+    fun storeUserInfo(responseString: String) {
 
         val editor = sharedPreferences.edit()
 
@@ -73,11 +72,11 @@ class User private constructor(context: Context) {
         editor.apply()
     }
 
-    fun isLoggedIn() : Boolean {
+    fun isLoggedIn(): Boolean {
         return !timedOut && (userId != null)
     }
 
-    fun isAdmin() : Boolean {
+    fun isAdmin(): Boolean {
         return userType == "Administrador"
     }
 
@@ -93,7 +92,7 @@ class User private constructor(context: Context) {
         checkedInCurrentSession = true
     }
 
-    fun checkedInCurrentSession() : Boolean {
+    fun checkedInCurrentSession(): Boolean {
         return checkedInCurrentSession
     }
 

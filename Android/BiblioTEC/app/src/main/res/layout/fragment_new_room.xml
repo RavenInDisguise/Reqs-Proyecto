@@ -18,7 +18,6 @@
             android:layout_marginHorizontal="30dp">
 
             <TextView
-                android:id="@+id/filters_menu_tile"
                 style="@style/menuTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

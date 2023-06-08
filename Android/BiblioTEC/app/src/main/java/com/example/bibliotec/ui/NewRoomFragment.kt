@@ -27,7 +27,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.Calendar
 
 
 class NewRoomFragment : Fragment() {
@@ -128,7 +127,9 @@ class NewRoomFragment : Fragment() {
                                 "\"nombre\":\"${editNameBox.text}\"," +
                                 "\"capacidad\":\"${capacity}\"," +
                                 "\"tiempoMaximo\":\"${maxTime}\"," +
-                                "\"servicios\":${services.map { "\"" + it + "\"" }}}").toRequestBody("application/json".toMediaTypeOrNull())
+                                "\"servicios\":${services.map { "\"" + it + "\"" }}}").toRequestBody(
+                            "application/json".toMediaTypeOrNull()
+                        )
 
                     val (responseStatus, responseString) = apiRequest.putRequest(url, requestBody)
 

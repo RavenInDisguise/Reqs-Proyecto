@@ -20,19 +20,18 @@
             android:layout_marginHorizontal="30dp">
 
             <TextView
-                android:id="@+id/filters_menu_tile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="@style/menuTitle"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="10dp"
-                android:text="Búsqueda de cubículos"/>
+                android:text="Búsqueda de cubículos" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Fecha"
-                style="@style/FilterLabel"/>
+                style="@style/FilterLabel" />
 
             <EditText
                 android:id="@+id/date_filter_edit"
@@ -57,7 +56,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Hora de inicio"
-                        style="@style/FilterLabel"/>
+                        style="@style/FilterLabel" />
 
                     <EditText
                         android:id="@+id/start_time_filter_edit"
@@ -97,7 +96,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Capacidad mínima"
-                style="@style/FilterLabel"/>
+                style="@style/FilterLabel" />
 
             <EditText
                 android:id="@+id/capacity_filter_edit"
@@ -111,7 +110,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Servicios mínimos"
-                style="@style/FilterLabel"/>
+                style="@style/FilterLabel" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/service_filter_recycler"
@@ -127,7 +126,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="Buscar"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"/>
+                android:layout_marginBottom="30dp" />
 
         </LinearLayout>
 
