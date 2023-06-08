@@ -44,7 +44,8 @@ class ReservasFragment : Fragment() {
         val horaInicio: String,
         val horaFin: String,
         val activo: Boolean,
-        val confirmado: Boolean
+        val confirmado: Boolean,
+        val idCubiculo: Int
     )
 
     override fun onCreateView(
@@ -194,7 +195,12 @@ class ReservasFragment : Fragment() {
                             .setMessage("La reserva fue confirmada")
                             .setPositiveButton("OK") { dialog, _ ->
                                 dialog.dismiss()
-                                view?.findNavController()?.navigate(R.id.action_reservasFragment_self)
+                                val bundle = Bundle()
+                                bundle.putInt("id", reserva.id)
+                                 bundle.putString("horaInicio", reserva.horaInicio)
+                                 bundle.putString("horaFin", reserva.horaFin)
+                                bundle.putInt("idCubiculo", reserva.idCubiculo)
+                                findNavController().navigate(R.id.action_reservasFragment_to_BookingConfirmationFragment, bundle)
                             }
                             .create()
                         dialog.show()

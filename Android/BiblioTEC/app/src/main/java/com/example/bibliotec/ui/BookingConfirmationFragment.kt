@@ -1,60 +1,199 @@
 package com.example.bibliotec.ui
 
+import android.app.AlertDialog
+import android.app.ProgressDialog
+import android.nfc.Tag
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
+import com.example.bibliotec.api.ApiRequest
+import com.example.bibliotec.data.ServicePerRoomItem
+import com.example.bibliotec.databinding.FragmentBookingConfirmationBinding
+import com.example.bibliotec.user.User
+import com.example.bibliotec.misc.LocalDate
+import com.google.gson.Gson
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [BookingConfirmationFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class BookingConfirmationFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    //variables
+    private var _binding: FragmentBookingConfirmationBinding? = null
+    private lateinit var apiRequest: ApiRequest
+    private val binding get() = _binding!!
+    private lateinit var user: User
+    private lateinit var horaInicio : String
+    private lateinit var horaFin : String
+    private val gson = Gson()
+    private var reservationId: Int = -1
+    private var idCubiculo: Int = -1
+    private lateinit var servicePerRoomList: List<ServicePerRoomItem>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_booking_confirmation, container, false)
+        _binding = FragmentBookingConfirmationBinding.inflate(inflater, container, false)
+        user = User.getInstance(requireContext())
+        apiRequest = ApiRequest.getInstance(requireContext())
+
+        arguments?.let {
+            reservationId = it.getInt("id", -1)
+            horaInicio = it.getString("horaInicio")!!
+            horaFin = it.getString("horaFin")!!
+            idCubiculo = it.getInt("idCubiculo")
+        }
+
+        if (id == -1){
+            findNavController().navigateUp()
+        }
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BookingConfirmationFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            BookingConfirmationFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val cubicleName = view.findViewById<TextView>(R.id.cubiName)
+        val cubicleCapacity = view.findViewById<TextView>(R.id.capacityCubi)
+        val cubicleSchedule = view.findViewById<TextView>(R.id.scheduleCubiReserva)
+        val cubicleRecycler = view.findViewById<RecyclerView>(R.id.servicesCubiRecycler)
+        cubicleRecycler?.layoutManager = LinearLayoutManager(requireContext())
+        val codeQR = view.findViewById<ImageView>(R.id.codeReservation)
+        val btnAceptar = view.findViewById<Button>(R.id.btnReserveCubi)
+
+        val progressDialog = ProgressDialog(requireContext())
+        progressDialog.setMessage("Cargando...")
+        progressDialog.setCancelable(false)
+        progressDialog.show()
+
+        btnAceptar.setOnClickListener{
+            findNavController().navigateUp()
+        }
+
+        GlobalScope.launch(Dispatchers.IO) {
+            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo?id=$idCubiculo"
+
+            val (responseStatus, responseString) = apiRequest.getRequest(url)
+
+            // Se quita el popup de "Cargando"
+            progressDialog.dismiss()
+
+            if (responseStatus) {
+                val json = gson.fromJson(responseString, JsonArray::class.java)
+                val valores = (json[0] as JsonObject)
+
+                val id = valores.get("id").asInt
+                val nombre = valores.get("nombre").asString
+                val capacidad = valores.get("capacidad").asString
+                val minutosMaximo = valores.get("minutosMaximo").asInt
+
+                val horaInicioObject = LocalDate.parseIso(horaInicio)
+                var horaFinObject = LocalDate.parseIso(horaFin)
+
+                val horaInicioCalendar = Calendar.getInstance()
+                horaInicioCalendar.time = horaInicioObject
+
+                val horaFinCalendar = Calendar.getInstance()
+                horaFinCalendar.time = horaFinObject
+
+                val horaFinMaxCalendar = Calendar.getInstance()
+                horaFinMaxCalendar.time = horaInicioCalendar.time
+                horaFinMaxCalendar.add(Calendar.MINUTE, minutosMaximo)
+
+                if (horaFinCalendar > horaFinMaxCalendar) {
+                    horaFinObject = horaFinMaxCalendar.time
+                    horaFin = LocalDate.toUtc(horaFinObject)
+                }
+
+                servicePerRoomList = valores.get("servicios")
+                    .asJsonArray.map {
+                        ServicePerRoomItem(
+                            it.asJsonObject.get("nombre").asString,
+                            it.asJsonObject.get("activo").asBoolean
+                        )
+                    }
+
+                val bookingTime = (horaFinObject.time - horaInicioObject.time) / (1000 * 60)
+
+                var bookingTimeString = LocalDate.durationString(bookingTime.toInt())
+
+                requireActivity().runOnUiThread {
+                    cubicleName?.text = nombre
+                    cubicleCapacity?.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
+                    cubicleSchedule?.text = "${
+                        LocalDate.date(horaInicioObject)
+                    }, de ${LocalDate.time(horaInicioObject)} a ${
+                        LocalDate.time(horaFinObject)
+                    }\n(durante $bookingTimeString)"
+                    val adapter = BookingAdapter(servicePerRoomList)
+                    cubicleRecycler?.adapter = adapter
+                }
+            } else {
+                if (user.isLoggedIn()) {
+                    // Ocurrió un error al hacer la consulta
+                    requireActivity().runOnUiThread {
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Error")
+                            .setMessage(responseString)
+                            .setPositiveButton("OK") { dialog, _ ->
+                                dialog.dismiss()
+                                findNavController().navigateUp()
+                            }
+                            .show()
+                    }
+                } else {
+                    // La sesión expiró
+                    requireActivity().runOnUiThread {
+                        AlertDialog.Builder(requireContext())
+                            .setTitle(R.string.session_timeout_title)
+                            .setMessage(R.string.session_timeout)
+                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .show()
+                        findNavController().navigate(R.id.LoginFragment)
+                    }
                 }
             }
+        }
+
+        GlobalScope.launch(Dispatchers.IO){
+            val url = "https://appbibliotec.azurewebsites.net/api/reserva/qr?id=${reservationId}"
+
+            val (responseStatus, responseString) = apiRequest.getRequest(url)
+
+            if (responseStatus) {
+                //val json = gson.fromJson(responseString, JsonPrimitive::class.java)
+                //val valores = json.asJsonObject
+
+                requireActivity().runOnUiThread {
+                    //val urlCodigo = valores.get(url).asString
+                    Log.i("Dentro del que asigna", responseString)
+                    Picasso.get().load(responseString).into(codeQR)
+                }
+            }
+        }
+
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

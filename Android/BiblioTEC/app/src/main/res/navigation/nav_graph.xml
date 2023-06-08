@@ -137,13 +137,13 @@
         tools:layout="@layout/fragment_reservas">
 
         <action
+            android:id="@+id/action_reservasFragment_to_BookingConfirmationFragment"
+            app:destination="@id/BookingConfirmationFragment" />
+        <action
             android:id="@+id/action_reservasFragment_self"
             app:destination="@id/reservasFragment"
             app:popUpTo="@+id/StudentFragment"
             app:popUpToInclusive="false" />
-        <action
-            android:id="@+id/action_reservasFragment_to_BookingConfirmationFragment"
-            app:destination="@id/BookingConfirmationFragment" />
     </fragment>
     <fragment
         android:id="@+id/AdminFragment"
