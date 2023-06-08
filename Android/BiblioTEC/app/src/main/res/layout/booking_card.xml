@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/default_elevation"
+    android:background="@drawable/room_card"
+    android:layout_marginHorizontal="20dp"
+    android:layout_marginVertical="10dp"
+    android:id="@+id/BookingCard"
+    android:clickable="true">
+
+    <LinearLayout
+        android:id="@+id/bookingIdLayout"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/BookingImage"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="5dp"
+        >
+
+        <TextView
+            android:id="@+id/BookingText"
+            style="@style/MenuItemText"
+            android:focusable="true"
+            android:fontFamily="@font/robotoslab_bold"
+            app:fontFamily="@font/robotoslab_bold"
+            android:textColor="@color/blue_500"
+            android:layout_marginStart="0dp"
+            android:text="ID:"
+            android:textSize="15sp"/>
+        <TextView
+            android:id="@+id/BookingIdText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF222222"
+            tools:text="500" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/bookingStatusLayout"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/BookingImage"
+        app:layout_constraintTop_toBottomOf="@+id/bookingIdLayout"
+        android:layout_marginTop="10dp"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/icon_status" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:id="@+id/bookingStatusLabel"
+                style="@style/MenuItemText"
+                android:focusable="true"
+                android:fontFamily="@font/robotoslab_bold"
+                app:fontFamily="@font/robotoslab_bold"
+                android:textColor="@color/blue_500"
+                android:text="Estado:"
+                android:textSize="15sp"
+                android:layout_marginStart="0dp" />
+            <TextView
+                android:id="@+id/bookingStatusText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF222222"
+                tools:text="Confirmada"
+                android:layout_marginLeft="0dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/bookRoomLayout"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/BookingImage"
+        app:layout_constraintTop_toBottomOf="@+id/bookingStatusLayout"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        >
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/icon_room" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:id="@+id/BookRoomText"
+                style="@style/MenuItemText"
+                android:focusable="true"
+                android:fontFamily="@font/robotoslab_bold"
+                app:fontFamily="@font/robotoslab_bold"
+                android:textColor="@color/blue_500"
+                android:text="Cubículo:"
+                android:textSize="15sp"
+                android:layout_marginStart="0dp" />
+            <TextView
+                android:id="@+id/BookRoomNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF222222"
+                tools:text="E12"
+                android:layout_marginLeft="0dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+    <ImageView
+        android:id="@+id/BookingImage"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/MenuItemImage"
+        android:src="@drawable/icon_booking"
+        android:focusable="true"/>
+
+    <LinearLayout
+        android:id="@+id/studentNameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@+id/BookingImage"
+        app:layout_constraintTop_toBottomOf="@+id/bookRoomLayout"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+         >
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/icon_student" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/robotoslab_bold"
+                app:fontFamily="@font/robotoslab_bold"
+                android:text="Estudiante:"
+                style="@style/MenuItemText"
+                android:textColor="@color/blue_500"
+                android:textSize="15sp"
+                android:layout_marginStart="0dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Lucía Argüello Aguilar"
+                android:id="@+id/StudentNameInfo"
+                android:textColor="#FF222222" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/BookingDate"
+            style="@style/MenuItemText"
+            android:fontFamily="@font/robotoslab_bold"
+            app:fontFamily="@font/robotoslab_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue_500"
+            android:text="Hecha:"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="0dp"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/BookingDateText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            tools:text="30 de junio, 7:41 a. m." />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/serviceLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/BookingImage"
+        app:layout_constraintTop_toBottomOf="@+id/studentNameLayout">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="0dp"
+                android:src="@drawable/icon_timer" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp"
+                android:paddingEnd="50dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/robotoslab_bold"
+                    app:fontFamily="@font/robotoslab_bold"
+                    android:text="Horario reservado:"
+                    style="@style/MenuItemText"
+                    android:id="@+id/bookingSchedule"
+                    android:textColor="@color/blue_500"
+                    android:textSize="15sp"
+                    android:layout_marginStart="0dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingMultiplier="1"
+                    tools:text="30 jun. 2023, de 12:00 p. m. a 12:50 p. m."
+                    android:id="@+id/bookingScheduleText"
+                    android:textColor="@color/black"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

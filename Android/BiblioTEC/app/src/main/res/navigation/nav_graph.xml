@@ -3,26 +3,284 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    app:startDestination="@id/LoginFragment"
+    style="@style/ToolbarStyle">
 
     <fragment
-        android:id="@+id/FirstFragment"
-        android:name="com.example.bibliotec.FirstFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_first">
+        android:id="@+id/LoginFragment"
+        android:name="com.example.bibliotec.ui.LoginFragment"
+        android:label="@string/bibliotec_label"
+        tools:layout="@layout/fragment_login">
 
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_LoginFragment_to_StudentFragment"
+            app:destination="@id/StudentFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true"/>
+
+        <action
+            android:id="@+id/action_LoginFragment_to_AdminFragment"
+            app:destination="@id/AdminFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_LoginFragment_to_RegistroFragment"
+            app:destination="@id/RegistroFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.example.bibliotec.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/RegistroFragment"
+        android:name="com.example.bibliotec.ui.SignUpFragment"
+        android:label="@string/bibliotec_label"
+        tools:layout="@layout/fragment_signup">
+    </fragment>
+    <fragment
+        android:id="@+id/StudentFragment"
+        android:name="com.example.bibliotec.ui.menu.StudentFragment"
+        android:label="@string/bibliotec_label"
+        tools:layout="@layout/fragment_student">
 
         <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            android:id="@+id/action_StudentFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_StudentFragment_to_reservasFragment"
+            app:destination="@id/reservasFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+
+        <action
+            android:id="@+id/action_StudentFragment_to_FiltersFragment"
+            app:destination="@id/FiltersFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/FiltersFragment"
+        android:name="com.example.bibliotec.ui.FiltersFragment"
+        android:label=""
+        tools:layout="@layout/fragment_filters">
+
+        <action
+            android:id="@+id/action_FiltersFragment_to_StudentFragment"
+            app:destination="@id/StudentFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_FiltersFragment_toAvailableRoomsFragment"
+            app:destination="@id/AvailableRoomsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/AvailableRoomsFragment"
+        android:name="com.example.bibliotec.ui.AvailableRoomsFragment"
+        android:label=""
+        tools:layout="@layout/fragment_available_rooms">
+        <action
+            android:id="@+id/action_AvailableRoomsFragment_toRegistroFragment"
+            app:destination="@id/ReservaFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+    </fragment>
+    <fragment
+        android:id="@+id/ReservaFragment"
+        android:name="com.example.bibliotec.ui.BookingFragment"
+        android:label=""
+        tools:layout="@layout/fragment_booking">
+
+        <action
+            android:id="@+id/action_ReservaFragment_toreservasFragment"
+            app:destination="@id/reservasFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/StudentFragment"
+            app:popUpToInclusive="false" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/reservasFragment"
+        android:name="com.example.bibliotec.ui.ReservasFragment"
+        android:label="fragment_reservas"
+        tools:layout="@layout/fragment_reservas">
+
+        <action
+            android:id="@+id/action_reservasFragment_to_BookingConfirmationFragment"
+            app:destination="@id/BookingConfirmationFragment" />
+        <action
+            android:id="@+id/action_reservasFragment_self"
+            app:destination="@id/reservasFragment"
+            app:popUpTo="@+id/StudentFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/AdminFragment"
+        android:name="com.example.bibliotec.ui.menu.AdminFragment"
+        android:label="@string/bibliotec_label"
+        tools:layout="@layout/fragment_admin">
+
+        <action
+            android:id="@+id/action_AdminFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"
+            app:popUpTo="@+id/nav_graph"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_AdminFragment_to_NewRoomFragment"
+            app:destination="@id/NewRoomFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_AdminFragment_to_BookingListFragment"
+            app:destination="@id/BookingListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_AdminFragment_to_cubiListFragment"
+            app:destination="@id/cubiListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_AdminFragment_to_studListFragment"
+            app:destination="@id/studListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/NewRoomFragment"
+        android:name="com.example.bibliotec.ui.NewRoomFragment"
+        android:label=""
+        tools:layout="@layout/fragment_new_room">
+    </fragment>
+    <fragment
+        android:id="@+id/ModifyRoomFragment"
+        android:name="com.example.bibliotec.ui.ModifyRoomFragment"
+        android:label=""
+        tools:layout="@layout/fragment_modify_room">
+
+    </fragment>
+    <fragment
+        android:id="@+id/BookingListFragment"
+        android:name="com.example.bibliotec.ui.BookingListFragment"
+        android:label=""
+        tools:layout="@layout/fragment_booking_list">
+
+        <action
+            android:id="@+id/action_BookingListFragment_to_ModifyBookingFragment"
+            app:destination="@id/ModifyBookingFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/cubiListFragment"
+        android:name="com.example.bibliotec.ui.cubiListFragment"
+        android:label="fragment_cubi_list"
+        tools:layout="@layout/fragment_cubi_list" >
+        <action
+            android:id="@+id/action_cubiListFragment_to_ModifyRoomFragment"
+            app:destination="@id/ModifyRoomFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_roomList_to_bookingList"
+            app:destination="@id/BookingListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_cubiListFragment_self"
+            app:destination="@id/cubiListFragment"
+            app:popUpTo="@+id/AdminFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/studListFragment"
+        android:name="com.example.bibliotec.ui.studListFragment"
+        android:label="fragment_stud_list"
+        tools:layout="@layout/fragment_stud_list" >
+        <action
+            android:id="@+id/action_studListFragment_to_StudentModFragment"
+            app:destination="@id/StudentModFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
+        <action
+            android:id="@+id/action_studList_to_bookingList"
+            app:destination="@id/BookingListFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/StudentModFragment"
+        android:name="com.example.bibliotec.ui.StudentModFragment"
+        android:label=""
+        tools:layout="@layout/fragment_student_mod">
+
+    </fragment>
+    <fragment
+        android:id="@+id/BookingConfirmationFragment"
+        android:name="com.example.bibliotec.ui.BookingConfirmationFragment"
+        android:label=""
+        tools:layout="@layout/fragment_booking_confirmation">
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/ModifyBookingFragment"
+        android:name="com.example.bibliotec.ui.ModifyBookingFragment"
+        android:label=""
+        tools:layout="@layout/fragment_modify_booking">
+
     </fragment>
 </navigation>

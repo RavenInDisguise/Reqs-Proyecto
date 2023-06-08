@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.menu.StudentFragment">
+
+    <ScrollView
+        android:id="@+id/admin_scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="30dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/admin_menu_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/menuTitle"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:text="Menú"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                style="@style/MenuCategory">
+
+                <TextView
+                    style="@style/MenuCategoryText"
+                    android:text="Cubículos"/>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/NewReservationButton"
+                    style="@style/MenuItem">
+
+                    <ImageView
+                        android:id="@+id/MenuBookImage"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/MenuItemImage"
+                        android:src="@drawable/icon_book_room" />
+
+                    <TextView
+                        android:id="@+id/MenuBookText"
+                        style="@style/MenuItemText"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/MenuBookImage"
+                        android:text="Reservar cubículo"
+                        android:focusable="true"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/SeeReservationHistory"
+                    style="@style/MenuItem">
+
+                    <ImageView
+                        android:id="@+id/MenuBookedImage"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/MenuItemImage"
+                        android:src="@drawable/icon_see_history" />
+
+                    <TextView
+                        android:id="@+id/MenuBookedText"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        style="@style/MenuItemText"
+                        app:layout_constraintStart_toEndOf="@+id/MenuBookedImage"
+                        android:text="Ver cubículos reservados" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
