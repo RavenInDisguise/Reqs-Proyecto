@@ -2,6 +2,9 @@ package com.example.bibliotec.ui
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.nfc.Tag
 import android.os.Bundle
 import android.util.Log
@@ -12,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +34,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 class BookingConfirmationFragment : Fragment() {
@@ -44,6 +50,9 @@ class BookingConfirmationFragment : Fragment() {
     private var reservationId: Int = -1
     private var idCubiculo: Int = -1
     private lateinit var servicePerRoomList: List<ServicePerRoomItem>
+    private var errorOccurred = false
+    private var roomInfoLoaded = false
+    private var qrCodeLoaded = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -76,6 +85,7 @@ class BookingConfirmationFragment : Fragment() {
         val cubicleRecycler = view.findViewById<RecyclerView>(R.id.servicesCubiRecycler)
         cubicleRecycler?.layoutManager = LinearLayoutManager(requireContext())
         val codeQR = view.findViewById<ImageView>(R.id.codeReservation)
+        val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val btnAceptar = view.findViewById<Button>(R.id.btnReserveCubi)
 
         val progressDialog = ProgressDialog(requireContext())
@@ -93,7 +103,10 @@ class BookingConfirmationFragment : Fragment() {
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 
             // Se quita el popup de "Cargando"
-            progressDialog.dismiss()
+            roomInfoLoaded = true
+            if (qrCodeLoaded) {
+                progressDialog.dismiss()
+            }
 
             if (responseStatus) {
                 val json = gson.fromJson(responseString, JsonArray::class.java)
@@ -146,45 +159,88 @@ class BookingConfirmationFragment : Fragment() {
                     cubicleRecycler?.adapter = adapter
                 }
             } else {
-                if (user.isLoggedIn()) {
-                    // Ocurrió un error al hacer la consulta
-                    requireActivity().runOnUiThread {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle("Error")
-                            .setMessage(responseString)
-                            .setPositiveButton("OK") { dialog, _ ->
-                                dialog.dismiss()
-                                findNavController().navigateUp()
-                            }
-                            .show()
-                    }
-                } else {
-                    // La sesión expiró
-                    requireActivity().runOnUiThread {
-                        AlertDialog.Builder(requireContext())
-                            .setTitle(R.string.session_timeout_title)
-                            .setMessage(R.string.session_timeout)
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                            .show()
-                        findNavController().navigate(R.id.LoginFragment)
+                if (!errorOccurred) {
+                    // Si más de un request da un error, solo se muestra una vez
+                    errorOccurred = true
+                    if (user.isLoggedIn()) {
+                        // Ocurrió un error al hacer la consulta
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                    findNavController().navigateUp()
+                                }
+                                .show()
+                        }
+                    } else {
+                        // La sesión expiró
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
                     }
                 }
             }
         }
 
         GlobalScope.launch(Dispatchers.IO){
-            val url = "https://appbibliotec.azurewebsites.net/api/reserva/qr?id=${reservationId}"
+            val url = "https://appbibliotec.azurewebsites.net/api/reserva/qr?id=$reservationId"
 
-            val (responseStatus, responseString) = apiRequest.getRequest(url)
+            val (responseStatus, responseString, imageData) = apiRequest.getRequestBytes(url)
+
+            // Se quita el popup de "Cargando"
+            qrCodeLoaded = true
+            if (roomInfoLoaded) {
+                progressDialog.dismiss()
+            }
+
+            val bitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData?.size ?: 0)
+            val tempFile = File(requireContext().cacheDir, "temp_booking_$reservationId.png")
+            val outputStream = FileOutputStream(tempFile)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.close()
+
+            val imageUri = Uri.fromFile(tempFile)
 
             if (responseStatus) {
-                //val json = gson.fromJson(responseString, JsonPrimitive::class.java)
-                //val valores = json.asJsonObject
-
                 requireActivity().runOnUiThread {
-                    //val urlCodigo = valores.get(url).asString
-                    Log.i("Dentro del que asigna", responseString)
-                    Picasso.get().load(responseString).into(codeQR)
+                    Picasso.get().load(imageUri).into(codeQR)
+                    codeQR.visibility = View.VISIBLE
+                    progressBar.visibility = View.GONE
+                }
+            } else {
+                if (!errorOccurred) {
+                    // Si más de un request da un error, solo se muestra una vez
+                    errorOccurred = true
+                    if (user.isLoggedIn()) {
+                        // Ocurrió un error al hacer la consulta
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle("Error")
+                                .setMessage(responseString)
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                    findNavController().navigateUp()
+                                }
+                                .show()
+                        }
+                    } else {
+                        // La sesión expiró
+                        requireActivity().runOnUiThread {
+                            AlertDialog.Builder(requireContext())
+                                .setTitle(R.string.session_timeout_title)
+                                .setMessage(R.string.session_timeout)
+                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                            findNavController().navigate(R.id.LoginFragment)
+                        }
+                    }
                 }
             }
         }

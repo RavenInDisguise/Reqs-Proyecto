@@ -98,27 +98,45 @@ class ReservasFragment : Fragment() {
                             val buttonConfirmar = view.findViewById<Button>(R.id.button_confirmar)
                             val buttonEliminar = view.findViewById<Button>(R.id.button_eliminar)
                             val reservaConfirmada = reservas[position].confirmado
+                            val reservaActiva = reservas[position].activo
 
                             // Actualizar el estado del botón Confirmar
-                            buttonConfirmar.isEnabled = !reservaConfirmada
+                            buttonConfirmar.isEnabled = reservaActiva
 
                             val reserva = reservas[position]
                             itemText.text = elementos[position]
 
                             // Acciones al hacer clic en el botón Confirmar
-                            buttonConfirmar.setOnClickListener {
-                                val confirmDialog = AlertDialog.Builder(requireContext())
-                                    .setTitle("Confirmación")
-                                    .setMessage("¿Está seguro de confirmar esta reserva?")
-                                    .setPositiveButton("OK") { dialog, _ ->
-                                        confirmarReserva(reserva)
-                                        dialog.dismiss()
+                            if (reservaActiva && !reservaConfirmada) {
+                                buttonConfirmar.setOnClickListener {
+                                    val confirmDialog = AlertDialog.Builder(requireContext())
+                                        .setTitle("Confirmación")
+                                        .setMessage("¿Está seguro de confirmar esta reserva?")
+                                        .setPositiveButton("OK") { dialog, _ ->
+                                            confirmarReserva(reserva)
+                                            dialog.dismiss()
+                                        }
+                                        .setNegativeButton("Cancelar") { dialog, _ ->
+                                            dialog.dismiss()
+                                        }
+                                        .create()
+                                    confirmDialog.show()
+                                }
+                            } else {
+                                if (reservaActiva) {
+                                    buttonConfirmar.text = "Código QR"
+                                    buttonConfirmar.setOnClickListener {
+                                        val bundle = Bundle()
+                                        bundle.putInt("id", reserva.id)
+                                        bundle.putInt("idCubiculo", reserva.idCubiculo)
+                                        bundle.putString("horaInicio", reserva.horaInicio)
+                                        bundle.putString("horaFin", reserva.horaFin)
+                                        findNavController().navigate(
+                                            R.id.BookingConfirmationFragment,
+                                            bundle
+                                        )
                                     }
-                                    .setNegativeButton("Cancelar") { dialog, _ ->
-                                        dialog.dismiss()
-                                    }
-                                    .create()
-                                confirmDialog.show()
+                                }
                             }
 
                             // Acciones al hacer clic en el botón Eliminar
@@ -197,8 +215,8 @@ class ReservasFragment : Fragment() {
                                 dialog.dismiss()
                                 val bundle = Bundle()
                                 bundle.putInt("id", reserva.id)
-                                 bundle.putString("horaInicio", reserva.horaInicio)
-                                 bundle.putString("horaFin", reserva.horaFin)
+                                bundle.putString("horaInicio", reserva.horaInicio)
+                                bundle.putString("horaFin", reserva.horaFin)
                                 bundle.putInt("idCubiculo", reserva.idCubiculo)
                                 findNavController().navigate(R.id.action_reservasFragment_to_BookingConfirmationFragment, bundle)
                             }
