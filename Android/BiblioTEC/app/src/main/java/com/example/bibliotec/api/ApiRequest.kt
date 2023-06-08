@@ -1,6 +1,7 @@
 package com.example.bibliotec.api
 
 import android.content.Context
+import com.example.bibliotec.R
 import com.example.bibliotec.user.User
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -35,7 +36,13 @@ class ApiRequest private constructor(context : Context, user : User) {
             .header("Cookie", cookies.joinToString("; "))
             .build()
 
-        val response = client.newCall(request).execute()
+        var response : Response
+
+        try {
+            response = client.newCall(request).execute()
+        } catch (e: Exception) {
+            return Pair(false, context.getString(R.string.request_timeout))
+        }
 
         return response.use { response : Response ->
             var responseString = response.body?.string() ?: ""
@@ -83,7 +90,13 @@ class ApiRequest private constructor(context : Context, user : User) {
             .header("Cookie", cookies.joinToString("; "))
             .build()
 
-        val response = client.newCall(request).execute()
+        var response : Response
+
+        try {
+            response = client.newCall(request).execute()
+        } catch (e: Exception) {
+            return Triple(false, context.getString(R.string.request_timeout), null)
+        }
 
         return response.use { response : Response ->
             val byteData = response.body?.bytes()
@@ -140,7 +153,13 @@ class ApiRequest private constructor(context : Context, user : User) {
             .put(requestBody)
             .build()
 
-        val response = client.newCall(request).execute()
+        var response : Response
+
+        try {
+            response = client.newCall(request).execute()
+        } catch (e: Exception) {
+            return Pair(false, context.getString(R.string.request_timeout))
+        }
 
         return response.use { response : Response ->
             var responseString = response.body?.string() ?: ""
@@ -193,7 +212,7 @@ class ApiRequest private constructor(context : Context, user : User) {
         try {
             response = client.newCall(request).execute()
         } catch (e: Exception) {
-            return Pair(false, "Error de red")
+            return Pair(false, context.getString(R.string.request_timeout))
         }
 
         return response.use { response : Response ->
