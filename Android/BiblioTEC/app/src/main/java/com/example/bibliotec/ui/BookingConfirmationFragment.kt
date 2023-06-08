@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
@@ -17,12 +19,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bibliotec.R
 import com.example.bibliotec.api.ApiRequest
 import com.example.bibliotec.data.ServicePerRoomItem
-import com.example.bibliotec.databinding.FragmentBookingBinding
+import com.example.bibliotec.databinding.FragmentBookingConfirmationBinding
 import com.example.bibliotec.user.User
 import com.example.bibliotec.misc.LocalDate
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -30,7 +34,7 @@ import java.util.*
 
 class BookingConfirmationFragment : Fragment() {
     //variables
-    private var _binding: FragmentBookingBinding? = null
+    private var _binding: FragmentBookingConfirmationBinding? = null
     private lateinit var apiRequest: ApiRequest
     private val binding get() = _binding!!
     private lateinit var user: User
@@ -38,14 +42,14 @@ class BookingConfirmationFragment : Fragment() {
     private lateinit var horaFin : String
     private val gson = Gson()
     private var reservationId: Int = -1
-    private var idCubicle: Int = -1
+    private var idCubiculo: Int = -1
     private lateinit var servicePerRoomList: List<ServicePerRoomItem>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentBookingBinding.inflate(inflater, container, false)
+        _binding = FragmentBookingConfirmationBinding.inflate(inflater, container, false)
         user = User.getInstance(requireContext())
         apiRequest = ApiRequest.getInstance(requireContext())
 
@@ -53,8 +57,9 @@ class BookingConfirmationFragment : Fragment() {
             reservationId = it.getInt("id", -1)
             horaInicio = it.getString("horaInicio")!!
             horaFin = it.getString("horaFin")!!
+            idCubiculo = it.getInt("idCubiculo")
         }
-        /**/
+
         if (id == -1){
             findNavController().navigateUp()
         }
@@ -69,24 +74,21 @@ class BookingConfirmationFragment : Fragment() {
         val cubicleCapacity = view.findViewById<TextView>(R.id.capacityCubi)
         val cubicleSchedule = view.findViewById<TextView>(R.id.scheduleCubiReserva)
         val cubicleRecycler = view.findViewById<RecyclerView>(R.id.servicesCubiRecycler)
+        cubicleRecycler?.layoutManager = LinearLayoutManager(requireContext())
+        val codeQR = view.findViewById<ImageView>(R.id.codeReservation)
+        val btnAceptar = view.findViewById<Button>(R.id.btnReserveCubi)
 
         val progressDialog = ProgressDialog(requireContext())
         progressDialog.setMessage("Cargando...")
         progressDialog.setCancelable(false)
         progressDialog.show()
 
-        GlobalScope.launch(Dispatchers.IO){
-            val uri = "https://appbibliotec.azurewebsites.net/api/reserva?idReserva=$reservationId"
-            val (responseStatus, responseString) = apiRequest.getRequest(uri)
-            if (responseStatus){
-                val json = gson.fromJson(responseString, JsonArray::class.java)
-                val valores = (json[0] as JsonObject)
-                idCubicle = valores.get("idCubiculo").asInt
-            }
+        btnAceptar.setOnClickListener{
+            findNavController().navigateUp()
         }
 
         GlobalScope.launch(Dispatchers.IO) {
-            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo?id=$idCubicle"
+            val url = "https://appbibliotec.azurewebsites.net/api/cubiculo?id=$idCubiculo"
 
             val (responseStatus, responseString) = apiRequest.getRequest(url)
 
@@ -102,8 +104,8 @@ class BookingConfirmationFragment : Fragment() {
                 val capacidad = valores.get("capacidad").asString
                 val minutosMaximo = valores.get("minutosMaximo").asInt
 
-                val horaInicioObject = LocalDate.parseUtc(horaInicio)
-                var horaFinObject = LocalDate.parseUtc(horaFin)
+                val horaInicioObject = LocalDate.parseIso(horaInicio)
+                var horaFinObject = LocalDate.parseIso(horaFin)
 
                 val horaInicioCalendar = Calendar.getInstance()
                 horaInicioCalendar.time = horaInicioObject
@@ -133,15 +135,15 @@ class BookingConfirmationFragment : Fragment() {
                 var bookingTimeString = LocalDate.durationString(bookingTime.toInt())
 
                 requireActivity().runOnUiThread {
-                    cubicleName.text = nombre
-                    cubicleCapacity.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
-                    cubicleSchedule.text = "${
+                    cubicleName?.text = nombre
+                    cubicleCapacity?.text = "$capacidad persona${if (capacidad.toInt() == 1) "" else "s"}"
+                    cubicleSchedule?.text = "${
                         LocalDate.date(horaInicioObject)
                     }, de ${LocalDate.time(horaInicioObject)} a ${
                         LocalDate.time(horaFinObject)
                     }\n(durante $bookingTimeString)"
                     val adapter = BookingAdapter(servicePerRoomList)
-                    cubicleRecycler.adapter = adapter
+                    cubicleRecycler?.adapter = adapter
                 }
             } else {
                 if (user.isLoggedIn()) {
@@ -169,6 +171,24 @@ class BookingConfirmationFragment : Fragment() {
                 }
             }
         }
+
+        GlobalScope.launch(Dispatchers.IO){
+            val url = "https://appbibliotec.azurewebsites.net/api/reserva/qr?id=${reservationId}"
+
+            val (responseStatus, responseString) = apiRequest.getRequest(url)
+
+            if (responseStatus) {
+                //val json = gson.fromJson(responseString, JsonPrimitive::class.java)
+                //val valores = json.asJsonObject
+
+                requireActivity().runOnUiThread {
+                    //val urlCodigo = valores.get(url).asString
+                    Log.i("Dentro del que asigna", responseString)
+                    Picasso.get().load(responseString).into(codeQR)
+                }
+            }
+        }
+
 
     }
 

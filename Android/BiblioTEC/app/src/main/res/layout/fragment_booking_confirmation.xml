@@ -91,9 +91,11 @@
 
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/codeReservation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginVertical="20dp"
                 android:src="@android:drawable/ic_menu_recent_history" />
 
             <LinearLayout
