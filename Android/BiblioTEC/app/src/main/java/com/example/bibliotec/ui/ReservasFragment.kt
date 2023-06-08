@@ -106,6 +106,8 @@ class ReservasFragment : Fragment() {
                             val reserva = reservas[position]
                             itemText.text = elementos[position]
 
+                            buttonConfirmar.text = "Confirmar"
+
                             // Acciones al hacer clic en el botón Confirmar
                             if (reservaActiva && !reservaConfirmada) {
                                 buttonConfirmar.setOnClickListener {
