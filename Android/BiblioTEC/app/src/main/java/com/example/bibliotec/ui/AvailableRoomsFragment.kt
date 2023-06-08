@@ -42,6 +42,7 @@ class AvailableRoomsFragment : Fragment() {
     ): View {
         _binding = FragmentAvailableRoomsBinding.inflate(inflater, container, false)
         apiRequest = ApiRequest.getInstance(requireContext())
+        user = User.getInstance(requireContext())
 
         // Parámetros del fragmento
         arguments?.let {
