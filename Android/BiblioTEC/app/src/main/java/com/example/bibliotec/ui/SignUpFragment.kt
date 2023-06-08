@@ -98,7 +98,7 @@ class SignUpFragment : Fragment() {
 
                 // Se abre un popup de "Cargando"
                 val progressDialog = ProgressDialog(requireContext())
-                progressDialog.setMessage("Iniciando sesión...")
+                progressDialog.setMessage("Registrando usuario...")
                 progressDialog.setCancelable(false)
                 progressDialog.show()
 
